@@ -1,0 +1,14 @@
+Copyright (c) 2025 helloadhavan
+
+Permission is granted to download and use this software for personal or educational purposes free of charge.
+
+You MAY NOT:
+- Copy, redistribute, or sell this framework.
+- Claim this framework as your own work.
+- Use this framework in a way that violates the original author's rights.
+
+You MAY:
+- Use the framework locally for your projects.
+- Study, learn from, or experiment with the framework.
+
+All rights not expressly granted are reserved by the original author.
