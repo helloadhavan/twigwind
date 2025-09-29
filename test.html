@@ -2,34 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Twigwind Flex Demo</title>
-  <script src="twigwind.js" defer></script>
+  <title>Twigwind Test Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Minimal Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f8f8f8; }
+    section { margin-bottom: 40px; }
+  </style>
 </head>
-<body class="bg-black color-white p-20">
+<body>
 
-  <h1 class="color-amber mb-20">Twigwind Flexbox Demo</h1>
+  <h1 class="color-blue size-xl mb-20">Twigwind Test Page</h1>
 
-  <!-- Row with centered items -->
-  <div class=" bg-lightBlue p-20">
-    <div class="w-80 h-80 bg-red m-10"></div>
-    <div class="w-80 h-80 bg-green m-10"></div>
-    <div class="w-80 h-80 bg-yellow m-10"></div>
-  </div>
+  <!-- Colors -->
+  <section>
+    <h2 class="color-purple size-lg mb-10">Colors</h2>
+    <div class="flex:row-left-center mb-10">
+      <div class="bg-red size-md mr-10 p-10">Red</div>
+      <div class="bg-green size-md mr-10 p-10">Green</div>
+      <div class="bg-blue size-md p-10">Blue</div>
+    </div>
+  </section>
 
-  <!-- Column with left alignment -->
-  <div class=" bg-purple p-20 mt-20">
-    <div class="w-80 h-80 bg-pink m-10"></div>
-    <div class="w-80 h-80 bg-lime m-10"></div>
-    <div class="w-80 h-80 bg-orange m-10"></div>
-  </div>
+  <!-- Spacing -->
+  <section>
+    <h2 class="color-teal size-lg mb-10">Spacing</h2>
+    <div class="bg-amber p-20 mb-10">Padding 20px</div>
+    <div class="bg-lightBlue m-20 p-10">Margin 20px</div>
+  </section>
 
-  <!-- Responsive: row on small, col on md -->
-  <div class="md:flex:col-center-center bg-deepOrange p-20 mt-20">
-    <div class="w-80 h-80 bg-lightBlue m-10"></div>
-    <div class="w-80 h-80 bg-lime m-10"></div>
-    <div class="w-80 h-80 bg-deepPurple m-10"></div>
-  </div>
+  <!-- Flex Layouts -->
+  <section>
+    <h2 class="color-orange size-lg mb-10">Flex Layout</h2>
+    <div class="flex:row-center-center bg-sand p-10 mb-10">
+      <div class="bg-purple size-sm mr-10 p-5">Item 1</div>
+      <div class="bg-red size-sm mr-10 p-5">Item 2</div>
+      <div class="bg-green size-sm p-5">Item 3</div>
+    </div>
+
+    <div class="flex:col-center-center bg-lightGreen p-10">
+      <div class="bg-blue size-sm mb-10 p-5">Item A</div>
+      <div class="bg-yellow size-sm mb-10 p-5">Item B</div>
+      <div class="bg-orange size-sm p-5">Item C</div>
+    </div>
+  </section>
+
+  <!-- Hover Effects -->
+  <section>
+    <h2 class="color-pink size-lg mb-10">Hover Effects</h2>
+    <div class="flex:row-left-center">
+      <div class="bg-cyan hover:bg-purple size-md mr-10 p-10">Hover Me</div>
+      <div class="bg-lightBlue hover:bg-amber size-md p-10">Hover Me</div>
+    </div>
+  </section>
+
+  <!-- Sizing -->
+  <section>
+    <h2 class="color-indigo size-lg mb-10">Sizing</h2>
+    <div class="flex:row-left-center">
+      <div class="bg-teal size-sm mr-10 p-5">SM</div>
+      <div class="bg-teal size-md mr-10 p-5">MD</div>
+      <div class="bg-teal size-lg mr-10 p-5">LG</div>
+      <div class="bg-teal size-xl p-5">XL</div>
+    </div>
+  </section>
+
+  <!-- Text Styles -->
+  <section>
+    <h2 class="color-brown size-lg mb-10">Text Styles</h2>
+    <p class="italic mb-10">This is italic text</p>
+    <p class="bold mb-10">This is bold text</p>
+    <p class="font-fira mb-10">This is Fira Code font</p>
+  </section>
+
+  <!-- Twigwind JS -->
+  <script src="css.js"></script>
 
 </body>
 </html>
-

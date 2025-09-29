@@ -31,7 +31,7 @@ const Twigwind = (() => {
     const bpMatch = cls.match(/^(\w+):(.+)$/);
     if (bpMatch) {
       const prefix = bpMatch[1];
-      pure = bpMatch[2];
+      pure = bpMatch[2]; // remove the prefix
       if (prefix === "hover") hover = true;
       else if (breakpoints[prefix]) media = `@media (min-width: ${breakpoints[prefix]}px){`;
     }
@@ -58,7 +58,7 @@ const Twigwind = (() => {
     else return;
 
     const value = colors[name] || name;
-    pushCSS(cls, `${prop}: ${value};`, hover, media);
+    pushCSS(pure, `${prop}: ${value};`, hover, media); // <-- FIXED
   };
 
   const twSpacing = (cls) => {
@@ -73,7 +73,7 @@ const Twigwind = (() => {
     const prop = space[key];
     if (!prop) return;
 
-    pushCSS(cls, `${prop}: ${amount}${unit || "px"};`, hover, media);
+    pushCSS(pure, `${prop}: ${amount}${unit || "px"};`, hover, media); // <-- FIXED
   };
 
   const twSize = (cls) => {
@@ -87,7 +87,7 @@ const Twigwind = (() => {
     const size = sizes[match[1]];
     if (!size) return;
 
-    pushCSS(cls, `width: ${size}; height: ${size};`, hover, media);
+    pushCSS(pure, `width: ${size}; height: ${size};`, hover, media); // <-- FIXED
   };
 
   const twflex = (cls) => {
@@ -98,19 +98,17 @@ const Twigwind = (() => {
     const match = pure.match(/^flex(?::(row|col))?(?:-(center|right|left))?(?:-(center|right|left))?$/);
     if (!match) return;
 
-    const [, dir, main, cross] = match; // groups
+    const [, dir, main, cross] = match;
 
     let rules = ["display: flex;"];
     if (dir === "row") rules.push("flex-direction: row;");
     if (dir === "col") rules.push("flex-direction: column;");
 
-    // main axis → justify-content
     if (main) {
       const map = { center: "center", left: "flex-start", right: "flex-end" };
       rules.push(`justify-content: ${map[main]};`);
     }
 
-    // cross axis → align-items
     if (cross) {
       const map = { center: "center", left: "flex-start", right: "flex-end" };
       rules.push(`align-items: ${map[cross]};`);
@@ -120,16 +118,15 @@ const Twigwind = (() => {
     const selector = hover ? `.hover\\:${safeClass}:hover` : `.${safeClass}`;
 
     const block = `${selector} { ${rules.join(" ")} }`;
-
     css.push(media ? `${media}${block}}` : block);
-};
+  };
 
   const twApply = (el) => {
     el.classList.forEach(cls => {
       if (/^(hover:)?(bg-|color-)/.test(cls)) twColor(cls);
       else if (/^(hover:)?[pm]/.test(cls)) twSpacing(cls);
       else if (/^(hover:)?size-/.test(cls)) twSize(cls);
-      else if (/^flex(?::(row|col))?(?:-(center|right|left))?(?:-(center|right|left))?$/.test(cls)) twSize(cls);
+      else if (/^flex(?::(row|col))?(?:-(center|right|left))?(?:-(center|right|left))?$/.test(cls)) twflex(cls);
     });
   };
 
@@ -139,7 +136,7 @@ const Twigwind = (() => {
     document.head.appendChild(style);
   };
 
-  return { twColor, twSpacing, twSize, twflex, twApply, twInject};
+  return { twColor, twSpacing, twSize, twflex, twApply, twInject };
 })();
 
 // Run on load
