@@ -100,7 +100,7 @@ Rapidly build modern websites without ever leaving your HTML.
 </html>
 ```
 
-<h2>Comparsition</h2>
+**Comparsition**
 | Feature / Aspect               | **Twigwind (Your Framework)** | **Tailwind CSS** | **W3.CSS** | **Bootstrap** |
 |--------------------------------|-------------------------------|-----------------|------------|---------------|
 | **Type**                       | Utility-first ✅               | Utility-first ✅ | Predefined ✅ | Component-based ⭐ |
