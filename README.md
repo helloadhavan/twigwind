@@ -24,65 +24,93 @@ Rapidly build modern websites without ever leaving your HTML.
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Twigwind Test</title>
-  <script src="css.js"></script> <!-- Your simplified framework -->
+  <title>Twigwind Test Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css.css">
 </head>
-<body style="font-family: sans-serif; line-height: 1.5;">
+<body>
 
-  <h1 class="color-blue bg-yellow p-2">
-    Blue text on yellow background
-  </h1>
+  <h1 class="color-blue size-xl mb-20">Twigwind Test Page</h1>
 
-  <p class="color-white bg-red p-2">
-    White text on red background
-  </p>
-
-  <div class="bg-blue color-white p-4 m-2">
-    This div has padding 1rem and margin 0.5rem
-  </div>
-
-  <button class="bg-green color-white p-2 hover:bg-dark-grey">
-    Hover me!
-  </button>
-
-  <div class="bg-lightBlue p-2 sm:bg-blue md:bg-red lg:bg-green xl:bg-purple">
-    Background changes color depending on screen width
-  </div>
-
-  <div class="color-white bg-indigo p-4 m-2 hover:bg-pink sm:bg-teal md:p-6">
-    White text, indigo background, hover pink, responsive padding
-  </div>
-
-  <div style="display: flex; margin-top: 2rem;">
-    <div style="width: 160px; background-color: #f1f1f1; padding: 0.5rem;">
-      <a href="#colors" style="display:block; margin-bottom:0.5rem;">Colors</a>
-      <a href="#spacing" style="display:block; margin-bottom:0.5rem;">Spacing</a>
-      <a href="#hover" style="display:block; margin-bottom:0.5rem;">Hover</a>
-      <a href="#breakpoints" style="display:block; margin-bottom:0.5rem;">Breakpoints</a>
-      <a href="#combined" style="display:block;">Combined</a>
+  <!-- Colors -->
+  <section>
+    <h2 class="color-purple size-lg mb-10">Colors</h2>
+    <div class="flex:row-left-center mb-10">
+      <div class="bg-red size-md mr-10 p-10">Red</div>
+      <div class="bg-green size-md mr-10 p-10">Green</div>
+      <div class="bg-blue size-md p-10">Blue</div>
     </div>
-    <div style="flex: 1; padding-left: 1rem;">
-      <h2 id="colors">Colors</h2>
-      <p>Use <code>color-*</code> and <code>bg-*</code> classes to style text and background.</p>
+  </section>
 
-      <h2 id="spacing">Spacing</h2>
-      <p>Use <code>p-*</code> and <code>m-*</code> classes for padding and margin.</p>
+  <!-- Spacing -->
+  <section>
+    <h2 class="color-teal size-lg mb-10">Spacing</h2>
+    <div class="bg-amber p-20 mb-10">Padding 20px</div>
+    <div class="bg-lightBlue m-20 p-10">Margin 20px</div>
+  </section>
 
-      <h2 id="hover">Hover</h2>
-      <p>Use <code>hover:bg-*</code> or <code>hover:color-*</code> for hover effects.</p>
-
-      <h2 id="breakpoints">Breakpoints</h2>
-      <p>Use <code>sm:</code>, <code>md:</code>, <code>lg:</code>, <code>xl:</code> prefixes for responsive styles.</p>
-
-      <h2 id="combined">Combined Classes</h2>
-      <p>Mix colors, spacing, hover, and breakpoints for flexible styling.</p>
+  <!-- Flex Layouts -->
+  <section>
+    <h2 class="color-orange size-lg mb-10">Flex Layout</h2>
+    <div class="flex:row-center-center bg-sand p-10 mb-10">
+      <div class="bg-purple size-sm mr-10 p-5">Item 1</div>
+      <div class="bg-red size-sm mr-10 p-5">Item 2</div>
+      <div class="bg-green size-sm p-5">Item 3</div>
     </div>
-  </div>
 
-  <script>
-    // Apply Twigwind automatically
-    document.querySelectorAll("[class]").forEach(el => Twigwind.twApply(el));
-    Twigwind.twInject();
-  </script>
+    <div class="flex:col-center-center bg-lightGreen p-10">
+      <div class="bg-blue size-sm mb-10 p-5">Item A</div>
+      <div class="bg-yellow size-sm mb-10 p-5">Item B</div>
+      <div class="bg-orange size-sm p-5">Item C</div>
+    </div>
+  </section>
+
+  <!-- Hover Effects -->
+  <section>
+    <h2 class="color-pink size-lg mb-10">Hover Effects</h2>
+    <div class="flex:row-left-center">
+      <div class="bg-cyan hover:bg-purple size-md mr-10 p-10">Hover Me</div>
+      <div class="bg-lightBlue hover:bg-amber size-md p-10">Hover Me</div>
+    </div>
+  </section>
+
+  <!-- Sizing -->
+  <section>
+    <h2 class="color-indigo size-lg mb-10">Sizing</h2>
+    <div class="flex:row-left-center">
+      <div class="bg-teal size-sm mr-10 p-5">SM</div>
+      <div class="bg-teal size-md mr-10 p-5">MD</div>
+      <div class="bg-teal size-lg mr-10 p-5">LG</div>
+      <div class="bg-teal size-xl p-5">XL</div>
+    </div>
+  </section>
+
+  <!-- Text Styles -->
+  <section>
+    <h2 class="color-brown size-lg mb-10">Text Styles</h2>
+    <p class="italic mb-10">This is italic text</p>
+    <p class="bold mb-10">This is bold text</p>
+    <p class="font-fira mb-10">This is Fira Code font</p>
+  </section>
+
+  <!-- Twigwind JS -->
+  <script src="css.js"></script>
+
 </body>
 </html>
+```
+
+<h2>Comparsition</h2>
+| Feature / Aspect               | **Twigwind (Your Framework)** | **Tailwind CSS** | **W3.CSS** | **Bootstrap** |
+|--------------------------------|-------------------------------|-----------------|------------|---------------|
+| **Type**                       | Utility-first ✅               | Utility-first ✅ | Predefined ✅ | Component-based ⭐ |
+| **Approach**                    | Minimal, JS-generated ✅       | Utility classes ⭐ | Pre-built classes ✅ | Pre-built classes + JS ⭐ |
+| **Installation / Size**         | Small, self-contained ✅       | Medium (build/Node.js) ❌ | Very small ✅ | Large ❌ |
+| **Responsiveness**               | Can add manually ❌            | Built-in responsive ⭐ | Limited ❌ | Built-in responsive ⭐ |
+| **Flex & Layout Utilities**      | Basic ✅                       | Extensive ⭐      | Basic ✅   | Extensive ⭐ |
+| **Hover / State Variants**       | Fixed now ✅                   | Built-in ⭐       | Limited ❌ | Limited ❌ |
+| **Prebuilt Components**          | None ❌                        | None ❌          | Some ✅    | Many ⭐ |
+| **JavaScript Dependencies**      | Required for dynamic CSS ❌    | Optional ✅       | None ✅    | Required for interactive components ❌ |
+| **Ease of Learning**             | Very simple ✅                 | Medium ❌         | Very easy ✅ | Medium ❌ |
+| **Customizability**              | Fully customizable ⭐          | Highly customizable ⭐ | Low ❌    | Moderate ✅ |
+| **Use Case**                     | Small projects / learning ✅   | Production-ready ⭐ | Quick prototyping ✅ | Production-ready ⭐ |
