@@ -2,79 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Twigwind Test Page</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css.css">
+  <title>Twigwind Test</title>
+  <script src="css.js"></script>
 </head>
 <body>
 
-  <h1 class="color-blue size-xl mb-20">Twigwind Test Page</h1>
+  <h1 class="color-blue m-20px">Twigwind Test</h1>
 
-  <!-- Colors -->
-  <section>
-    <h2 class="color-purple size-lg mb-10">Colors</h2>
-    <div class="flex:row-left-center mb-10">
-      <div class="bg-red size-md mr-10 p-10">Red</div>
-      <div class="bg-green size-md mr-10 p-10">Green</div>
-      <div class="bg-blue size-md p-10">Blue</div>
-    </div>
-  </section>
+  <!-- Flexbox test -->
+  <div class="flex:row-center-center bg-lightGreen p-20px">
+    <div class="bg-red p-10px m-10px">Box 1</div>
+    <div class="bg-blue p-10px m-10px">Box 2</div>
+    <div class="bg-amber p-10px m-10px">Box 3</div>
+  </div>
 
-  <!-- Spacing -->
-  <section>
-    <h2 class="color-teal size-lg mb-10">Spacing</h2>
-    <div class="bg-amber p-20 mb-10">Padding 20px</div>
-    <div class="bg-lightBlue m-20 p-10">Margin 20px</div>
-  </section>
+  <!-- Grid test -->
+  <div class="grid:3,2,10px mt-20px">
+    <div class="bg-purple p-10px">Grid 1</div>
+    <div class="bg-pink p-10px">Grid 2</div>
+    <div class="bg-orange p-10px">Grid 3</div>
+    <div class="bg-teal p-10px">Grid 4</div>
+    <div class="bg-brown p-10px">Grid 5</div>
+    <div class="bg-yellow p-10px">Grid 6</div>
+  </div>
 
-  <!-- Flex Layouts -->
-  <section>
-    <h2 class="color-orange size-lg mb-10">Flex Layout</h2>
-    <div class="flex:row-center-center bg-sand p-10 mb-10">
-      <div class="bg-purple size-sm mr-10 p-5">Item 1</div>
-      <div class="bg-red size-sm mr-10 p-5">Item 2</div>
-      <div class="bg-green size-sm p-5">Item 3</div>
-    </div>
-
-    <div class="flex:col-center-center bg-lightGreen p-10">
-      <div class="bg-blue size-sm mb-10 p-5">Item A</div>
-      <div class="bg-yellow size-sm mb-10 p-5">Item B</div>
-      <div class="bg-orange size-sm p-5">Item C</div>
-    </div>
-  </section>
-
-  <!-- Hover Effects -->
-  <section>
-    <h2 class="color-pink size-lg mb-10">Hover Effects</h2>
-    <div class="flex:row-left-center">
-      <div class="bg-cyan hover:bg-purple size-md mr-10 p-10">Hover Me</div>
-      <div class="bg-lightBlue hover:bg-amber size-md p-10">Hover Me</div>
-    </div>
-  </section>
-
-  <!-- Sizing -->
-  <section>
-    <h2 class="color-indigo size-lg mb-10">Sizing</h2>
-    <div class="flex:row-left-center">
-      <div class="bg-teal size-sm mr-10 p-5">SM</div>
-      <div class="bg-teal size-md mr-10 p-5">MD</div>
-      <div class="bg-teal size-lg mr-10 p-5">LG</div>
-      <div class="bg-teal size-xl p-5">XL</div>
-    </div>
-  </section>
-
-  <!-- Text Styles -->
-  <section>
-    <h2 class="color-brown size-lg mb-10">Text Styles</h2>
-    <p class="italic mb-10">This is italic text</p>
-    <p class="bold mb-10">This is bold text</p>
-    <p class="font-fira mb-10">This is Fira Code font</p>
-    <p class="font-jetbrains mb-10">This is jetbrains mono font</p>
-    <p class="font-sofia mb-10">This is sofia font</p>
-  </section>
-
-  <!-- Twigwind JS -->
-  <script src="css.js"></script>
+  <!-- Transform test -->
+  <div class="bg-indigo color-white p-20px mt-20px transform:rotate-10">
+    Rotated Box
+  </div>
 
 </body>
 </html>
