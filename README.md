@@ -101,16 +101,24 @@ Rapidly build modern websites without ever leaving your HTML.
 ```
 
 **Comparsition**
-| Feature / Aspect               | **Twigwind** | **Tailwind CSS** | **W3.CSS** | **Bootstrap** |
-|--------------------------------|-------------------------------|-----------------|------------|---------------|
-| **Type**                       | Utility-first ✅               | Utility-first ✅ | Predefined ✅ | Component-based ⭐ |
-| **Approach**                    | Minimal, JS-generated ✅       | Utility classes ⭐ | Pre-built classes ✅ | Pre-built classes + JS ⭐ |
-| **Installation / Size**         | Small, self-contained ✅       | Medium (build/Node.js) ❌ | Very small ✅ | Large ❌ |
-| **Responsiveness**               | Can add manually ❌            | Built-in responsive ⭐ | Limited ❌ | Built-in responsive ⭐ |
-| **Flex & Layout Utilities**      | Basic ✅                       | Extensive ⭐      | Basic ✅   | Extensive ⭐ |
-| **Hover / State Variants**       | Fixed now ✅                   | Built-in ⭐       | Limited ❌ | Limited ❌ |
-| **Prebuilt Components**          | None ❌                        | None ❌          | Some ✅    | Many ⭐ |
-| **JavaScript Dependencies**      | Required for dynamic CSS ❌    | Optional ✅       | None ✅    | Required for interactive components ❌ |
-| **Ease of Learning**             | Very simple ✅                 | Medium ❌         | Very easy ✅ | Medium ❌ |
-| **Customizability**              | Fully customizable ⭐          | Highly customizable ⭐ | Low ❌    | Moderate ✅ |
-| **Use Case**                     | Small projects / learning ✅   | Production-ready ⭐ | Quick prototyping ✅ | Production-ready ⭐ |
+ Feature / Framework            | W3.CSS | Tailwind | Bootstrap | Twigwind |
+|--------------------------------|--------|---------|-----------|----------|
+| **Ease of Learning**           | ✔️      | ❌      | ⭐         | ✔️       |
+| **Utility-First Approach**     | ❌      | ⭐       | ❌        | ⭐        |
+| **Customization / Flexibility**| ✔️      | ⭐       | ✔️        | ⭐        |
+| **Responsive Design**          | ✔️      | ⭐       | ⭐         | ⭐        |
+| **Prebuilt Components**        | ✔️      | ❌      | ⭐         | ✔️       |
+| **File Size / Lightweight**    | ⭐      | ✔️      | ❌        | ⭐        |
+| **Community / Ecosystem**      | ✔️      | ⭐       | ⭐         | ❌       |
+| **Ease of Integration**        | ⭐      | ✔️      | ✔️        | ⭐        |
+| **Dynamic/JS Integration**     | ❌      | ✔️      | ✔️        | ⭐        |
+| **Rapid Prototyping**          | ✔️      | ⭐       | ⭐         | ⭐        |
+
+**Legend:**  
+⭐ = Excellent | ✔️ = Good | ❌ = Poor
+
+**Notes:**  
+- **W3.CSS** is lightweight and easy to learn but lacks utility-first flexibility.  
+- **Tailwind** is highly flexible and utility-first, but the learning curve is steeper.  
+- **Bootstrap** has a huge ecosystem and prebuilt components, but is heavier.  
+- **Twigwind** combines lightweight, utility-first design with easy JS integration, ideal for fast prototyping and flexible customization.
