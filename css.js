@@ -151,6 +151,30 @@ const Twigwind = (() => {
     pushCSS(cls, rules, hover, media);
   };
 
+  const twBorder = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+
+    const { hover, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^border(?:-(t|b|l|r))?-((?:\d+)|(?:.+))$/);
+    if (!match) return;
+
+    const [, side, val] = match;
+    let prop, value;
+
+    if (/^\d+$/.test(val)) {
+      // width
+      prop = side ? `border-${side}` : "border";
+      value = `${val}px solid`;
+    } else {
+      // color
+      prop = side ? `border-${side}-color` : "border-color";
+      value = colors[val] || val;
+    }
+
+    pushCSS(cls, `${prop}: ${value};`, hover, media);
+  };
+
   const twTransform = (cls) => {
     if (used.has(cls)) return;
     used.add(cls);
@@ -198,6 +222,8 @@ const Twigwind = (() => {
         twflex(cls);
       } else if (pure.startsWith("grid:")) {
         twGrid(cls);
+      } else if (pure.startsWith("border")) {
+        twBorder(cls);
       } else if (pure.startsWith("transform:")) {
         twTransform(cls);
       } else if (pure.startsWith("transition:")) {
@@ -212,7 +238,7 @@ const Twigwind = (() => {
     document.head.appendChild(style);
   };
 
-  return { twColor, twSpacing, twSize, twflex, twGrid, twTransform, twtransition, twApply, twInject };
+  return { twColor, twSpacing, twSize, twflex, twGrid, twBorder, twTransform, twtransition, twApply, twInject };
 })();
 
 // Run on load
