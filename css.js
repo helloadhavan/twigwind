@@ -208,6 +208,40 @@ const Twigwind = (() => {
     pushCSS(cls, rule, hover, media);
   };
 
+  const twshadow = (cls) => {
+  if (used.has(cls)) return;
+  used.add(cls);
+
+  const { hover, media, pure } = parsePrefix(cls);
+
+  // Preset map
+  const map = {
+    sm: "0 1px 2px rgba(0,0,0,0.05)",
+    md: "0 4px 6px rgba(0,0,0,0.1)",
+    lg: "0 10px 15px rgba(0,0,0,0.15)",
+    xl: "0 20px 25px rgba(0,0,0,0.2)",
+    "2xl": "0 25px 50px rgba(0,0,0,0.25)"
+  };
+
+  // Match: shadow, shadow-md, shadow-<custom>
+  const match = pure.match(/^shadow(?:-(.+))?$/);
+  if (!match) return;
+
+  let val = match[1]; // may be undefined, preset key, or custom value
+
+  if (!val) {
+    // default = sm
+    pushCSS(cls, `box-shadow: ${map.sm};`, hover, media);
+  } else if (map[val]) {
+    // preset
+    pushCSS(cls, `box-shadow: ${map[val]};`, hover, media);
+  } else {
+    // arbitrary value (use underscores for spaces in class)
+    const custom = val.replace(/_/g, " ");
+    pushCSS(cls, `box-shadow: ${custom};`, hover, media);
+  }
+};
+
   // --- Apply classes ---
   const twApply = (el) => {
     el.classList.forEach(cls => {
@@ -229,6 +263,10 @@ const Twigwind = (() => {
       } else if (pure.startsWith("transition:")) {
         twtransition(cls);
       }
+      else if (pure.startsWith("shadow:")){
+        twshadow(cls)
+      }
+
     });
   };
 
@@ -238,7 +276,7 @@ const Twigwind = (() => {
     document.head.appendChild(style);
   };
 
-  return { twColor, twSpacing, twSize, twflex, twGrid, twBorder, twTransform, twtransition, twApply, twInject };
+  return { twColor, twSpacing, twSize, twflex, twGrid, twBorder, twTransform, twtransition, twshadow, twApply, twInject };
 })();
 
 // Run on load
