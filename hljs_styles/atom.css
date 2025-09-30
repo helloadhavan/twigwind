@@ -1,0 +1,131 @@
+/* General code block styling */
+pre, code {
+    background-color: #282c34; /* Atom Dark background */
+    color: #abb2bf; /* default text */
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    padding: 8px;
+    display: block;
+    border-radius: 6px;
+    overflow: auto;
+}
+
+/* Comments */
+.hljs-comment,
+.hljs-quote {
+    color: #5c6370;
+    font-style: italic;
+}
+
+/* Keywords */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-doctag {
+    color: #c678dd;
+}
+
+/* Built-ins / functions */
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-title.function_,
+.hljs-title {
+    color: #61afef;
+}
+
+/* Types */
+.hljs-type {
+    color: #e5c07b;
+}
+
+/* Literals / constants */
+.hljs-literal,
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet {
+    color: #d19a66;
+}
+
+/* Strings */
+.hljs-string,
+.hljs-attr .hljs-string,
+.hljs-template-tag,
+.hljs-template-variable {
+    color: #98c379;
+}
+
+/* Variables */
+.hljs-variable,
+.hljs-variable.language_ {
+    color: #e06c75;
+}
+
+/* Functions */
+.hljs-function {
+    color: #61afef;
+}
+
+/* HTML / XML tags */
+.hljs-tag {
+    color: #e06c75;
+}
+
+/* Tag names */
+.hljs-name {
+    color: #e06c75;
+}
+
+/* Attribute names */
+.hljs-attr {
+    color: #d19a66;
+}
+
+/* Operators and punctuation */
+.hljs-operator,
+.hljs-punctuation {
+    color: #abb2bf;
+}
+
+/* Substitutions */
+.hljs-subst {
+    color: #abb2bf;
+}
+
+/* Regex / special sequences */
+.hljs-regexp {
+    color: #56b6c2;
+}
+
+/* Sections / titles */
+.hljs-section,
+.hljs-title.class_,
+.hljs-title.function_,
+.hljs-title {
+    color: #61afef;
+}
+
+/* Selector classes, IDs, attributes, pseudos */
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+    color: #d19a66;
+}
+
+/* Meta information */
+.hljs-meta {
+    color: #abb2bf;
+}
+
+/* Doctags */
+.hljs-doctag {
+    color: #c678dd;
+}
+
+/* Links */
+.hljs-link {
+    color: #61afef;
+}
+
+/* Safe fallback for any unstyled elements */
+.hljs {
+    color: #abb2bf;
+}

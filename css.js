@@ -263,7 +263,7 @@ const Twigwind = (() => {
       } else if (pure.startsWith("transition:")) {
         twtransition(cls);
       }
-      else if (pure.startsWith("shadow:")){
+      else if (pure.startsWith("shadow")){
         twshadow(cls)
       }
 

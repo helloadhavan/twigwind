@@ -3,9 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>Twigwind Test</title>
+  <link rel="stylesheet" href="css.css">
   <script src="css.js"></script>
 </head>
-<body>
+<body class="container">
+
+  <!-- Hero Test -->
+  <section class="hero" style="background-image: url('twigwind.png');">
+    <div class="hero-content">
+      <h1 class="color-white">Twigwind Framework</h1>
+      <p class="color-white">Dynamic CSS generation made simple</p>
+      <button class="bg-white color-black p-10px border-1 border-black">Get Started</button>
+    </div>
+  </section>
 
   <h1 class="color-blue m-20px">Twigwind Test</h1>
 
@@ -31,6 +41,11 @@
     Rotated Box
   </div>
 
+  <!-- Shadow test -->
+  <div class="bg-white color-black p-20px mt-20px shadow-2xl">
+       Shadow Box
+  </div>
+
   <!-- Hover test -->
   <div class="hover:bg-red bg-blue p-20px mt-20px">
     Hover me (should turn red on hover)
@@ -47,9 +62,15 @@
   </div>
 
   <!-- Media test -->
-  <div class="sm:bg-yellow bg-purple p-20px mt-20px shadow-sm">
+  <div class="sm:bg-yellow bg-purple p-20px mt-20px ">
     Media test (yellow on small screens, purple on large)
   </div>
 
+   <!-- Image test -->
+   <div class="flex:row-center-center mt-20px">
+     <img src="twigwind.png" alt="Twigwind Logo" class="w-100px h-100px border-2 border-indigo shadow-lg">
+   </div>
+
+</body>
 </body>
 </html>
