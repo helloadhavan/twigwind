@@ -32,22 +32,28 @@ const Twigwind = (() => {
     let pure = cls;
 
     const parts = cls.split(":");
-    pure = parts.pop();
-
-    parts.forEach(prefix => {
-      if (prefix === "hover") {
+    if (parts.length > 1) {
+      const potentialPrefix = parts[0];
+      if (potentialPrefix === "hover") {
         hover = true;
-      } else if (breakpoints[prefix]) {
-        media = `@media (min-width: ${breakpoints[prefix]}px){`;
+        pure = parts.slice(1).join(":");
+      } else if (breakpoints[potentialPrefix]) {
+        media = `@media (min-width: ${breakpoints[potentialPrefix]}px){`;
+        pure = parts.slice(1).join(":");
+      } else {
+        // no prefix, pure = cls
+        pure = cls;
       }
-    });
+    } else {
+      pure = cls;
+    }
 
     return { hover, media, pure };
   };
 
   const pushCSS = (cls, rule, hover, media) => {
     const safe = escapeClass(cls);
-    const selector = hover ? `.hover\\:${safe}:hover` : `.${safe}`;
+    const selector = hover ? `.${safe}:hover` : `.${safe}`;
     const block = `${selector} { ${rule} }`;
     css.push(media ? `${media}${block}}` : block);
   };
@@ -119,7 +125,7 @@ const Twigwind = (() => {
     const rules = `
       display: grid;
       grid-template-columns: repeat(${cols}, 1fr);
-      grid-template-rows: repeat(${rows}, 1fr);
+      grid-template-rows: repeat(${rows}, auto);
       gap: ${gap};
     `;
 
@@ -169,14 +175,34 @@ const Twigwind = (() => {
     pushCSS(cls, rule, hover, media);
   };
 
+  const twtransition = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+
+    const { hover, media, pure } = parsePrefix(cls);
+    const rule = `transition: ${pure.slice(11).replace(/-/g, " ")}`;
+    pushCSS(cls, rule, hover, media);
+  };
+
+  // --- Apply classes ---
   const twApply = (el) => {
     el.classList.forEach(cls => {
-      if (cls.startsWith("bg-") || cls.startsWith("color-") || cls.match(/^(\w+):(bg|color)-/)) twColor(cls);
-      else if (cls.match(/^([pm][lrtb]?)-/)) twSpacing(cls);
-      else if (cls.match(/^(w|h)-/) || cls.startsWith("size-")) twSize(cls);
-      else if (cls.startsWith("flex")) twflex(cls);
-      else if (cls.startsWith("grid:")) twGrid(cls);
-      else if (cls.startsWith("transform:")) twTransform(cls);
+      const { pure } = parsePrefix(cls);
+      if (pure.startsWith("bg-") || pure.startsWith("color-")) {
+        twColor(cls);
+      } else if (pure.match(/^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/)) {
+        twSpacing(cls);
+      } else if (pure.match(/^(w|h)-(\d+)(px|rem|em|%)?$/) || pure.startsWith("size-")) {
+        twSize(cls);
+      } else if (pure.startsWith("flex")) {
+        twflex(cls);
+      } else if (pure.startsWith("grid:")) {
+        twGrid(cls);
+      } else if (pure.startsWith("transform:")) {
+        twTransform(cls);
+      } else if (pure.startsWith("transition:")) {
+        twtransition(cls);
+      }
     });
   };
 
@@ -186,7 +212,7 @@ const Twigwind = (() => {
     document.head.appendChild(style);
   };
 
-  return { twColor, twSpacing, twSize, twflex, twGrid, twTransform, twApply, twInject };
+  return { twColor, twSpacing, twSize, twflex, twGrid, twTransform, twtransition, twApply, twInject };
 })();
 
 // Run on load
