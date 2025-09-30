@@ -101,7 +101,7 @@ Rapidly build modern websites without ever leaving your HTML.
 ```
 
 **Comparsition**
-| Feature / Aspect               | **Twigwind (Your Framework)** | **Tailwind CSS** | **W3.CSS** | **Bootstrap** |
+| Feature / Aspect               | **Twigwind** | **Tailwind CSS** | **W3.CSS** | **Bootstrap** |
 |--------------------------------|-------------------------------|-----------------|------------|---------------|
 | **Type**                       | Utility-first ✅               | Utility-first ✅ | Predefined ✅ | Component-based ⭐ |
 | **Approach**                    | Minimal, JS-generated ✅       | Utility classes ⭐ | Pre-built classes ✅ | Pre-built classes + JS ⭐ |
