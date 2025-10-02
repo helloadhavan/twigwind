@@ -1,11 +1,11 @@
-document.addEventListener("DOMContentLoaded", () => {
+const highlightAll = (stylesheet="twigwind/defalt.css") => {
     const codeBlocks = document.querySelectorAll('pre code');
     if (codeBlocks.length === 0) return; // No code blocks, skip
 
     // 1. Load CSS theme dynamically
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css";
+    link.href = stylesheet;
     document.head.appendChild(link);
 
     // 2. Collect unique languages from code blocks
@@ -52,4 +52,4 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
     document.head.appendChild(coreScript);
-});
+}

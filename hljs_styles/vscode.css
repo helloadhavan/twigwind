@@ -1,0 +1,130 @@
+pre, code {
+    background-color: #1e1e1e; /* VS Code Dark+ background */
+    color: #d4d4d4; /* default text color */
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    padding: 8px;
+    display: block;
+    border-radius: 6px;
+    overflow: auto;
+}
+
+/* Comments */
+.hljs-comment,
+.hljs-quote {
+    color: #6a9955;
+    font-style: italic;
+}
+
+/* Keywords */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-doctag {
+    color: #569cd6;
+}
+
+/* Built-in objects/functions */
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-title.function_,
+.hljs-title {
+    color: #4ec9b0;
+}
+
+/* Types */
+.hljs-type {
+    color: #4ec9b0;
+}
+
+/* Literals and constants */
+.hljs-literal,
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet {
+    color: #b5cea8;
+}
+
+/* Strings */
+.hljs-string,
+.hljs-attr .hljs-string,
+.hljs-template-tag,
+.hljs-template-variable {
+    color: #ce9178;
+}
+
+/* Variables */
+.hljs-variable,
+.hljs-variable.language_ {
+    color: #9cdcfe;
+}
+
+/* Functions */
+.hljs-function {
+    color: #dcdcaa;
+}
+
+/* HTML / XML tags */
+.hljs-tag {
+    color: #569cd6;
+}
+
+/* Tag names */
+.hljs-name {
+    color: #569cd6;
+}
+
+/* Attribute names */
+.hljs-attr {
+    color: #9cdcfe;
+}
+
+/* Operators and punctuation */
+.hljs-operator,
+.hljs-punctuation {
+    color: #d4d4d4;
+}
+
+/* Substitutions */
+.hljs-subst {
+    color: #d4d4d4;
+}
+
+/* Regex / special sequences */
+.hljs-regexp {
+    color: #d16969;
+}
+
+/* Sections / titles */
+.hljs-section,
+.hljs-title.class_,
+.hljs-title.function_,
+.hljs-title {
+    color: #4ec9b0;
+}
+
+/* Selector classes, IDs, attributes, pseudos */
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+    color: #d7ba7d;
+}
+
+/* Meta information */
+.hljs-meta {
+    color: #9cdcfe;
+}
+
+/* Doctags */
+.hljs-doctag {
+    color: #569cd6;
+}
+
+/* Links */
+.hljs-link {
+    color: #d7ba7d;
+}
+
+/* Safe fallback for any unstyled elements */
+.hljs {
+    color: #d4d4d4;
+}

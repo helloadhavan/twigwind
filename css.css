@@ -58,7 +58,7 @@
 }
 
 /* ===========================
-    Flex and container + hero
+     Flex and container + hero
    ===========================*/
 
 .flex {
@@ -68,4 +68,3 @@
 .grid {
     display: grid;
 }
-
