@@ -107,7 +107,7 @@ Rapidly build modern websites without ever leaving your HTML.
 | **Utility-First Approach**     | ❌      | ⭐       | ❌        | ⭐        |
 | **Customization / Flexibility**| ✔️      | ⭐       | ✔️        | ⭐        |
 | **Responsive Design**          | ✔️      | ⭐       | ⭐         | ⭐        |
-| **Prebuilt Components**        | ✔️      | ❌      | ⭐         | ✔️       |
+| **Prebuilt Components**        | ✔️      | ❌      | ⭐         | ❌      |
 | **File Size / Lightweight**    | ⭐      | ✔️      | ❌        | ⭐        |
 | **Community / Ecosystem**      | ✔️      | ⭐       | ⭐         | ❌       |
 | **Ease of Integration**        | ⭐      | ✔️      | ✔️        | ⭐        |
