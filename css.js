@@ -242,6 +242,58 @@ const Twigwind = (() => {
   }
 };
 
+  const twPosition = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+
+    const { hover, media, pure } = parsePrefix(cls);
+
+    // Position types: absolute, relative, fixed, sticky, static
+    const positionMatch = pure.match(/^(absolute|relative|fixed|sticky|static)$/);
+    if (positionMatch) {
+      return pushCSS(cls, `position: ${positionMatch[1]};`, hover, media);
+    }
+
+    // Position values: top-10, bottom-5, left-0, right-auto, inset-4
+    const valueMatch = pure.match(/^(top|bottom|left|right|inset)-(.+)$/);
+    if (valueMatch) {
+      const [, direction, value] = valueMatch;
+      
+      if (direction === "inset") {
+        // inset-4 = top, right, bottom, left all set to 4px
+        const val = value === "auto" ? "auto" : `${value}${/^\d+$/.test(value) ? "px" : ""}`;
+        return pushCSS(cls, `top: ${val}; right: ${val}; bottom: ${val}; left: ${val};`, hover, media);
+      } else {
+        // top-10, left-0, etc.
+        const val = value === "auto" ? "auto" : `${value}${/^\d+$/.test(value) ? "px" : ""}`;
+        return pushCSS(cls, `${direction}: ${val};`, hover, media);
+      }
+    }
+
+    // Z-index: z-0, z-10, z-20, z-50, z-auto
+    const zMatch = pure.match(/^z-(.+)$/);
+    if (zMatch) {
+      const value = zMatch[1] === "auto" ? "auto" : zMatch[1];
+      return pushCSS(cls, `z-index: ${value};`, hover, media);
+    }
+  };
+
+  const twAnimation = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+    const { hover, media, pure } = parsePrefix(cls);
+    // Example: animate-bounce, animate-spin, animate-pulse
+    const match = pure.match(/^animate-(.*?)-(\d+)(ms|s)-(infinite|normal|reverse|alternate|alternate-reverse)$/);
+    if (!match) return;
+    var [, type, duration, unit, iteration] = match;
+    if (!iteration) iteration = "infinite";
+    if (!unit) unit = "ms";
+    if (!duration) duration = "1000";
+    let rule = `animation: ${type} ${duration}${unit} ${iteration};`;
+    pushCSS(cls, rule, hover, media);
+  }
+
+
   // --- Apply classes ---
   const twApply = (el) => {
     el.classList.forEach(cls => {
@@ -262,11 +314,16 @@ const Twigwind = (() => {
         twTransform(cls);
       } else if (pure.startsWith("transition:")) {
         twtransition(cls);
+      } else if (pure.startsWith("shadow")) {
+        twshadow(cls);
+      } else if (pure.match(/^(absolute|relative|fixed|sticky|static)$/) ||
+                 pure.match(/^(top|bottom|left|right|inset)-(.+)$/) ||
+                 pure.match(/^z-(.+)$/)) {
+        twPosition(cls);
       }
-      else if (pure.startsWith("shadow")){
-        twshadow(cls)
+      else if (pure.startsWith("animate-")) {
+        twAnimation(cls);
       }
-
     });
   };
 
@@ -276,7 +333,7 @@ const Twigwind = (() => {
     document.head.appendChild(style);
   };
 
-  return { twColor, twSpacing, twSize, twflex, twGrid, twBorder, twTransform, twtransition, twshadow, twApply, twInject };
+  return { twColor, twSpacing, twSize, twflex, twGrid, twBorder, twTransform, twtransition, twshadow, twPosition, twAnimation, twApply, twInject };
 })();
 
 // Run on load
