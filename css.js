@@ -225,7 +225,8 @@ const Twigwind = (() => {
 
   // Match: shadow, shadow-md, shadow-<custom>
   const match = pure.match(/^shadow(?:-(.+))?$/);
-  if (!match) return;
+  const text = pure.match(/^text-shadow(?:-(.+))?$/);
+  if (!match && !text) return;
 
   let val = match[1]; // may be undefined, preset key, or custom value
 
@@ -235,11 +236,15 @@ const Twigwind = (() => {
   } else if (map[val]) {
     // preset
     pushCSS(cls, `box-shadow: ${map[val]};`, hover, media);
+  } else if (text) {
+    // text-shadow
+    pushCSS(cls, `text-shadow: ${text[1]};`, hover, media);
   } else {
     // arbitrary value (use underscores for spaces in class)
     const custom = val.replace(/_/g, " ");
     pushCSS(cls, `box-shadow: ${custom};`, hover, media);
   }
+
 };
 
   const twPosition = (cls) => {

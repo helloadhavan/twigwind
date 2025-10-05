@@ -61,6 +61,10 @@
      Flex and container + hero
    ===========================*/
 
+.shadow-none {
+    box-shadow: none;
+}
+
 .flex {
     display: flex;
 }
