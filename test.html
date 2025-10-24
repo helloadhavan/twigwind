@@ -1,76 +1,357 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Twigwind Test</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mini CSS Framework — Official Docs (Demo)</title>
+
+  <!-- Your framework base -->
   <link rel="stylesheet" href="css.css">
-  <script src="css.js"></script>
+
+  <style>
+    /* tiny page layout helpers (these are thin, non-framework helpers) */
+    :root { --sidenav-w: 260px; }
+    body { margin:0; font-family: Roboto, Arial, sans-serif; background: #fafafa; color: #111; }
+    header.topbar { position: fixed; top:0; left:0; right:0; height:64px; z-index:60; display:flex; align-items:center; justify-content:space-between; padding:0 18px; }
+    .container { max-width:1100px; margin: 0 auto; padding: 20px; }
+    .layout { display:flex; margin-top:64px; }
+    aside.sidenav { width:var(--sidenav-w); min-height: calc(100vh - 64px); position: sticky; top:64px; padding:18px; border-right:1px solid #eee; background:#fff; }
+    main.content { flex:1; padding: 28px; }
+    a.nlink { text-decoration:none; color:inherit; }
+    .small { font-size:0.9rem; color:#666; }
+    /* back-to-top */
+    .backtop { position:fixed; right:20px; bottom:20px; display:inline-block; z-index:80; }
+    pre { background:#0b0b0b; color:#eee; padding:12px; border-radius:6px; overflow:auto; }
+    code { font-family: "JetBrains Mono", monospace; font-size:0.9rem; }
+    .hero-overlay { background: rgba(0,0,0,0.35); position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+    .hero-inner { text-align:center; color:#fff; }
+    .doc-section { margin-bottom:40px; }
+    .grid-demo > * { border-radius:6px; }
+    /* responsiveness */
+    @media (max-width:900px){ aside.sidenav{ display:none } .layout{ margin-top: 0 } body{ padding-top:64px } }
+  </style>
 </head>
-<body class="container">
+<body>
 
-  <!-- Hero Test -->
-  <section class="hero" style="background-image: url('twigwind.png');">
-    <div class="hero-content">
-      <h1 class="color-white">Twigwind Framework</h1>
-      <p class="color-white">Dynamic CSS generation made simple</p>
-      <button class="bg-white color-black p-10px border-1 border-black">Get Started</button>
+  <!-- TOPBAR (uses framework utilities for visuals) -->
+  <header class="topbar bg-dark-grey color-white flex flex-align-center justify-content-space-between p-10px">
+    <div class="flex flex-align-center">
+      <div class="font-suse-bold color-white p-10px">Mini CSS Framework</div>
+      <nav class="flex" style="gap:8px; margin-left:8px;">
+        <a class="color-white hover:color-yellow p-8px" href="#overview">Overview</a>
+        <a class="color-white hover:color-yellow p-8px" href="#colors">Colors</a>
+        <a class="color-white hover:color-yellow p-8px" href="#layout">Layout</a>
+        <a class="color-white hover:color-yellow p-8px" href="#components">Components</a>
+      </nav>
     </div>
-  </section>
 
-  <h1 class="color-blue m-20px">Twigwind Test</h1>
+    <div class="flex flex-align-center">
+      <input class="p-8px m-8px" placeholder="Search docs..." />
+      <button class="bg-white color-purple p-8px hover:bg-light-grey">Get started</button>
+    </div>
+  </header>
 
-  <!-- Flexbox test -->
-  <div class="flex:row-center-center bg-lightGreen p-20px">
-    <div class="bg-red p-10px m-10px">Box 1</div>
-    <div class="bg-blue p-10px m-10px">Box 2</div>
-    <div class="bg-amber p-10px m-10px">Box 3</div>
+  <div class="layout">
+
+    <!-- SIDENAV (live links to sections) -->
+    <aside class="sidenav">
+      <div class="font-jetbrains-bold mb-10px">Documentation</div>
+      <ul class="font-roboto small" style="padding-left:0; list-style:none;">
+        <li><a class="nlink" href="#overview">• Overview</a></li>
+        <li><a class="nlink" href="#hero">• Hero</a></li>
+        <li><a class="nlink" href="#typography">• Typography</a></li>
+        <li><a class="nlink" href="#colors">• Colors</a></li>
+        <li><a class="nlink" href="#spacing">• Spacing</a></li>
+        <li><a class="nlink" href="#sizes">• Sizes</a></li>
+        <li><a class="nlink" href="#grid">• Grid</a></li>
+        <li><a class="nlink" href="#flex">• Flex</a></li>
+        <li><a class="nlink" href="#components">• Components</a></li>
+        <li><a class="nlink" href="#forms">• Forms</a></li>
+        <li><a class="nlink" href="#tables">• Tables</a></li>
+        <li><a class="nlink" href="#highlighting">• Highlighting</a></li>
+        <li><a class="nlink" href="#examples">• Examples</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content container">
+
+      <!-- HERO (uses framework classes; background image inline) -->
+      <section id="hero" class="hero" style="position:relative; height:420px; background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size:cover; background-position:center; border-radius:8px; overflow:hidden;">
+        <div class="hero-overlay">
+          <div class="hero-inner">
+            <h1 class="font-suse-bold size-xxl color-white">Mini CSS Framework</h1>
+            <p class="font-roboto mt-10px color-white">Utility-first, lightweight, zero-build demo generator (Twigwind-powered)</p>
+            <div class="mt-20px">
+              <a class="p-12px bg-white color-purple hover:bg-light-grey font-roboto-bold" href="#overview">Read the Docs</a>
+              <a class="p-12px bg-purple color-white hover:bg-dark-grey font-roboto-bold" href="#examples">Examples</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- OVERVIEW -->
+      <section id="overview" class="doc-section">
+        <h2 class="font-suse-bold color-indigo">Overview</h2>
+        <p class="font-roboto">This demo docs site is built with the Twigwind runtime generator + base utilities. It shows: colors, spacing, sizes, layout helpers, responsive prefixes (sm:, md:, lg:), hover: and custom arbitrary values (color-#ff6600, bg-rgb(...)).</p>
+
+        <div class="grid:2,1,16px" style="margin-top:18px;">
+          <div class="bg-pale-blue p-15px">
+            <h4 class="font-jetbrains-bold">Styling</h4>
+            <ul class="small"><li>Predefined color tokens</li><li>Arbitrary color values</li><li>Typography utilities</li></ul>
+          </div>
+          <div class="bg-pale-green p-15px">
+            <h4 class="font-jetbrains-bold">Layout</h4>
+            <ul class="small"><li>Flex & Grid utilities</li><li>Size helpers</li><li>Responsive prefixes</li></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- TYPOGRAPHY -->
+      <section id="typography" class="doc-section">
+        <h2 class="font-suse-bold color-red">Typography</h2>
+        <div class="example p-12px">
+          <h1 class="font-suse-bold">Suse Mono — Heading</h1>
+          <h3 class="font-jetbrains">JetBrains Mono — Subheading</h3>
+          <p class="font-roboto">Roboto — body text. <span class="italic">Italic</span> <span class="bold">Bold</span></p>
+          <p class="font-cedarville color-purple">Cedarville Cursive — decorative example</p>
+        </div>
+
+        <pre><code class="language-html">
+&lt;h1 class="font-suse-bold"&gt;Heading&lt;/h1&gt;
+&lt;p class="font-roboto"&gt;Body text&lt;/p&gt;
+&lt;p class="font-cedarville"&gt;Cursive example&lt;/p&gt;
+        </code></pre>
+      </section>
+
+      <!-- COLORS -->
+      <section id="colors" class="doc-section">
+        <h2 class="font-suse-bold color-blue">Colors</h2>
+
+        <h3 class="font-jetbrains">Predefined colors</h3>
+        <div class="grid:4,1,12px grid-demo" style="margin:12px 0;">
+          <div class="bg-amber p-12px color-black">amber</div>
+          <div class="bg-blue p-12px color-white">blue</div>
+          <div class="bg-green p-12px color-white">green</div>
+          <div class="bg-red p-12px color-white">red</div>
+        </div>
+
+        <h3 class="font-jetbrains">Arbitrary colors</h3>
+        <div class="flex" style="gap:12px;">
+          <div class="bg-#ff6b35 color-white p-12px">bg-#ff6b35</div>
+          <div class="color-#ff6b35 p-12px">color-#ff6b35</div>
+          <div class="bg-rgb(60,180,75) color-white p-12px">bg-rgb(...)</div>
+        </div>
+
+        <pre><code class="language-html">
+&lt;div class="bg-amber"&gt;Predefined color&lt;/div&gt;
+&lt;div class="bg-#ff6b35"&gt;Arbitrary hex&lt;/div&gt;
+&lt;div class="color-rgb(60,180,75)"&gt;Arbitrary rgb color&lt;/div&gt;
+        </code></pre>
+      </section>
+
+      <!-- SPACING -->
+      <section id="spacing" class="doc-section">
+        <h2 class="font-suse-bold color-teal">Spacing</h2>
+        <p class="small">Use m-*, p-* and axis shortcuts mx-*, py-* etc. Values accept px/rem/em/% (e.g. p-12px).</p>
+
+        <div class="example flex" style="gap:12px;">
+          <div class="bg-pale-blue p-20px m-10px">p-20px m-10px</div>
+          <div class="bg-pale-green px-30px py-10px">px-30px py-10px</div>
+        </div>
+
+        <pre><code class="language-html">
+&lt;div class="p-20px m-10px"&gt;Box&lt;/div&gt;
+&lt;div class="px-30px py-10px"&gt;Box&lt;/div&gt;
+        </code></pre>
+      </section>
+
+      <!-- SIZING -->
+      <section id="sizes" class="doc-section">
+        <h2 class="font-suse-bold color-orange">Sizes</h2>
+        <div class="flex" style="gap:12px;">
+          <div class="bg-light-blue size-sm flex flex-align-center justify-content-center">size-sm</div>
+          <div class="bg-purple size-md flex flex-align-center justify-content-center color-white">size-md</div>
+          <div class="bg-green size-lg flex flex-align-center justify-content-center color-white">size-lg</div>
+        </div>
+
+        <pre><code class="language-html">
+&lt;div class="size-sm"&gt;Small&lt;/div&gt;
+&lt;div class="size-md"&gt;Medium&lt;/div&gt;
+        </code></pre>
+      </section>
+
+      <!-- GRID -->
+      <section id="grid" class="doc-section">
+        <h2 class="font-suse-bold color-green">Grid</h2>
+        <p class="small">Twigwind grid syntax: <code>grid:cols,rows,gap</code> — e.g. <code>grid:3,1,12px</code></p>
+
+        <div class="grid:2,2,12px" style="margin-top:12px;">
+          <div class="bg-#f99 p-12px">1</div>
+          <div class="bg-#9f9 p-12px">2</div>
+          <div class="bg-#99f p-12px">3</div>
+          <div class="bg-#ff9 p-12px">4</div>
+        </div>
+
+        <pre><code class="language-html">
+&lt;div class="grid:2,2,12px"&gt;
+  &lt;div&gt;1&lt;/div&gt;
+  &lt;div&gt;2&lt;/div&gt;
+  &lt;div&gt;3&lt;/div&gt;
+  &lt;div&gt;4&lt;/div&gt;
+&lt;/div&gt;
+        </code></pre>
+      </section>
+
+      <!-- FLEX -->
+      <section id="flex" class="doc-section">
+        <h2 class="font-suse-bold color-purple">Flex</h2>
+        <p class="small">Use <code>flex</code> or the extended shorthand syntax like <code>flex:row-center-center</code>.</p>
+
+        <div class="flex p-12px bg-#eee" style="gap:12px;">
+          <div class="bg-#ddd p-10px">Item A</div>
+          <div class="bg-#ccc p-10px">Item B</div>
+          <div class="bg-#bbb p-10px">Item C</div>
+        </div>
+
+        <pre><code class="language-html">
+&lt;div class="flex"&gt;
+  &lt;div&gt;A&lt;/div&gt;
+  &lt;div&gt;B&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- or aligned shorthand --&gt;
+&lt;div class="flex:row-center-center"&gt;...&lt;/div&gt;
+        </code></pre>
+      </section>
+
+      <!-- COMPONENTS -->
+      <section id="components" class="doc-section">
+        <h2 class="font-suse-bold color-brown">Components</h2>
+
+        <h3 class="font-jetbrains">Card</h3>
+        <div class="bg-white p-18px" style="border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); max-width:420px;">
+          <div class="flex justify-content-space-between flex-align-center">
+            <div>
+              <h4 class="color-indigo font-jetbrains-bold mb-4px">Product title</h4>
+              <p class="small color-grey">Short description showing typography utilities.</p>
+            </div>
+            <div class="flex flex-col flex-align-center">
+              <span class="color-green font-roboto-bold">$29.90</span>
+              <button class="bg-blue color-white p-10px hover:bg-dark-blue mt-8px" style="border:none; border-radius:4px;">Buy</button>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="font-jetbrains mt-16px">Navbar</h3>
+        <div class="bg-dark-grey color-white p-12px flex justify-content-space-between">
+          <div class="font-suse-bold">Brand</div>
+          <div class="flex">
+            <a class="color-white hover:color-orange p-8px" href="#">Docs</a>
+            <a class="color-white hover:color-orange p-8px" href="#">GitHub</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- FORMS -->
+      <section id="forms" class="doc-section">
+        <h2 class="font-suse-bold color-orange">Forms</h2>
+        <form class="bg-white p-16px" style="max-width:640px;border-radius:6px;">
+          <label class="font-jetbrains">Name</label>
+          <input class="p-10px m-8px w-100" placeholder="Your name">
+          <label class="font-jetbrains">Email</label>
+          <input class="p-10px m-8px w-100" placeholder="you@example.com">
+          <label class="font-jetbrains">Message</label>
+          <textarea class="p-10px m-8px w-100" rows="4"></textarea>
+          <div class="flex" style="gap:12px;">
+            <button class="bg-green color-white p-10px hover:bg-dark-grey" type="button">Submit</button>
+            <button class="bg-grey color-black p-10px hover:bg-dark-grey" type="reset">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- TABLES -->
+      <section id="tables" class="doc-section">
+        <h2 class="font-suse-bold color-teal">Tables</h2>
+        <table class="w-100 bg-white" style="border-collapse:collapse;">
+          <thead class="bg-dark-grey color-white">
+            <tr><th class="p-10px">Name</th><th class="p-10px">Role</th><th class="p-10px">Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="p-10px">Alice</td><td class="p-10px">Admin</td><td class="p-10px color-green">Active</td></tr>
+            <tr class="bg-light-grey"><td class="p-10px">Bob</td><td class="p-10px">Editor</td><td class="p-10px color-orange">Pending</td></tr>
+            <tr><td class="p-10px">Charlie</td><td class="p-10px">Viewer</td><td class="p-10px color-red">Banned</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- HIGHLIGHTING -->
+      <section id="highlighting" class="doc-section">
+        <h2 class="font-suse-bold color-indigo">Code Highlighting</h2>
+        <p class="small">We load Highlight.js on-demand for languages used in the page.</p>
+
+        <pre><code class="language-javascript">
+// Example: create a card with Twigwind classes
+const el = document.createElement('div');
+el.className = 'bg-white p-20px size-md';
+el.innerHTML = '<h4 class="color-indigo">Card</h4>';
+document.body.appendChild(el);
+        </code></pre>
+      </section>
+
+      <!-- EXAMPLES -->
+      <section id="examples" class="doc-section">
+        <h2 class="font-suse-bold color-brown">Full Examples</h2>
+
+        <h3>Dashboard Example</h3>
+        <div class="grid:3,1,16px" style="gap:16px;">
+          <div class="bg-dark-grey color-white p-12px size-md">Sidebar</div>
+          <div class="bg-white p-12px">Main content — cards, charts, tables</div>
+          <div class="bg-light-blue p-12px">Right rail</div>
+        </div>
+
+        <h3 class="mt-16px">Landing Block</h3>
+        <div class="bg-white p-20px" style="border-radius:8px;">
+          <h3 class="color-indigo">Landing headline</h3>
+          <p class="small">Supporting description — call-to-action below.</p>
+          <div class="flex" style="gap:12px;">
+            <a class="bg-purple color-white p-12px hover:bg-dark-grey">Primary CTA</a>
+            <a class="bg-white color-purple p-12px hover:bg-light-grey">Secondary CTA</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER (simple) -->
+      <footer class="mt-40px small color-grey">
+        <div class="flex justify-content-space-between">
+          <div>© 2025 Mini CSS Framework — demo docs</div>
+          <div>Built with Twigwind · <a class="nlink" href="#overview">Docs</a></div>
+        </div>
+      </footer>
+    </main>
   </div>
 
-  <!-- Grid test -->
-  <div class="grid:3,2,10px mt-20px">
-    <div class="bg-purple p-10px">Grid 1</div>
-    <div class="bg-pink p-10px">Grid 2</div>
-    <div class="bg-orange p-10px">Grid 3</div>
-    <div class="bg-teal p-10px">Grid 4</div>
-    <div class="bg-brown p-10px">Grid 5</div>
-    <div class="bg-yellow p-10px">Grid 6</div>
-  </div>
+  <!-- Back to top -->
+  <a class="backtop" href="#hero"><button class="bg-dark-grey color-white p-10px">↑ Top</button></a>
 
-  <!-- Transform test -->
-  <div class="bg-indigo color-white p-20px mt-20px transform:rotate-10">
-    Rotated Box
-  </div>
+  <!-- scripts: load Twigwind generator and Highlight.js loader -->
+  <script src="css.js" defer></script>
+  <script src="hljs.js" defer></script>
+  <script>
+    // after DOM loaded, call highlight loader (hljs.js exposes highlightAll())
+    document.addEventListener('DOMContentLoaded', () => {
+      try { highlightAll(); } catch(e) { /* ignore if hljs not present */ }
+    });
 
-  <!-- Shadow test -->
-  <div class="bg-white color-black p-20px mt-20px shadow-2xl">
-       Shadow Box
-  </div>
-
-  <!-- Hover test -->
-  <div class="hover:bg-red bg-blue p-20px mt-20px">
-    Hover me (should turn red on hover)
-  </div>
-
-  <!-- Transition test -->
-  <div class="bg-green p-20px mt-20px transition:all-0.5s">
-    Transition test
-  </div>
-
-  <!-- Border test -->
-  <div class="border-2 border-red p-20px mt-20px">
-    Border test (2px red border)
-  </div>
-
-  <!-- Media test -->
-  <div class="sm:bg-yellow bg-purple p-20px mt-20px ">
-    Media test (yellow on small screens, purple on large)
-  </div>
-
-   <!-- Image test -->
-   <div class="flex:row-center-center mt-20px">
-     <img src="twigwind.png" alt="Twigwind Logo" class="w-100px h-100px border-2 border-indigo shadow-lg">
-   </div>
-
-</body>
+    // small behavior: smooth scroll for sidebar links
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (ev)=>{
+        const href = a.getAttribute('href');
+        if(!href || href === '#') return;
+        const target = document.querySelector(href);
+        if(target){ ev.preventDefault(); target.scrollIntoView({behavior:'smooth', block:'start'}); }
+      });
+    });
+  </script>
 </body>
 </html>

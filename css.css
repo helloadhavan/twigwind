@@ -1,61 +1,4 @@
-/* ===========================
-   Google Fonts Imports
-   =========================== */
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Sofia&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
-
-/* ===========================
-   Font Classes
-   =========================== */
-.font-serif {
-    font-family: serif, Georgia, "Times New Roman", Times;
-}
-
-.font-roboto {
-    font-family: 'Roboto', sans-serif;
-}
-
-.font-fira {
-    font-family: 'Fira Code', monospace;
-}
-
-.font-jetbrains {
-    font-family: 'JetBrains Mono', monospace;
-}
-
-.font-roboto-mono {
-    font-family: 'Roboto Mono', monospace;
-}
-
-.font-sofia {
-    font-family: 'Sofia', cursive;
-}
-
-.light {
-    font-weight: lighter;
-}
-
-.bold {
-    font-weight: bold; 
-}
-
-.itatic {
-    font-style: italic;
-}
-
-/* ===========================
-   Material Symbols Setup
-   =========================== */
-.material-symbols-outlined {
-    font-variation-settings:
-        'FILL' 0,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 24;
-    vertical-align: middle;
-    font-size: 1.5rem; /* Default size */
-    display: inline-block;
-}
+/* File: css.css */
 
 /* ===========================
      Flex and container + hero
@@ -99,8 +42,9 @@
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+    0% { opacity: 1; transform: scale(0); }
+    50% { opacity: 0.5; transform: scale(1); }
+    100% { opacity: 1; transform: scale(0); }
 }
 
 @keyframes bounce {
