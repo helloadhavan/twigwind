@@ -79,8 +79,8 @@ Dynamic gradient generation:
 </head>
 <body>
 
-  <!-- Hero Section with Gradient Background -->
-  <section class="relative h-420 gradient-to-br-blue-purple">
+  <!-- Hero Section with image as Background -->
+  <section class="relative h-420 image-url-https://images.unsplash.com/photo-1506905925346-21bda4d32df4"">
     <div class="absolute inset-0 flex:row-center-center">
       <div class="text-center color-white">
         <h1 class="size-xxl color-white animate-fadeIn-1s-normal">Welcome to Twigwind</h1>
