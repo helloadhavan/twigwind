@@ -32,6 +32,35 @@
     display: none;
 }
 
+.clip-border {
+  background-clip: border-box;
+}
+
+.clip-padding {
+  background-clip: padding-box;
+}
+
+.clip-content {
+  background-clip: content-box;
+}
+
+.clip-text {
+  background-clip: text;
+}
+
+.clip-revert {
+  background-clip: revert;
+}
+
+.clip-inset {
+  background-clip: inset;
+}
+
+.clip-inherit {
+  background-clip: inherit;
+}
+
+
 /* ===========================
    Animation Keyframes
    =========================== */

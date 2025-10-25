@@ -150,7 +150,7 @@ const Twigwind = (() => {
 
     pushCSS(cls, rules, hover, media);
   };
-
+  
   const twBorder = (cls) => {
     if (used.has(cls)) return;
     used.add(cls);
@@ -173,6 +173,18 @@ const Twigwind = (() => {
     }
 
     pushCSS(cls, `${prop}: ${value};`, hover, media);
+  };
+
+  const twBorderRadius = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+
+    const { hover, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^border-radius(?:-(.+))?$/);
+    if (!match) return;
+
+    const radius = match[1] || "0";
+    pushCSS(cls, `border-radius: ${radius};`, hover, media);
   };
 
   const twTransform = (cls) => {
@@ -198,6 +210,39 @@ const Twigwind = (() => {
 
     pushCSS(cls, rule, hover, media);
   };
+
+  const twLinearGradient = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+
+    const { hover, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^gradient-(?:(to-[a-z]+|\d+deg)-)(.+)$/);
+    if (!match) return;
+
+    const [, direction, colorString] = match;
+    
+    const colorParts = colorString.split('-');
+    if (colorParts.length < 2) return;
+  
+    const gradientColors = colorParts.map(colorName => colors[colorName] || colorName).join(', ');
+    let gradientDirection = direction;
+    if (direction.startsWith('to-')) {
+      const dirMap = {
+        'to-r': 'to right',
+        'to-l': 'to left',
+        'to-t': 'to top',
+        'to-b': 'to bottom',
+        'to-tr': 'to top right',
+        'to-tl': 'to top left',
+        'to-br': 'to bottom right',
+        'to-bl': 'to bottom left'
+      };
+      gradientDirection = dirMap[direction] || 'to right';
+    }
+    
+    pushCSS(cls, `background-image: linear-gradient(${gradientDirection}, ${gradientColors});`, hover, media);
+  };
+
 
   const twtransition = (cls) => {
     if (used.has(cls)) return;
@@ -246,6 +291,29 @@ const Twigwind = (() => {
   }
 
 };
+
+  const twImage = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+    const { hover, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^image-url-(.+)$/);
+    if (!match) return;
+    
+    // Handle URL properly - replace underscores with spaces and decode if needed
+    let url = match[1];
+    // Replace underscores with spaces for URLs that need spaces
+    url = url.replace(/_/g, " ");
+    
+    // Add additional CSS properties for better background image handling
+    const rules = `
+      background-image: url('${url}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    `;
+    
+    pushCSS(cls, rules, hover, media);
+  };
 
   const twPosition = (cls) => {
     if (used.has(cls)) return;
@@ -328,6 +396,11 @@ const Twigwind = (() => {
       }
       else if (pure.startsWith("animate-")) {
         twAnimation(cls);
+      } else if (pure.startsWith("gradient-")) {
+        twLinearGradient(cls);
+      }
+      else if (pure.startsWith("image-url-")) {
+        twImage(cls);
       }
     });
   };
@@ -338,7 +411,7 @@ const Twigwind = (() => {
     document.head.appendChild(style);
   };
 
-  return { twColor, twSpacing, twSize, twflex, twGrid, twBorder, twTransform, twtransition, twshadow, twPosition, twAnimation, twApply, twInject };
+  return { twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius, twTransform, twLinearGradient, twImage, twtransition, twshadow, twPosition, twAnimation, twApply, twInject };
 })();
 
 // Run on load

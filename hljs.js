@@ -1,11 +1,11 @@
-const highlightAll = (stylesheet="twigwind/defalt.css") => {
+const highlightAll = (stylesheet_path="hljs_styles/defalt.css") => {
     const codeBlocks = document.querySelectorAll('pre code');
     if (codeBlocks.length === 0) return; // No code blocks, skip
 
     // 1. Load CSS theme dynamically
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = stylesheet;
+    link.href = stylesheet_path;
     document.head.appendChild(link);
 
     // 2. Collect unique languages from code blocks
@@ -23,7 +23,14 @@ const highlightAll = (stylesheet="twigwind/defalt.css") => {
         // No language classes, fallback to auto-detect
         const script = document.createElement('script');
         script.src = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js";
-        script.onload = () => hljs.highlightAll();
+        script.onload = () => {
+            if (typeof hljs !== 'undefined') {
+                hljs.highlightAll();
+            }
+        };
+        script.onerror = () => {
+            console.warn('Failed to load Highlight.js core');
+        };
         document.head.appendChild(script);
         return;
     }
@@ -48,8 +55,19 @@ const highlightAll = (stylesheet="twigwind/defalt.css") => {
 
         // 5. Once all languages are loaded, highlight code
         Promise.all(promises).then(() => {
-            hljs.highlightAll();
+            if (typeof hljs !== 'undefined') {
+                hljs.highlightAll();
+            }
+        }).catch(error => {
+            console.warn('Error loading language modules:', error);
+            // Fallback to basic highlighting
+            if (typeof hljs !== 'undefined') {
+                hljs.highlightAll();
+            }
         });
+    };
+    coreScript.onerror = () => {
+        console.warn('Failed to load Highlight.js core script');
     };
     document.head.appendChild(coreScript);
 }

@@ -5,142 +5,192 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Mini CSS Framework — Official Docs (Demo)</title>
 
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Google Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
   <!-- Your framework base -->
   <link rel="stylesheet" href="css.css">
 
+  <!-- Custom font styles -->
   <style>
-    /* tiny page layout helpers (these are thin, non-framework helpers) */
-    :root { --sidenav-w: 260px; }
-    body { margin:0; font-family: Roboto, Arial, sans-serif; background: #fafafa; color: #111; }
-    header.topbar { position: fixed; top:0; left:0; right:0; height:64px; z-index:60; display:flex; align-items:center; justify-content:space-between; padding:0 18px; }
-    .container { max-width:1100px; margin: 0 auto; padding: 20px; }
-    .layout { display:flex; margin-top:64px; }
-    aside.sidenav { width:var(--sidenav-w); min-height: calc(100vh - 64px); position: sticky; top:64px; padding:18px; border-right:1px solid #eee; background:#fff; }
-    main.content { flex:1; padding: 28px; }
-    a.nlink { text-decoration:none; color:inherit; }
-    .small { font-size:0.9rem; color:#666; }
-    /* back-to-top */
-    .backtop { position:fixed; right:20px; bottom:20px; display:inline-block; z-index:80; }
-    pre { background:#0b0b0b; color:#eee; padding:12px; border-radius:6px; overflow:auto; }
-    code { font-family: "JetBrains Mono", monospace; font-size:0.9rem; }
-    .hero-overlay { background: rgba(0,0,0,0.35); position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
-    .hero-inner { text-align:center; color:#fff; }
-    .doc-section { margin-bottom:40px; }
-    .grid-demo > * { border-radius:6px; }
-    /* responsiveness */
-    @media (max-width:900px){ aside.sidenav{ display:none } .layout{ margin-top: 0 } body{ padding-top:64px } }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-weight: 700;
+    }
+    
+    code, pre {
+      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    
+    .font-inter { font-family: 'Inter', sans-serif; }
+    .font-playfair { font-family: 'Playfair Display', serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    
+    .material-icons, .material-symbols-outlined {
+      vertical-align: middle;
+      margin-right: 8px;
+    }
   </style>
+
 </head>
 <body>
 
   <!-- TOPBAR (uses framework utilities for visuals) -->
-  <header class="topbar bg-dark-grey color-white flex flex-align-center justify-content-space-between p-10px">
-    <div class="flex flex-align-center">
-      <div class="font-suse-bold color-white p-10px">Mini CSS Framework</div>
-      <nav class="flex" style="gap:8px; margin-left:8px;">
-        <a class="color-white hover:color-yellow p-8px" href="#overview">Overview</a>
-        <a class="color-white hover:color-yellow p-8px" href="#colors">Colors</a>
-        <a class="color-white hover:color-yellow p-8px" href="#layout">Layout</a>
-        <a class="color-white hover:color-yellow p-8px" href="#components">Components</a>
+  <header class="fixed top-0 left-0 right-0 bg-blueGrey color-white flex:row-center-center p-10 z-50">
+    <div class="flex:row-left-center">
+      <div class="color-white p-10 flex:row-left-center">
+        <span class="material-icons">auto_awesome</span>
+        Twigwind Framework
+      </div>
+      <nav class="flex:row-left-center ml-8">
+        <a class="color-white hover:color-yellow p-8 mr-8 flex:row-left-center" href="#overview">
+          <span class="material-icons">description</span>Overview
+        </a>
+        <a class="color-white hover:color-yellow p-8 mr-8 flex:row-left-center" href="#colors">
+          <span class="material-icons">palette</span>Colors
+        </a>
+        <a class="color-white hover:color-yellow p-8 mr-8 flex:row-left-center" href="#layout">
+          <span class="material-icons">view_quilt</span>Layout
+        </a>
+        <a class="color-white hover:color-yellow p-8 flex:row-left-center" href="#components">
+          <span class="material-icons">widgets</span>Components
+        </a>
       </nav>
     </div>
 
-    <div class="flex flex-align-center">
-      <input class="p-8px m-8px" placeholder="Search docs..." />
-      <button class="bg-white color-purple p-8px hover:bg-light-grey">Get started</button>
+    <div class="flex:row-right-center">
+      <div class="relative flex:row-left-center">
+        <span class="material-icons absolute left-8 color-blueGrey">search</span>
+        <input class="p-8 pl-40 m-8" placeholder="Search docs..." />
+      </div>
+      <button class="bg-white color-purple p-8 hover:bg-lightBlue flex:row-left-center">
+        <span class="material-icons">rocket_launch</span>Get started
+      </button>
     </div>
   </header>
 
-  <div class="layout">
+  <div class="flex mt-64">
 
     <!-- SIDENAV (live links to sections) -->
-    <aside class="sidenav">
-      <div class="font-jetbrains-bold mb-10px">Documentation</div>
-      <ul class="font-roboto small" style="padding-left:0; list-style:none;">
-        <li><a class="nlink" href="#overview">• Overview</a></li>
-        <li><a class="nlink" href="#hero">• Hero</a></li>
-        <li><a class="nlink" href="#typography">• Typography</a></li>
-        <li><a class="nlink" href="#colors">• Colors</a></li>
-        <li><a class="nlink" href="#spacing">• Spacing</a></li>
-        <li><a class="nlink" href="#sizes">• Sizes</a></li>
-        <li><a class="nlink" href="#grid">• Grid</a></li>
-        <li><a class="nlink" href="#flex">• Flex</a></li>
-        <li><a class="nlink" href="#components">• Components</a></li>
-        <li><a class="nlink" href="#forms">• Forms</a></li>
-        <li><a class="nlink" href="#tables">• Tables</a></li>
-        <li><a class="nlink" href="#highlighting">• Highlighting</a></li>
-        <li><a class="nlink" href="#examples">• Examples</a></li>
+    <aside class="w-260 bg-white p-18 border-r-1">
+      <div class="mb-10">Documentation</div>
+      <ul class="pl-0">
+        <li><a class="nlink flex:row-left-center" href="#overview"><span class="material-icons">description</span>Overview</a></li>
+        <li><a class="nlink flex:row-left-center" href="#hero"><span class="material-icons">star</span>Hero</a></li>
+        <li><a class="nlink flex:row-left-center" href="#typography"><span class="material-icons">text_fields</span>Typography</a></li>
+        <li><a class="nlink flex:row-left-center" href="#colors"><span class="material-icons">palette</span>Colors</a></li>
+        <li><a class="nlink flex:row-left-center" href="#spacing"><span class="material-icons">space_bar</span>Spacing</a></li>
+        <li><a class="nlink flex:row-left-center" href="#sizes"><span class="material-icons">photo_size_select_large</span>Sizes</a></li>
+        <li><a class="nlink flex:row-left-center" href="#grid"><span class="material-icons">grid_view</span>Grid</a></li>
+        <li><a class="nlink flex:row-left-center" href="#flex"><span class="material-icons">view_column</span>Flex</a></li>
+        <li><a class="nlink flex:row-left-center" href="#gradients"><span class="material-icons">gradient</span>Gradients</a></li>
+        <li><a class="nlink flex:row-left-center" href="#background"><span class="material-icons">wallpaper</span>Background</a></li>
+        <li><a class="nlink flex:row-left-center" href="#components"><span class="material-icons">widgets</span>Components</a></li>
+        <li><a class="nlink flex:row-left-center" href="#forms"><span class="material-icons">dynamic_form</span>Forms</a></li>
+        <li><a class="nlink flex:row-left-center" href="#tables"><span class="material-icons">table_chart</span>Tables</a></li>
+        <li><a class="nlink flex:row-left-center" href="#highlighting"><span class="material-icons">code</span>Highlighting</a></li>
+        <li><a class="nlink flex:row-left-center" href="#examples"><span class="material-icons">apps</span>Examples</a></li>
       </ul>
     </aside>
 
     <!-- MAIN CONTENT -->
-    <main class="content container">
+    <main class="flex-1 p-28">
 
       <!-- HERO (uses framework classes; background image inline) -->
-      <section id="hero" class="hero" style="position:relative; height:420px; background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size:cover; background-position:center; border-radius:8px; overflow:hidden;">
-        <div class="hero-overlay">
-          <div class="hero-inner">
-            <h1 class="font-suse-bold size-xxl color-white">Mini CSS Framework</h1>
-            <p class="font-roboto mt-10px color-white">Utility-first, lightweight, zero-build demo generator (Twigwind-powered)</p>
-            <div class="mt-20px">
-              <a class="p-12px bg-white color-purple hover:bg-light-grey font-roboto-bold" href="#overview">Read the Docs</a>
-              <a class="p-12px bg-purple color-white hover:bg-dark-grey font-roboto-bold" href="#examples">Examples</a>
+      <section id="hero" class="relative h-420 gradient-to-br-blue-purple mb-40">
+        <div class="absolute inset-0 flex:row-center-center" style="background: rgba(0,0,0,0.4);">
+          <div class="text-center color-white">
+            <h1 class="size-xxl color-white font-playfair">Twigwind CSS Framework</h1>
+            <p class="mt-10 color-white font-inter">Utility-first, lightweight, zero-build demo generator</p>
+            <div class="mt-20">
+              <a class="p-12 bg-white color-purple hover:bg-lightBlue flex:row-left-center" href="#overview">
+                <span class="material-icons">menu_book</span>Read the Docs
+              </a>
+              <a class="p-12 bg-purple color-white hover:bg-blueGrey flex:row-left-center ml-12" href="#examples">
+                <span class="material-icons">explore</span>Examples
+              </a>
             </div>
           </div>
         </div>
       </section>
 
       <!-- OVERVIEW -->
-      <section id="overview" class="doc-section">
-        <h2 class="font-suse-bold color-indigo">Overview</h2>
-        <p class="font-roboto">This demo docs site is built with the Twigwind runtime generator + base utilities. It shows: colors, spacing, sizes, layout helpers, responsive prefixes (sm:, md:, lg:), hover: and custom arbitrary values (color-#ff6600, bg-rgb(...)).</p>
+      <section id="overview" class="mb-40">
+        <h2 class="color-indigo flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">info</span>Overview
+        </h2>
+        <p class="font-inter">This demo docs site is built with the Twigwind runtime generator + base utilities. It shows: colors, spacing, sizes, layout helpers, responsive prefixes (sm:, md:, lg:), hover: and custom arbitrary values (color-#ff6600, bg-rgb(...)).</p>
 
-        <div class="grid:2,1,16px" style="margin-top:18px;">
-          <div class="bg-pale-blue p-15px">
-            <h4 class="font-jetbrains-bold">Styling</h4>
-            <ul class="small"><li>Predefined color tokens</li><li>Arbitrary color values</li><li>Typography utilities</li></ul>
+        <div class="grid:2,1,16px mt-18">
+          <div class="bg-lightBlue p-15">
+            <h4 class="flex:row-left-center font-playfair">
+              <span class="material-icons mr-8">brush</span>Styling
+            </h4>
+            <ul class="small font-inter">
+              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Predefined color tokens</li>
+              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Arbitrary color values</li>
+              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Typography utilities</li>
+            </ul>
           </div>
-          <div class="bg-pale-green p-15px">
-            <h4 class="font-jetbrains-bold">Layout</h4>
-            <ul class="small"><li>Flex & Grid utilities</li><li>Size helpers</li><li>Responsive prefixes</li></ul>
+          <div class="bg-lightGreen p-15">
+            <h4 class="flex:row-left-center font-playfair">
+              <span class="material-icons mr-8">dashboard</span>Layout
+            </h4>
+            <ul class="small font-inter">
+              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Flex & Grid utilities</li>
+              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Size helpers</li>
+              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Responsive prefixes</li>
+            </ul>
           </div>
         </div>
       </section>
 
       <!-- TYPOGRAPHY -->
-      <section id="typography" class="doc-section">
-        <h2 class="font-suse-bold color-red">Typography</h2>
-        <div class="example p-12px">
-          <h1 class="font-suse-bold">Suse Mono — Heading</h1>
-          <h3 class="font-jetbrains">JetBrains Mono — Subheading</h3>
-          <p class="font-roboto">Roboto — body text. <span class="italic">Italic</span> <span class="bold">Bold</span></p>
-          <p class="font-cedarville color-purple">Cedarville Cursive — decorative example</p>
+      <section id="typography" class="mb-40">
+        <h2 class="color-red flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">text_fields</span>Typography
+        </h2>
+        <div class="example p-12">
+          <h1 class="font-playfair">Heading with Playfair Display</h1>
+          <h3 class="font-playfair">Subheading with Playfair Display</h3>
+          <p class="font-inter">Body text with Inter font. <span class="font-mono">Monospace code</span> <span class="font-playfair">Serif accent</span></p>
+          <p class="color-purple font-inter">Decorative example with custom fonts</p>
         </div>
 
         <pre><code class="language-html">
-&lt;h1 class="font-suse-bold"&gt;Heading&lt;/h1&gt;
-&lt;p class="font-roboto"&gt;Body text&lt;/p&gt;
-&lt;p class="font-cedarville"&gt;Cursive example&lt;/p&gt;
+&lt;h1&gt;Heading&lt;/h1&gt;
+&lt;p&gt;Body text&lt;/p&gt;
+&lt;p class="color-purple"&gt;Decorative example&lt;/p&gt;
         </code></pre>
       </section>
 
       <!-- COLORS -->
-      <section id="colors" class="doc-section">
-        <h2 class="font-suse-bold color-blue">Colors</h2>
+      <section id="colors" class="mb-40">
+        <h2 class="color-blue">Colors</h2>
 
-        <h3 class="font-jetbrains">Predefined colors</h3>
-        <div class="grid:4,1,12px grid-demo" style="margin:12px 0;">
-          <div class="bg-amber p-12px color-black">amber</div>
-          <div class="bg-blue p-12px color-white">blue</div>
-          <div class="bg-green p-12px color-white">green</div>
-          <div class="bg-red p-12px color-white">red</div>
+        <h3>Predefined colors</h3>
+        <div class="grid:4,1,12px my-12">
+          <div class="bg-amber p-12 color-black">amber</div>
+          <div class="bg-blue p-12 color-white">blue</div>
+          <div class="bg-green p-12 color-white">green</div>
+          <div class="bg-red p-12 color-white">red</div>
         </div>
 
-        <h3 class="font-jetbrains">Arbitrary colors</h3>
-        <div class="flex" style="gap:12px;">
-          <div class="bg-#ff6b35 color-white p-12px">bg-#ff6b35</div>
-          <div class="color-#ff6b35 p-12px">color-#ff6b35</div>
-          <div class="bg-rgb(60,180,75) color-white p-12px">bg-rgb(...)</div>
+        <h3>Arbitrary colors</h3>
+        <div class="flex:row-left-center">
+          <div class="bg-#ff6b35 color-white p-12 mr-12">bg-#ff6b35</div>
+          <div class="color-#ff6b35 p-12 mr-12">color-#ff6b35</div>
+          <div class="bg-rgb(60,180,75) color-white p-12">bg-rgb(...)</div>
         </div>
 
         <pre><code class="language-html">
@@ -150,29 +200,79 @@
         </code></pre>
       </section>
 
-      <!-- SPACING -->
-      <section id="spacing" class="doc-section">
-        <h2 class="font-suse-bold color-teal">Spacing</h2>
-        <p class="small">Use m-*, p-* and axis shortcuts mx-*, py-* etc. Values accept px/rem/em/% (e.g. p-12px).</p>
+      <!-- GRADIENTS -->
+      <section id="gradients" class="mb-40">
+        <h2 class="color-purple">Gradients</h2>
+        <p class="small">Linear gradients with direction and multiple colors using the gradient- utility.</p>
 
-        <div class="example flex" style="gap:12px;">
-          <div class="bg-pale-blue p-20px m-10px">p-20px m-10px</div>
-          <div class="bg-pale-green px-30px py-10px">px-30px py-10px</div>
+        <div class="flex:row-left-center mb-12">
+          <div class="gradient-to-r-red-blue p-12 color-white mr-12">gradient-to-r-red-blue</div>
+          <div class="gradient-to-br-purple-pink p-12 color-white mr-12">gradient-to-br-purple-pink</div>
+          <div class="gradient-45deg-green-yellow p-12 color-white">gradient-45deg-green-yellow</div>
+        </div>
+
+        <div class="flex:row-left-center mb-12">
+          <div class="gradient-to-b-blue-cyan-lightBlue p-12 color-white mr-12">Three colors</div>
+          <div class="hover:gradient-to-r-orange-red p-12 color-white bg-orange">Hover gradient</div>
         </div>
 
         <pre><code class="language-html">
-&lt;div class="p-20px m-10px"&gt;Box&lt;/div&gt;
-&lt;div class="px-30px py-10px"&gt;Box&lt;/div&gt;
+&lt;div class="gradient-to-r-red-blue"&gt;Left to right&lt;/div&gt;
+&lt;div class="gradient-to-br-purple-pink"&gt;Diagonal&lt;/div&gt;
+&lt;div class="gradient-45deg-green-yellow"&gt;45 degree&lt;/div&gt;
+&lt;div class="gradient-to-b-blue-cyan-lightBlue"&gt;Three colors&lt;/div&gt;
+&lt;div class="hover:gradient-to-r-orange-red"&gt;Hover effect&lt;/div&gt;
+        </code></pre>
+      </section>
+
+      <!-- BACKGROUND UTILITIES -->
+      <section id="background" class="mb-40">
+        <h2 class="color-cyan">Background Utilities</h2>
+        <p class="small">Background clip utilities and image backgrounds.</p>
+
+        <h3>Background Clip</h3>
+        <div class="flex:row-left-center mb-12">
+          <div class="gradient-to-r-red-blue clip-border p-12 color-white mr-12">clip-border</div>
+          <div class="gradient-to-r-blue-green clip-padding p-12 color-white mr-12">clip-padding</div>
+          <div class="gradient-to-r-purple-pink clip-content p-12 color-white">clip-content</div>
+        </div>
+
+        <h3>Background Images</h3>
+        <div class="flex:row-left-center mb-12">
+          <div class="image-url-https://images.unsplash.com/photo-1506905925346-21bda4d32df4 w-200 h-100 mr-12 flex:row-center-center color-white">Image URL</div>
+          <div class="bg-blue p-12 color-white">Regular background</div>
+        </div>
+
+        <pre><code class="language-html">
+&lt;div class="clip-border"&gt;Border box clipping&lt;/div&gt;
+&lt;div class="clip-padding"&gt;Padding box clipping&lt;/div&gt;
+&lt;div class="image-url-https://example.com/image.jpg"&gt;Background image&lt;/div&gt;
+        </code></pre>
+      </section>
+
+      <!-- SPACING -->
+      <section id="spacing" class="mb-40">
+        <h2 class="color-teal">Spacing</h2>
+        <p class="small">Use m-*, p-* shortcuts. Values accept px/rem/em/% (e.g. p-12px).</p>
+
+        <div class="flex:row-left-center">
+          <div class="bg-lightBlue p-20 m-10 mr-12">p-20 m-10</div>
+          <div class="bg-lightGreen p-30">p-30</div>
+        </div>
+
+        <pre><code class="language-html">
+&lt;div class="p-20 m-10"&gt;Box&lt;/div&gt;
+&lt;div class="p-30"&gt;Box&lt;/div&gt;
         </code></pre>
       </section>
 
       <!-- SIZING -->
-      <section id="sizes" class="doc-section">
-        <h2 class="font-suse-bold color-orange">Sizes</h2>
-        <div class="flex" style="gap:12px;">
-          <div class="bg-light-blue size-sm flex flex-align-center justify-content-center">size-sm</div>
-          <div class="bg-purple size-md flex flex-align-center justify-content-center color-white">size-md</div>
-          <div class="bg-green size-lg flex flex-align-center justify-content-center color-white">size-lg</div>
+      <section id="sizes" class="mb-40">
+        <h2 class="color-orange">Sizes</h2>
+        <div class="flex:row-left-center">
+          <div class="bg-lightBlue size-sm flex:row-center-center mr-12">size-sm</div>
+          <div class="bg-purple size-md flex:row-center-center color-white mr-12">size-md</div>
+          <div class="bg-green size-lg flex:row-center-center color-white">size-lg</div>
         </div>
 
         <pre><code class="language-html">
@@ -182,15 +282,15 @@
       </section>
 
       <!-- GRID -->
-      <section id="grid" class="doc-section">
-        <h2 class="font-suse-bold color-green">Grid</h2>
+      <section id="grid" class="mb-40">
+        <h2 class="color-green">Grid</h2>
         <p class="small">Twigwind grid syntax: <code>grid:cols,rows,gap</code> — e.g. <code>grid:3,1,12px</code></p>
 
-        <div class="grid:2,2,12px" style="margin-top:12px;">
-          <div class="bg-#f99 p-12px">1</div>
-          <div class="bg-#9f9 p-12px">2</div>
-          <div class="bg-#99f p-12px">3</div>
-          <div class="bg-#ff9 p-12px">4</div>
+        <div class="grid:2,2,12px mt-12">
+          <div class="bg-#f99 p-12">1</div>
+          <div class="bg-#9f9 p-12">2</div>
+          <div class="bg-#99f p-12">3</div>
+          <div class="bg-#ff9 p-12">4</div>
         </div>
 
         <pre><code class="language-html">
@@ -204,14 +304,14 @@
       </section>
 
       <!-- FLEX -->
-      <section id="flex" class="doc-section">
-        <h2 class="font-suse-bold color-purple">Flex</h2>
+      <section id="flex" class="mb-40">
+        <h2 class="color-purple">Flex</h2>
         <p class="small">Use <code>flex</code> or the extended shorthand syntax like <code>flex:row-center-center</code>.</p>
 
-        <div class="flex p-12px bg-#eee" style="gap:12px;">
-          <div class="bg-#ddd p-10px">Item A</div>
-          <div class="bg-#ccc p-10px">Item B</div>
-          <div class="bg-#bbb p-10px">Item C</div>
+        <div class="flex:row-left-center p-12 bg-#eee">
+          <div class="bg-#ddd p-10 mr-12">Item A</div>
+          <div class="bg-#ccc p-10 mr-12">Item B</div>
+          <div class="bg-#bbb p-10">Item C</div>
         </div>
 
         <pre><code class="language-html">
@@ -226,113 +326,204 @@
       </section>
 
       <!-- COMPONENTS -->
-      <section id="components" class="doc-section">
-        <h2 class="font-suse-bold color-brown">Components</h2>
+      <section id="components" class="mb-40">
+        <h2 class="color-brown flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">widgets</span>Components
+        </h2>
 
-        <h3 class="font-jetbrains">Card</h3>
-        <div class="bg-white p-18px" style="border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); max-width:420px;">
-          <div class="flex justify-content-space-between flex-align-center">
+        <h3 class="flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">credit_card</span>Card
+        </h3>
+        <div class="bg-white p-18 shadow-lg w-420">
+          <div class="flex:row-center-center">
             <div>
-              <h4 class="color-indigo font-jetbrains-bold mb-4px">Product title</h4>
-              <p class="small color-grey">Short description showing typography utilities.</p>
+              <h4 class="color-indigo mb-4 flex:row-left-center font-playfair">
+                <span class="material-icons mr-8">shopping_bag</span>Product title
+              </h4>
+              <p class="small color-blueGrey font-inter">Short description showing typography utilities with custom fonts.</p>
             </div>
-            <div class="flex flex-col flex-align-center">
-              <span class="color-green font-roboto-bold">$29.90</span>
-              <button class="bg-blue color-white p-10px hover:bg-dark-blue mt-8px" style="border:none; border-radius:4px;">Buy</button>
+            <div class="flex:col-center-center">
+              <span class="color-green flex:row-left-center font-inter">
+                <span class="material-icons mr-4">attach_money</span>29.90
+              </span>
+              <button class="bg-blue color-white p-10 hover:bg-indigo mt-8 flex:row-left-center">
+                <span class="material-icons mr-4">add_shopping_cart</span>Buy
+              </button>
             </div>
           </div>
         </div>
 
-        <h3 class="font-jetbrains mt-16px">Navbar</h3>
-        <div class="bg-dark-grey color-white p-12px flex justify-content-space-between">
-          <div class="font-suse-bold">Brand</div>
-          <div class="flex">
-            <a class="color-white hover:color-orange p-8px" href="#">Docs</a>
-            <a class="color-white hover:color-orange p-8px" href="#">GitHub</a>
+        <h3 class="mt-16 flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">navigation</span>Navbar
+        </h3>
+        <div class="bg-blueGrey color-white p-12 flex:row-left-center">
+          <div class="flex:row-left-center font-playfair">
+            <span class="material-icons mr-8">auto_awesome</span>Brand
+          </div>
+          <div class="flex:row-right-center">
+            <a class="color-white hover:color-orange p-8 mr-8 flex:row-left-center" href="#">
+              <span class="material-icons mr-4">description</span>Docs
+            </a>
+            <a class="color-white hover:color-orange p-8 flex:row-left-center" href="#">
+              <span class="material-icons mr-4">code</span>GitHub
+            </a>
           </div>
         </div>
       </section>
 
       <!-- FORMS -->
-      <section id="forms" class="doc-section">
-        <h2 class="font-suse-bold color-orange">Forms</h2>
-        <form class="bg-white p-16px" style="max-width:640px;border-radius:6px;">
-          <label class="font-jetbrains">Name</label>
-          <input class="p-10px m-8px w-100" placeholder="Your name">
-          <label class="font-jetbrains">Email</label>
-          <input class="p-10px m-8px w-100" placeholder="you@example.com">
-          <label class="font-jetbrains">Message</label>
-          <textarea class="p-10px m-8px w-100" rows="4"></textarea>
-          <div class="flex" style="gap:12px;">
-            <button class="bg-green color-white p-10px hover:bg-dark-grey" type="button">Submit</button>
-            <button class="bg-grey color-black p-10px hover:bg-dark-grey" type="reset">Reset</button>
+      <section id="forms" class="mb-40">
+        <h2 class="color-orange flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">dynamic_form</span>Forms
+        </h2>
+        <form class="bg-white p-16 w-640">
+          <label class="flex:row-left-center font-inter">
+            <span class="material-icons mr-8">person</span>Name
+          </label>
+          <input class="p-10 m-8 w-100 font-inter" placeholder="Your name">
+          <label class="flex:row-left-center font-inter">
+            <span class="material-icons mr-8">email</span>Email
+          </label>
+          <input class="p-10 m-8 w-100 font-inter" placeholder="you@example.com">
+          <label class="flex:row-left-center font-inter">
+            <span class="material-icons mr-8">message</span>Message
+          </label>
+          <textarea class="p-10 m-8 w-100 font-inter" rows="4" placeholder="Your message here..."></textarea>
+          <div class="flex:row-left-center">
+            <button class="bg-green color-white p-10 hover:bg-blueGrey mr-12 flex:row-left-center" type="button">
+              <span class="material-icons mr-4">send</span>Submit
+            </button>
+            <button class="bg-blueGrey color-black p-10 hover:bg-blueGrey flex:row-left-center" type="reset">
+              <span class="material-icons mr-4">refresh</span>Reset
+            </button>
           </div>
         </form>
       </section>
 
       <!-- TABLES -->
-      <section id="tables" class="doc-section">
-        <h2 class="font-suse-bold color-teal">Tables</h2>
-        <table class="w-100 bg-white" style="border-collapse:collapse;">
-          <thead class="bg-dark-grey color-white">
-            <tr><th class="p-10px">Name</th><th class="p-10px">Role</th><th class="p-10px">Status</th></tr>
+      <section id="tables" class="mb-40">
+        <h2 class="color-teal flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">table_chart</span>Tables
+        </h2>
+        <table class="w-100 bg-white">
+          <thead class="bg-blueGrey color-white">
+            <tr>
+              <th class="p-10 flex:row-left-center font-inter">
+                <span class="material-icons mr-4">person</span>Name
+              </th>
+              <th class="p-10 flex:row-left-center font-inter">
+                <span class="material-icons mr-4">work</span>Role
+              </th>
+              <th class="p-10 flex:row-left-center font-inter">
+                <span class="material-icons mr-4">info</span>Status
+              </th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td class="p-10px">Alice</td><td class="p-10px">Admin</td><td class="p-10px color-green">Active</td></tr>
-            <tr class="bg-light-grey"><td class="p-10px">Bob</td><td class="p-10px">Editor</td><td class="p-10px color-orange">Pending</td></tr>
-            <tr><td class="p-10px">Charlie</td><td class="p-10px">Viewer</td><td class="p-10px color-red">Banned</td></tr>
+            <tr>
+              <td class="p-10 font-inter">Alice</td>
+              <td class="p-10 font-inter">Admin</td>
+              <td class="p-10 color-green flex:row-left-center font-inter">
+                <span class="material-icons mr-4">check_circle</span>Active
+              </td>
+            </tr>
+            <tr class="bg-sand">
+              <td class="p-10 font-inter">Bob</td>
+              <td class="p-10 font-inter">Editor</td>
+              <td class="p-10 color-orange flex:row-left-center font-inter">
+                <span class="material-icons mr-4">schedule</span>Pending
+              </td>
+            </tr>
+            <tr>
+              <td class="p-10 font-inter">Charlie</td>
+              <td class="p-10 font-inter">Viewer</td>
+              <td class="p-10 color-red flex:row-left-center font-inter">
+                <span class="material-icons mr-4">block</span>Banned
+              </td>
+            </tr>
           </tbody>
         </table>
       </section>
 
       <!-- HIGHLIGHTING -->
-      <section id="highlighting" class="doc-section">
-        <h2 class="font-suse-bold color-indigo">Code Highlighting</h2>
-        <p class="small">We load Highlight.js on-demand for languages used in the page.</p>
+      <section id="highlighting" class="mb-40">
+        <h2 class="color-indigo flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">code</span>Code Highlighting
+        </h2>
+        <p class="small font-inter">We load Highlight.js on-demand for languages used in the page.</p>
 
-        <pre><code class="language-javascript">
+        <pre><code class="language-javascript font-mono">
 // Example: create a card with Twigwind classes
 const el = document.createElement('div');
-el.className = 'bg-white p-20px size-md';
+el.className = 'bg-white p-20 size-md';
 el.innerHTML = '<h4 class="color-indigo">Card</h4>';
 document.body.appendChild(el);
         </code></pre>
       </section>
 
       <!-- EXAMPLES -->
-      <section id="examples" class="doc-section">
-        <h2 class="font-suse-bold color-brown">Full Examples</h2>
+      <section id="examples" class="mb-40">
+        <h2 class="color-brown flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">apps</span>Full Examples
+        </h2>
 
-        <h3>Dashboard Example</h3>
-        <div class="grid:3,1,16px" style="gap:16px;">
-          <div class="bg-dark-grey color-white p-12px size-md">Sidebar</div>
-          <div class="bg-white p-12px">Main content — cards, charts, tables</div>
-          <div class="bg-light-blue p-12px">Right rail</div>
+        <h3 class="flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">dashboard</span>Dashboard Example
+        </h3>
+        <div class="grid:3,1,16px">
+          <div class="bg-blueGrey color-white p-12 size-md flex:row-left-center font-inter">
+            <span class="material-icons mr-4">menu</span>Sidebar
+          </div>
+          <div class="bg-white p-12 flex:row-left-center font-inter">
+            <span class="material-icons mr-4">view_module</span>Main content — cards, charts, tables
+          </div>
+          <div class="bg-lightBlue p-12 flex:row-left-center font-inter">
+            <span class="material-icons mr-4">info</span>Right rail
+          </div>
         </div>
 
-        <h3 class="mt-16px">Landing Block</h3>
-        <div class="bg-white p-20px" style="border-radius:8px;">
-          <h3 class="color-indigo">Landing headline</h3>
-          <p class="small">Supporting description — call-to-action below.</p>
-          <div class="flex" style="gap:12px;">
-            <a class="bg-purple color-white p-12px hover:bg-dark-grey">Primary CTA</a>
-            <a class="bg-white color-purple p-12px hover:bg-light-grey">Secondary CTA</a>
+        <h3 class="mt-16 flex:row-left-center font-playfair">
+          <span class="material-icons mr-8">web</span>Landing Block
+        </h3>
+        <div class="bg-white p-20">
+          <h3 class="color-indigo flex:row-left-center font-playfair">
+            <span class="material-icons mr-8">campaign</span>Landing headline
+          </h3>
+          <p class="small font-inter">Supporting description — call-to-action below.</p>
+          <div class="flex:row-left-center">
+            <a class="bg-purple color-white p-12 hover:bg-blueGrey mr-12 flex:row-left-center">
+              <span class="material-icons mr-4">star</span>Primary CTA
+            </a>
+            <a class="bg-white color-purple p-12 hover:bg-lightBlue flex:row-left-center">
+              <span class="material-icons mr-4">explore</span>Secondary CTA
+            </a>
           </div>
         </div>
       </section>
 
       <!-- FOOTER (simple) -->
-      <footer class="mt-40px small color-grey">
-        <div class="flex justify-content-space-between">
-          <div>© 2025 Mini CSS Framework — demo docs</div>
-          <div>Built with Twigwind · <a class="nlink" href="#overview">Docs</a></div>
+      <footer class="mt-40 color-blueGrey">
+        <div class="flex:row-center-center">
+          <div class="flex:row-left-center font-inter">
+            <span class="material-icons mr-4">copyright</span>© 2025 Twigwind CSS Framework — demo docs
+          </div>
+          <div class="flex:row-left-center font-inter">
+            <span class="material-icons mr-4">build</span>Built with Twigwind ·
+            <a class="nlink flex:row-left-center ml-8" href="#overview">
+              <span class="material-icons mr-4">description</span>Docs
+            </a>
+          </div>
         </div>
       </footer>
     </main>
   </div>
 
   <!-- Back to top -->
-  <a class="backtop" href="#hero"><button class="bg-dark-grey color-white p-10px">↑ Top</button></a>
+  <a class="fixed right-20 bottom-20 z-80" href="#hero">
+    <button class="bg-blueGrey color-white p-10 flex:row-left-center hover:bg-indigo">
+      <span class="material-icons mr-4">keyboard_arrow_up</span>Top
+    </button>
+  </a>
 
   <!-- scripts: load Twigwind generator and Highlight.js loader -->
   <script src="css.js" defer></script>
@@ -340,7 +531,7 @@ document.body.appendChild(el);
   <script>
     // after DOM loaded, call highlight loader (hljs.js exposes highlightAll())
     document.addEventListener('DOMContentLoaded', () => {
-      try { highlightAll(); } catch(e) { /* ignore if hljs not present */ }
+      try { highlightAll('./hljs_styles/atom.css'); } catch(e) { /* ignore if hljs not present */ }
     });
 
     // small behavior: smooth scroll for sidebar links
