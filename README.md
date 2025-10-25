@@ -1,96 +1,110 @@
 # Twigwind CSS Framework
 
-Rapidly build modern websites without ever leaving your HTML.
+A dark-first, utility CSS framework that's tiny, JS-powered, and designed for rapid prototyping.
 
 ---
 
 ## Features
 
-- Utility-first CSS framework
-- Dynamic CSS generators
-- Responsive and hover-friendly classes
-- Built with JavaScript for extreme flexibility
+- **Utility-first CSS framework** - Build directly in your HTML
+- **Dynamic CSS generators** - JavaScript-powered utility generation
+- **Position utilities** - Complete positioning system with inset, z-index, and directional controls
+- **Animation utilities** - 17 built-in keyframe animations (spin, pulse, bounce, fade, slide effects)
+- **Linear gradient utilities** - Dynamic gradient generation with directional and angle-based gradients
+- **Background utilities** - Image backgrounds, background-clip properties
+- **Responsive and hover-friendly classes** - sm:, md:, lg: prefixes and hover: states
+- **Google Fonts & Icons integration** - Easy integration with premium typography and iconography
+- **Comprehensive documentation** - 12 organized documentation pages
+- **Syntax highlighting** - Built-in Highlight.js integration with multiple themes
+- **Built with JavaScript** - Extreme flexibility and runtime CSS generation
 
 ---
 
-![Twigwind Logo](https://raw.githubusercontent.com/helloadhavan/twigwind/refs/heads/main/twigwind.png)
+![Twigwind Logo](https://raw.githubusercontent.com/helloadhavan/twigwind/refs/heads/main/twigwind.svg)
 
 ---
 
-## Example Usage
+## New Features Added
+
+### Position Utilities
+Complete positioning system with:
+- Position types: `absolute`, `relative`, `fixed`, `sticky`, `static`
+- Directional positioning: `top-*`, `bottom-*`, `left-*`, `right-*`
+- Inset utilities: `inset-*`, `inset-x-*`, `inset-y-*`
+- Z-index management: `z-*` (0-100 range)
+
+### Animation Utilities
+17 built-in animations ready to use:
+- **Rotation**: `spin`, `spin-slow`, `spin-fast`
+- **Scaling**: `pulse`, `pulse-slow`, `ping`
+- **Movement**: `bounce`, `bounce-slow`, `shake`
+- **Fade effects**: `fade-in`, `fade-out`, `fade-in-up`, `fade-in-down`
+- **Slide effects**: `slide-in-left`, `slide-in-right`, `slide-in-up`, `slide-in-down`
+- **Special**: `heartbeat`
+
+### Linear Gradient Utilities
+Dynamic gradient generation:
+- Directional: `gradient-to-r-red-blue`, `gradient-to-br-purple-pink`
+- Angle-based: `gradient-45deg-green-yellow`, `gradient-135deg-blue-cyan`
+- Multi-color: `gradient-to-b-blue-cyan-lightBlue`
+- Hover effects: `hover:gradient-to-r-orange-red`
+
+### Background Utilities
+- **Background images**: `image-url-[URL]` with automatic sizing and positioning
+- **Background clip**: `clip-border`, `clip-padding`, `clip-content`
+
+---
+
+## Quick Start
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Twigwind Test Page</title>
+  <title>Twigwind App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Google Fonts (optional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Google Icons (optional) -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <!-- Twigwind CSS -->
   <link rel="stylesheet" href="css.css">
 </head>
 <body>
 
-  <h1 class="color-blue size-xl mb-20">Twigwind Test Page</h1>
-
-  <!-- Colors -->
-  <section>
-    <h2 class="color-purple size-lg mb-10">Colors</h2>
-    <div class="flex:row-left-center mb-10">
-      <div class="bg-red size-md mr-10 p-10">Red</div>
-      <div class="bg-green size-md mr-10 p-10">Green</div>
-      <div class="bg-blue size-md p-10">Blue</div>
+  <!-- Hero Section with Gradient Background -->
+  <section class="relative h-420 gradient-to-br-blue-purple">
+    <div class="absolute inset-0 flex:row-center-center">
+      <div class="text-center color-white">
+        <h1 class="size-xxl color-white animate-fade-in">Welcome to Twigwind</h1>
+        <p class="mt-10 color-white animate-fade-in-up">Build beautiful interfaces rapidly</p>
+        <button class="p-12 bg-white color-purple hover:bg-lightBlue animate-pulse mt-20">
+          Get Started
+        </button>
+      </div>
     </div>
   </section>
 
-  <!-- Spacing -->
-  <section>
-    <h2 class="color-teal size-lg mb-10">Spacing</h2>
-    <div class="bg-amber p-20 mb-10">Padding 20px</div>
-    <div class="bg-lightBlue m-20 p-10">Margin 20px</div>
-  </section>
-
-  <!-- Flex Layouts -->
-  <section>
-    <h2 class="color-orange size-lg mb-10">Flex Layout</h2>
-    <div class="flex:row-center-center bg-sand p-10 mb-10">
-      <div class="bg-purple size-sm mr-10 p-5">Item 1</div>
-      <div class="bg-red size-sm mr-10 p-5">Item 2</div>
-      <div class="bg-green size-sm p-5">Item 3</div>
+  <!-- Feature Cards -->
+  <section class="p-40">
+    <div class="grid:3,1,20px">
+      <div class="bg-white p-20 shadow-lg animate-fade-in-up">
+        <h3 class="color-indigo mb-10">Utility-First</h3>
+        <p class="color-blueGrey">Build directly in your HTML with utility classes</p>
+      </div>
+      <div class="bg-white p-20 shadow-lg animate-fade-in-up">
+        <h3 class="color-purple mb-10">JS-Powered</h3>
+        <p class="color-blueGrey">Dynamic CSS generation with JavaScript</p>
+      </div>
+      <div class="bg-white p-20 shadow-lg animate-fade-in-up">
+        <h3 class="color-green mb-10">Lightweight</h3>
+        <p class="color-blueGrey">Tiny footprint, maximum flexibility</p>
+      </div>
     </div>
-
-    <div class="flex:col-center-center bg-lightGreen p-10">
-      <div class="bg-blue size-sm mb-10 p-5">Item A</div>
-      <div class="bg-yellow size-sm mb-10 p-5">Item B</div>
-      <div class="bg-orange size-sm p-5">Item C</div>
-    </div>
-  </section>
-
-  <!-- Hover Effects -->
-  <section>
-    <h2 class="color-pink size-lg mb-10">Hover Effects</h2>
-    <div class="flex:row-left-center">
-      <div class="bg-cyan hover:bg-purple size-md mr-10 p-10">Hover Me</div>
-      <div class="bg-lightBlue hover:bg-amber size-md p-10">Hover Me</div>
-    </div>
-  </section>
-
-  <!-- Sizing -->
-  <section>
-    <h2 class="color-indigo size-lg mb-10">Sizing</h2>
-    <div class="flex:row-left-center">
-      <div class="bg-teal size-sm mr-10 p-5">SM</div>
-      <div class="bg-teal size-md mr-10 p-5">MD</div>
-      <div class="bg-teal size-lg mr-10 p-5">LG</div>
-      <div class="bg-teal size-xl p-5">XL</div>
-    </div>
-  </section>
-
-  <!-- Text Styles -->
-  <section>
-    <h2 class="color-brown size-lg mb-10">Text Styles</h2>
-    <p class="italic mb-10">This is italic text</p>
-    <p class="bold mb-10">This is bold text</p>
-    <p class="font-fira mb-10">This is Fira Code font</p>
   </section>
 
   <!-- Twigwind JS -->
@@ -100,25 +114,136 @@ Rapidly build modern websites without ever leaving your HTML.
 </html>
 ```
 
-**Comparsition**
- Feature / Framework            | W3.CSS | Tailwind | Bootstrap | Twigwind |
-|--------------------------------|--------|---------|-----------|----------|
-| **Ease of Learning**           | ✔️      | ❌      | ⭐         | ✔️       |
-| **Utility-First Approach**     | ❌      | ⭐       | ❌        | ⭐        |
-| **Customization / Flexibility**| ✔️      | ⭐       | ✔️        | ⭐        |
-| **Responsive Design**          | ✔️      | ⭐       | ⭐         | ⭐        |
-| **Prebuilt Components**        | ✔️      | ❌      | ⭐         | ❌      |
-| **File Size / Lightweight**    | ⭐      | ✔️      | ❌        | ⭐        |
-| **Community / Ecosystem**      | ✔️      | ⭐       | ⭐         | ❌       |
-| **Ease of Integration**        | ⭐      | ✔️      | ✔️        | ⭐        |
-| **Dynamic/JS Integration**     | ❌      | ✔️      | ✔️        | ⭐        |
-| **Rapid Prototyping**          | ✔️      | ⭐       | ⭐         | ⭐        |
+---
+
+## Core Utilities
+
+### Colors
+```html
+<!-- Predefined colors -->
+<div class="bg-blue color-white">Blue background</div>
+<div class="bg-red color-white">Red background</div>
+
+<!-- Arbitrary colors -->
+<div class="bg-#ff6b35 color-white">Custom hex</div>
+<div class="bg-rgb(60,180,75) color-white">Custom RGB</div>
+```
+
+### Layout & Positioning
+```html
+<!-- Flexbox -->
+<div class="flex:row-center-center">Centered content</div>
+<div class="flex:col-left-top">Column layout</div>
+
+<!-- Grid -->
+<div class="grid:3,2,16px">Grid with 3 columns, 2 rows, 16px gap</div>
+
+<!-- Positioning -->
+<div class="absolute top-10 right-10 z-50">Positioned element</div>
+<div class="relative inset-0">Full coverage</div>
+```
+
+### Animations
+```html
+<!-- Basic animations -->
+<div class="animate-spin">Spinning element</div>
+<div class="animate-bounce">Bouncing element</div>
+<div class="animate-fade-in">Fading in</div>
+
+<!-- Hover animations -->
+<div class="hover:animate-pulse">Hover to pulse</div>
+```
+
+### Gradients
+```html
+<!-- Linear gradients -->
+<div class="gradient-to-r-blue-purple">Left to right gradient</div>
+<div class="gradient-45deg-red-yellow">45-degree gradient</div>
+<div class="gradient-to-b-blue-cyan-white">Three-color gradient</div>
+```
+
+### Backgrounds
+```html
+<!-- Background images -->
+<div class="image-url-https://example.com/image.jpg">Background image</div>
+
+<!-- Background clip -->
+<div class="gradient-to-r-red-blue clip-content">Clipped to content</div>
+```
+
+---
+
+## Documentation
+
+Visit our comprehensive documentation with 12 organized sections:
+
+1. **Getting Started** - Installation and basic usage
+2. **Colors** - Color system and arbitrary values
+3. **Typography** - Text styling and font utilities
+4. **Layout** - Flexbox and grid systems
+5. **Spacing** - Margin and padding utilities
+6. **Sizing** - Width, height, and size utilities
+7. **Position** - Positioning and z-index utilities
+8. **Animations** - Built-in animation utilities
+9. **Gradients** - Linear gradient utilities
+10. **Backgrounds** - Background utilities and images
+11. **Responsive** - Responsive design utilities
+12. **Gradients & Backgrounds** - Advanced background techniques
+
+---
+
+## Framework Comparison
+
+| Feature / Framework            | W3.CSS | Tailwind | Bootstrap | Twigwind |
+|--------------------------------|--------|----------|-----------|----------|
+| **Ease of Learning**           | ✔️      | ❌       | ⭐        | ✔️       |
+| **Utility-First Approach**     | ❌      | ⭐       | ❌        | ⭐       |
+| **Customization / Flexibility**| ✔️      | ⭐       | ✔️        | ⭐       |
+| **Responsive Design**          | ✔️      | ⭐       | ⭐        | ⭐       |
+| **Animation System**           | ❌      | ✔️       | ✔️        | ⭐       |
+| **Gradient Utilities**         | ❌      | ✔️       | ❌        | ⭐       |
+| **Position Utilities**         | ✔️      | ⭐       | ✔️        | ⭐       |
+| **File Size / Lightweight**    | ⭐      | ✔️       | ❌        | ⭐       |
+| **Dynamic/JS Integration**     | ❌      | ✔️       | ✔️        | ⭐       |
+| **Rapid Prototyping**          | ✔️      | ⭐       | ⭐        | ⭐       |
 
 **Legend:**  
 ⭐ = Excellent | ✔️ = Good | ❌ = Poor
 
 **Notes:**  
-- **W3.CSS** is lightweight and easy to learn but lacks utility-first flexibility.  
-- **Tailwind** is highly flexible and utility-first, but the learning curve is steeper.  
-- **Bootstrap** has a huge ecosystem and prebuilt components, but is heavier.  
-- **Twigwind** combines lightweight, utility-first design with easy JS integration, ideal for fast prototyping and flexible customization.
+- **W3.CSS** is lightweight and easy to learn but lacks modern utility features.  
+- **Tailwind** is highly flexible and utility-first, but requires build tools and has a steeper learning curve.  
+- **Bootstrap** has a huge ecosystem and prebuilt components, but is heavier and less flexible.  
+- **Twigwind** combines lightweight, utility-first design with easy JS integration, built-in animations, gradients, and positioning utilities - ideal for fast prototyping and flexible customization without build tools.
+
+---
+
+## File Structure
+
+```
+twigwind/
+├── css.css              # Base styles and animations
+├── css.js               # Dynamic utility generator
+├── hljs.js              # Syntax highlighting loader
+├── test.html            # Comprehensive demo page
+├── README.md
+├── twigwind.svg         # The twigwind logo  
+├── version.txt          # The version file (newest is 3.12)  
+└── hljs_styles/         # Syntax highlighting themes
+    ├── atom.css
+    ├── defalt.css
+    ├── jetbrains.css
+    └── vscode.css
+```
+
+---
+
+## Contributing
+
+Twigwind is designed to be simple, lightweight, and powerful. Contributions are welcome! Please ensure any new features maintain the framework's core principles of simplicity and utility-first design.
+
+---
+
+## License
+
+Custom License - feel free to use Twigwind in your projects!
