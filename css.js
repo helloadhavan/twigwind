@@ -413,9 +413,3 @@ const Twigwind = (() => {
 
   return { twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius, twTransform, twLinearGradient, twImage, twtransition, twshadow, twPosition, twAnimation, twApply, twInject };
 })();
-
-// Run on load
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll("[class]").forEach(el => Twigwind.twApply(el));
-  Twigwind.twInject();
-});
