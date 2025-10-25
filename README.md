@@ -34,13 +34,16 @@ Complete positioning system with:
 - Z-index management: `z-*` (0-100 range)
 
 ### Animation Utilities
-17 built-in animations ready to use:
-- **Rotation**: `spin`, `spin-slow`, `spin-fast`
-- **Scaling**: `pulse`, `pulse-slow`, `ping`
-- **Movement**: `bounce`, `bounce-slow`, `shake`
-- **Fade effects**: `fade-in`, `fade-out`, `fade-in-up`, `fade-in-down`
-- **Slide effects**: `slide-in-left`, `slide-in-right`, `slide-in-up`, `slide-in-down`
-- **Special**: `heartbeat`
+17 built-in keyframe animations with dynamic syntax:
+- **Rotation**: `spin`, `wiggle`
+- **Scaling**: `pulse`, `ping`, `zoomIn`, `zoomOut`, `heartbeat`, `rubberBand`
+- **Movement**: `bounce`, `shake`
+- **Fade effects**: `fadeIn`, `fadeOut`, `flash`
+- **Slide effects**: `slideUp`, `slideDown`, `slideLeft`, `slideRight`
+
+**Syntax**: `animate-(keyframe)-(duration)-(direction)`
+- Duration: number + `ms` or `s` (e.g., `500ms`, `2s`)
+- Direction: `infinite`, `normal`, `reverse`, `alternate`, `alternate-reverse`
 
 ### Linear Gradient Utilities
 Dynamic gradient generation:
@@ -80,9 +83,9 @@ Dynamic gradient generation:
   <section class="relative h-420 gradient-to-br-blue-purple">
     <div class="absolute inset-0 flex:row-center-center">
       <div class="text-center color-white">
-        <h1 class="size-xxl color-white animate-fade-in">Welcome to Twigwind</h1>
-        <p class="mt-10 color-white animate-fade-in-up">Build beautiful interfaces rapidly</p>
-        <button class="p-12 bg-white color-purple hover:bg-lightBlue animate-pulse mt-20">
+        <h1 class="size-xxl color-white animate-fadeIn-1s-normal">Welcome to Twigwind</h1>
+        <p class="mt-10 color-white animate-slideUp-800ms-normal">Build beautiful interfaces rapidly</p>
+        <button class="p-12 bg-white color-purple hover:bg-lightBlue animate-pulse-2s-infinite mt-20">
           Get Started
         </button>
       </div>
@@ -92,15 +95,15 @@ Dynamic gradient generation:
   <!-- Feature Cards -->
   <section class="p-40">
     <div class="grid:3,1,20px">
-      <div class="bg-white p-20 shadow-lg animate-fade-in-up">
+      <div class="bg-white p-20 shadow-lg animate-fadeIn-600ms-normal">
         <h3 class="color-indigo mb-10">Utility-First</h3>
         <p class="color-blueGrey">Build directly in your HTML with utility classes</p>
       </div>
-      <div class="bg-white p-20 shadow-lg animate-fade-in-up">
+      <div class="bg-white p-20 shadow-lg animate-fadeIn-800ms-normal">
         <h3 class="color-purple mb-10">JS-Powered</h3>
         <p class="color-blueGrey">Dynamic CSS generation with JavaScript</p>
       </div>
-      <div class="bg-white p-20 shadow-lg animate-fade-in-up">
+      <div class="bg-white p-20 shadow-lg animate-fadeIn-1s-normal">
         <h3 class="color-green mb-10">Lightweight</h3>
         <p class="color-blueGrey">Tiny footprint, maximum flexibility</p>
       </div>
@@ -145,13 +148,19 @@ Dynamic gradient generation:
 
 ### Animations
 ```html
-<!-- Basic animations -->
-<div class="animate-spin">Spinning element</div>
-<div class="animate-bounce">Bouncing element</div>
-<div class="animate-fade-in">Fading in</div>
+<!-- Twigwind animation syntax: animate-(keyframe)-(duration)-(direction) -->
+<div class="animate-spin-1s-infinite">Spinning element</div>
+<div class="animate-bounce-500ms-infinite">Bouncing element</div>
+<div class="animate-fadeIn-800ms-normal">Fading in</div>
+<div class="animate-slideUp-600ms-normal">Sliding up</div>
 
 <!-- Hover animations -->
-<div class="hover:animate-pulse">Hover to pulse</div>
+<div class="hover:animate-pulse-2s-infinite">Hover to pulse</div>
+<div class="hover:animate-shake-300ms-normal">Hover to shake</div>
+
+<!-- Complex animations -->
+<div class="animate-heartbeat-1s-alternate">Heartbeat effect</div>
+<div class="animate-rubberBand-800ms-normal">Rubber band effect</div>
 ```
 
 ### Gradients
