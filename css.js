@@ -249,7 +249,7 @@ const Twigwind = (() => {
     used.add(cls);
 
     const { hover, media, pure } = parsePrefix(cls);
-    const rule = `transition: ${pure.slice(11).replace(/-/g, " ")}`;
+    const rule = `transition: ${pure.slice(11).replace(/_/g, " ")}`;
     pushCSS(cls, rule, hover, media);
   };
 
@@ -381,6 +381,8 @@ const Twigwind = (() => {
         twflex(cls);
       } else if (pure.startsWith("grid:")) {
         twGrid(cls);
+      } else if (pure.startsWith("border-radius")) {
+        twBorderRadius(cls);
       } else if (pure.startsWith("border")) {
         twBorder(cls);
       } else if (pure.startsWith("transform:")) {
