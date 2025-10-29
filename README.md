@@ -184,7 +184,7 @@ Dynamic gradient generation:
 
 ## Documentation
 
-Visit our comprehensive documentation with 12 organized sections:
+Visit our comprehensive documentation with 12 organized sections at https://twigwind.github.io/:
 
 1. **Getting Started** - Installation and basic usage
 2. **Colors** - Color system and arbitrary values
@@ -246,13 +246,3 @@ twigwind/
 ```
 
 ---
-
-## Contributing
-
-Twigwind is designed to be simple, lightweight, and powerful. Contributions are welcome! Please ensure any new features maintain the framework's core principles of simplicity and utility-first design.
-
----
-
-## License
-
-Custom License - feel free to use Twigwind in your projects!
