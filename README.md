@@ -1,6 +1,6 @@
 # Twigwind CSS Framework
 
-A dark-first, utility CSS framework that's tiny, JS-powered, and designed for rapid prototyping.
+A utility-first CSS framework that's tiny, JS-powered, and designed for rapid prototyping.
 
 ---
 
@@ -9,14 +9,13 @@ A dark-first, utility CSS framework that's tiny, JS-powered, and designed for ra
 - **Utility-first CSS framework** - Build directly in your HTML
 - **Dynamic CSS generators** - JavaScript-powered utility generation
 - **Position utilities** - Complete positioning system with inset, z-index, and directional controls
-- **Animation utilities** - 17 built-in keyframe animations (spin, pulse, bounce, fade, slide effects)
+- **Animation utilities** - Built-in keyframe animations (spin, pulse, bounce, fade, slide effects)
 - **Linear gradient utilities** - Dynamic gradient generation with directional and angle-based gradients
-- **Background utilities** - Image backgrounds, background-clip properties
+- **Background utilities** - Image backgrounds with automatic sizing and positioning
 - **Responsive and hover-friendly classes** - sm:, md:, lg: prefixes and hover: states
-- **Google Fonts & Icons integration** - Easy integration with premium typography and iconography
-- **Comprehensive documentation** - 12 organized documentation pages
-- **Syntax highlighting** - Built-in Highlight.js integration with multiple themes
-- **Built with JavaScript** - Extreme flexibility and runtime CSS generation
+- **Build system** - Optional build-time CSS generation with file watching
+- **ES6 Module support** - Modern JavaScript module system
+- **Runtime CSS generation** - Extreme flexibility with dynamic styling
 
 ---
 
@@ -60,6 +59,7 @@ Dynamic gradient generation:
 
 ## Quick Start
 
+### Option 1: Runtime Usage (Browser)
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -68,24 +68,18 @@ Dynamic gradient generation:
   <title>Twigwind App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- Google Fonts (optional) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Google Icons (optional) -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  
-  <!-- Twigwind CSS -->
-  <link rel="stylesheet" href="css.css">
+  <!-- Twigwind CSS (optional base styles) -->
+  <link rel="stylesheet" href="src/css.css">
 </head>
 <body>
 
-  <!-- Hero Section with image as Background -->
-  <section class="relative h-420 image-url-https://images.unsplash.com/photo-1506905925346-21bda4d32df4"">
+  <!-- Hero Section -->
+  <section class="relative h-400 bg-blue">
     <div class="absolute inset-0 flex:row-center-center">
       <div class="text-center color-white">
-        <h1 class="size-xxl color-white animate-fadeIn-1s-normal">Welcome to Twigwind</h1>
+        <h1 class="size-xl color-white animate-fadeIn-1s-normal">Welcome to Twigwind</h1>
         <p class="mt-10 color-white animate-slideUp-800ms-normal">Build beautiful interfaces rapidly</p>
-        <button class="p-12 bg-white color-purple hover:bg-lightBlue animate-pulse-2s-infinite mt-20">
+        <button class="p-12 bg-white color-purple hover:bg-lightBlue transition:all_0.3s_ease mt-20 border-radius-8px">
           Get Started
         </button>
       </div>
@@ -93,17 +87,17 @@ Dynamic gradient generation:
   </section>
 
   <!-- Feature Cards -->
-  <section class="p-40">
+  <section class="p-40 bg-sand">
     <div class="grid:3,1,20px">
-      <div class="bg-white p-20 shadow-lg animate-fadeIn-600ms-normal">
+      <div class="bg-white p-20 shadow-lg border-radius-8px">
         <h3 class="color-indigo mb-10">Utility-First</h3>
         <p class="color-blueGrey">Build directly in your HTML with utility classes</p>
       </div>
-      <div class="bg-white p-20 shadow-lg animate-fadeIn-800ms-normal">
+      <div class="bg-white p-20 shadow-lg border-radius-8px">
         <h3 class="color-purple mb-10">JS-Powered</h3>
         <p class="color-blueGrey">Dynamic CSS generation with JavaScript</p>
       </div>
-      <div class="bg-white p-20 shadow-lg animate-fadeIn-1s-normal">
+      <div class="bg-white p-20 shadow-lg border-radius-8px">
         <h3 class="color-green mb-10">Lightweight</h3>
         <p class="color-blueGrey">Tiny footprint, maximum flexibility</p>
       </div>
@@ -111,11 +105,32 @@ Dynamic gradient generation:
   </section>
 
   <!-- Twigwind JS -->
-  <script src="css.js"></script>
+  <script src="src/css.js" type="module"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll("[class]").forEach(el => Twigwind.twApply(el));
+      Twigwind.twInject();
+    });
+  </script>
 
 </body>
 </html>
 ```
+
+### Option 2: Build-time Usage (Node.js)
+```bash
+# Install dependencies
+npm install
+
+# Build CSS from HTML files
+node build.js
+```
+
+The build system will:
+- Scan all `.html` files in your project
+- Extract Twigwind classes and generate optimized CSS
+- Output CSS files to the `dist/` directory
+- Watch for changes and rebuild automatically
 
 ---
 
@@ -182,22 +197,26 @@ Dynamic gradient generation:
 
 ---
 
-## Documentation
+## Installation
 
-Visit our comprehensive documentation with 12 organized sections:
+### NPM Package
+```bash
+npm install twigwind
+```
 
-1. **Getting Started** - Installation and basic usage
-2. **Colors** - Color system and arbitrary values
-3. **Typography** - Text styling and font utilities
-4. **Layout** - Flexbox and grid systems
-5. **Spacing** - Margin and padding utilities
-6. **Sizing** - Width, height, and size utilities
-7. **Position** - Positioning and z-index utilities
-8. **Animations** - Built-in animation utilities
-9. **Gradients** - Linear gradient utilities
-10. **Backgrounds** - Background utilities and images
-11. **Responsive** - Responsive design utilities
-12. **Gradients & Backgrounds** - Advanced background techniques
+### CDN (Coming Soon)
+```html
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/twigwind/dist/css.css">
+
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/twigwind/dist/css.js"></script>
+```
+
+### Manual Download
+Download the latest release from GitHub and include the files in your project:
+- `src/css.css` - Base styles and animations
+- `src/css.js` - Dynamic utility generator
 
 ---
 
