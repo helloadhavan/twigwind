@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { JSDOM } from "jsdom";
 import { Twigwind } from "./src/css.js";
+import chokidar from "chokidar";
 
 // Ensure dist/ exists
 const distDir = "./dist";
@@ -40,3 +41,16 @@ for (const file of files) {
 }
 
 console.log("🎉 Build complete!");
+
+const watcher = chokidar.watch(".", {
+  ignored: /dist|node_modules/,
+  persistent: true,
+});
+
+console.log("👀 Watching for HTML changes...");
+watcher.on("change", (file) => {
+  if (file.endsWith(".html")) {
+    console.log(`♻️ Rebuilding due to ${file}...`);
+    build(); // your main function
+  }
+});
