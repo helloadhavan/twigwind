@@ -1,0 +1,33 @@
+{
+  "name": "twigwind",
+  "version": "3.1.4",
+  "description": "A fast and user friendly JS powered dynamic css framework ",
+  "main": "build.js",
+  "type": "module", 
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helloadhavan/twigwind.git"
+  },
+  "keywords": [
+    "css",
+    "framework",
+    "utility-first",
+    "tailwind",
+    "jit"
+  ],
+  "author": "Adhavan Yuvaraj",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/helloadhavan/twigwind/issues"
+  },
+  "homepage": "https://twigwind.github.io/",
+  "dependencies": {
+    "jsdom": "^27.0.1"
+  }
+}
