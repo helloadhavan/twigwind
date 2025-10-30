@@ -3,7 +3,7 @@
   "version": "3.1.4",
   "description": "A fast and user friendly JS powered dynamic css framework ",
   "main": "build.js",
-  "type": "module", 
+  "type": "module",
   "directories": {
     "doc": "docs"
   },
@@ -28,6 +28,7 @@
   },
   "homepage": "https://twigwind.github.io/",
   "dependencies": {
+    "chokidar": "^4.0.3",
     "jsdom": "^27.0.1"
   }
 }
