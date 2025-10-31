@@ -1,0 +1,44 @@
+{
+  "name": "twigwind",
+  "version": "3.2.1",
+  "description": "A utility-first CSS framework that's tiny, JS-powered, and designed for rapid prototyping",
+  "main": "src/css.js",
+  "type": "module",
+  "directories": {
+    "src": "src",
+    "dist": "dist"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "src/",
+    "dist/",
+    "build.js",
+    "README.md",
+    "LICENSE.txt"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helloadhavan/twigwind.git"
+  },
+  "keywords": [
+    "css",
+    "framework",
+    "utility-first",
+    "tailwind",
+    "jit"
+  ],
+  "author": "Adhavan Yuvaraj",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/helloadhavan/twigwind/issues"
+  },
+  "homepage": "https://twigwind.github.io/",
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "jsdom": "^27.0.1"
+  }
+}

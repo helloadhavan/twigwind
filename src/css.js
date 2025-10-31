@@ -413,5 +413,12 @@ const Twigwind = (() => {
     document.head.appendChild(style);
   };
 
-  return { twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius, twTransform, twLinearGradient, twImage, twtransition, twshadow, twPosition, twAnimation, twApply, twInject };
+  return { 
+  twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius,
+  twTransform, twLinearGradient, twImage, twtransition, twshadow,
+  twPosition, twAnimation, twApply, twInject,
+  getCSS: () => css.join("\n") // ✅ clean accessor
+};
 })();
+export { Twigwind };
+// In browser, call Twigwind.twInject() after applying classes to inject CSS
