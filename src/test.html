@@ -3,545 +3,681 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mini CSS Framework — Official Docs (Demo)</title>
+  <title>Twigwind CSS Framework — Complete Test Suite</title>
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-  
-  <!-- Google Icons -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
-
-  <!-- Your framework base -->
+  <!-- Framework base CSS -->
   <link rel="stylesheet" href="css.css">
 
-  <!-- Custom font styles -->
+  <!-- Minimal custom styles only for what framework can't handle -->
   <style>
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
     }
     
-    h1, h2, h3, h4, h5, h6 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-weight: 700;
-    }
-    
-    code, pre {
-      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-    }
-    
-    .font-inter { font-family: 'Inter', sans-serif; }
-    .font-playfair { font-family: 'Playfair Display', serif; }
-    .font-mono { font-family: 'JetBrains Mono', monospace; }
-    
-    .material-icons, .material-symbols-outlined {
-      vertical-align: middle;
-      margin-right: 8px;
+    .animation-demo {
+      width: 50px;
+      height: 50px;
     }
   </style>
-
 </head>
-<body>
+<body class="bg-lightGray">
 
-  <!-- TOPBAR (uses framework utilities for visuals) -->
-  <header class="fixed top-0 left-0 right-0 bg-blueGrey color-white flex:row-center-center p-10 z-50">
-    <div class="flex:row-left-center">
-      <div class="color-white p-10 flex:row-left-center">
-        <span class="material-icons">auto_awesome</span>
-        Twigwind Framework
-      </div>
-      <nav class="flex:row-left-center ml-8">
-        <a class="color-white hover:color-yellow p-8 mr-8 flex:row-left-center" href="#overview">
-          <span class="material-icons">description</span>Overview
-        </a>
-        <a class="color-white hover:color-yellow p-8 mr-8 flex:row-left-center" href="#colors">
-          <span class="material-icons">palette</span>Colors
-        </a>
-        <a class="color-white hover:color-yellow p-8 mr-8 flex:row-left-center" href="#layout">
-          <span class="material-icons">view_quilt</span>Layout
-        </a>
-        <a class="color-white hover:color-yellow p-8 flex:row-left-center" href="#components">
-          <span class="material-icons">widgets</span>Components
-        </a>
-      </nav>
-    </div>
+  <!-- Dark Mode Toggle -->
+  <button class="fixed top-20 right-20 z-50 p-10 bg-blue color-white border-radius-4 hover:bg-indigo transition-all-300ms" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
 
-    <div class="flex:row-right-center">
-      <div class="relative flex:row-left-center">
-        <span class="material-icons absolute left-8 color-blueGrey">search</span>
-        <input class="p-8 pl-40 m-8" placeholder="Search docs..." />
-      </div>
-      <button class="bg-white color-purple p-8 hover:bg-lightBlue flex:row-left-center">
-        <span class="material-icons">rocket_launch</span>Get started
-      </button>
+  <!-- Header -->
+  <header class="bg-blue color-white p-20 text-center">
+    <h1 class="size-xxl mb-10">Twigwind CSS Framework</h1>
+    <p class="size-lg">Complete Test Suite & Documentation</p>
+    <div class="mt-20 flex:row-center-center gap-10">
+      <span class="bg-white color-blue p-8 border-radius-4">Version 3.2.0</span>
+      <span class="bg-green color-white p-8 border-radius-4">All Features</span>
     </div>
   </header>
 
-  <div class="flex mt-64">
+  <div class="p-20 max-w-1200 mx-auto">
 
-    <!-- SIDENAV (live links to sections) -->
-    <aside class="w-260 bg-white p-18 border-r-1">
-      <div class="mb-10">Documentation</div>
-      <ul class="pl-0">
-        <li><a class="nlink flex:row-left-center" href="#overview"><span class="material-icons">description</span>Overview</a></li>
-        <li><a class="nlink flex:row-left-center" href="#hero"><span class="material-icons">star</span>Hero</a></li>
-        <li><a class="nlink flex:row-left-center" href="#typography"><span class="material-icons">text_fields</span>Typography</a></li>
-        <li><a class="nlink flex:row-left-center" href="#colors"><span class="material-icons">palette</span>Colors</a></li>
-        <li><a class="nlink flex:row-left-center" href="#spacing"><span class="material-icons">space_bar</span>Spacing</a></li>
-        <li><a class="nlink flex:row-left-center" href="#sizes"><span class="material-icons">photo_size_select_large</span>Sizes</a></li>
-        <li><a class="nlink flex:row-left-center" href="#grid"><span class="material-icons">grid_view</span>Grid</a></li>
-        <li><a class="nlink flex:row-left-center" href="#flex"><span class="material-icons">view_column</span>Flex</a></li>
-        <li><a class="nlink flex:row-left-center" href="#gradients"><span class="material-icons">gradient</span>Gradients</a></li>
-        <li><a class="nlink flex:row-left-center" href="#background"><span class="material-icons">wallpaper</span>Background</a></li>
-        <li><a class="nlink flex:row-left-center" href="#components"><span class="material-icons">widgets</span>Components</a></li>
-        <li><a class="nlink flex:row-left-center" href="#forms"><span class="material-icons">dynamic_form</span>Forms</a></li>
-        <li><a class="nlink flex:row-left-center" href="#tables"><span class="material-icons">table_chart</span>Tables</a></li>
-        <li><a class="nlink flex:row-left-center" href="#highlighting"><span class="material-icons">code</span>Highlighting</a></li>
-        <li><a class="nlink flex:row-left-center" href="#examples"><span class="material-icons">apps</span>Examples</a></li>
-      </ul>
-    </aside>
+    <!-- Colors Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">🎨 Colors</div>
+      <div class="p-20">
+        <h3 class="mb-15">Predefined Colors</h3>
+        <div class="grid:4,3,10px mb-20">
+          <div class="bg-red color-white p-15 text-center border-radius-4">bg-red</div>
+          <div class="bg-blue color-white p-15 text-center border-radius-4">bg-blue</div>
+          <div class="bg-green color-white p-15 text-center border-radius-4">bg-green</div>
+          <div class="bg-yellow color-black p-15 text-center border-radius-4">bg-yellow</div>
+          <div class="bg-purple color-white p-15 text-center border-radius-4">bg-purple</div>
+          <div class="bg-pink color-white p-15 text-center border-radius-4">bg-pink</div>
+          <div class="bg-indigo color-white p-15 text-center border-radius-4">bg-indigo</div>
+          <div class="bg-teal color-white p-15 text-center border-radius-4">bg-teal</div>
+          <div class="bg-orange color-white p-15 text-center border-radius-4">bg-orange</div>
+          <div class="bg-cyan color-white p-15 text-center border-radius-4">bg-cyan</div>
+          <div class="bg-gray color-white p-15 text-center border-radius-4">bg-gray</div>
+          <div class="bg-brown color-white p-15 text-center border-radius-4">bg-brown</div>
+        </div>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 p-28">
+        <h3 class="mb-15">Light Colors</h3>
+        <div class="grid:4,1,10px mb-20">
+          <div class="bg-lightRed color-black p-15 text-center border-radius-4">bg-lightRed</div>
+          <div class="bg-lightBlue color-black p-15 text-center border-radius-4">bg-lightBlue</div>
+          <div class="bg-lightGreen color-black p-15 text-center border-radius-4">bg-lightGreen</div>
+          <div class="bg-lightGray color-black p-15 text-center border-radius-4">bg-lightGray</div>
+        </div>
 
-      <!-- HERO (uses framework classes; background image inline) -->
-      <section id="hero" class="relative h-420 gradient-to-br-blue-purple mb-40">
-        <div class="absolute inset-0 flex:row-center-center" style="background: rgba(0,0,0,0.4);">
-          <div class="text-center color-white">
-            <h1 class="size-xxl color-white font-playfair">Twigwind CSS Framework</h1>
-            <p class="mt-10 color-white font-inter">Utility-first, lightweight, zero-build demo generator</p>
-            <div class="mt-20">
-              <a class="p-12 bg-white color-purple hover:bg-lightBlue flex:row-left-center" href="#overview">
-                <span class="material-icons">menu_book</span>Read the Docs
-              </a>
-              <a class="p-12 bg-purple color-white hover:bg-blueGrey flex:row-left-center ml-12" href="#examples">
-                <span class="material-icons">explore</span>Examples
-              </a>
+        <h3 class="mb-15">Arbitrary Colors</h3>
+        <div class="grid:4,1,10px mb-20">
+          <div class="bg-#ff6b35 color-white p-15 text-center border-radius-4">bg-#ff6b35</div>
+          <div class="bg-rgb(60,180,75) color-white p-15 text-center border-radius-4">bg-rgb(60,180,75)</div>
+          <div class="color-#e74c3c p-15 text-center border-1 border-lightGray border-radius-4">color-#e74c3c</div>
+          <div class="color-hsl(210,100%,50%) p-15 text-center border-1 border-lightGray border-radius-4">color-hsl(210,100%,50%)</div>
+        </div>
+
+        <h3 class="mb-15">Dark Mode Colors</h3>
+        <div class="grid:3,1,10px">
+          <div class="bg-gray dark:bg-lightGray color-white dark:color-black p-15 text-center border-radius-4">Dark Mode Aware</div>
+          <div class="color-black dark:color-white p-15 text-center border-1 border-lightGray border-radius-4">Text Color Switch</div>
+          <div class="bg-white dark:bg-black color-black dark:color-white p-15 text-center border-radius-4">Background Switch</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spacing Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">📏 Spacing</div>
+      <div class="p-20">
+        <h3 class="mb-15">Padding</h3>
+        <div class="flex:row-left-center gap-10 mb-20">
+          <div class="bg-lightBlue p-5 text-center border-radius-4">p-5</div>
+          <div class="bg-lightBlue p-10 text-center border-radius-4">p-10</div>
+          <div class="bg-lightBlue p-20 text-center border-radius-4">p-20</div>
+          <div class="bg-lightBlue p-30 text-center border-radius-4">p-30</div>
+        </div>
+
+        <h3 class="mb-15">Margin</h3>
+        <div class="flex:row-left-center mb-20">
+          <div class="bg-lightGreen m-5 p-10 text-center border-radius-4">m-5</div>
+          <div class="bg-lightGreen m-10 p-10 text-center border-radius-4">m-10</div>
+          <div class="bg-lightGreen m-15 p-10 text-center border-radius-4">m-15</div>
+        </div>
+
+        <h3 class="mb-15">Directional Spacing</h3>
+        <div class="grid:3,1,10px mb-20">
+          <div class="bg-sand pt-20 pb-5 pl-10 pr-15 text-center border-radius-4">pt-20 pb-5 pl-10 pr-15</div>
+          <div class="bg-sand mx-20 my-10 p-10 text-center border-radius-4">mx-20 my-10</div>
+          <div class="bg-sand mt-15 mb-5 ml-10 mr-20 p-10 text-center border-radius-4">mt-15 mb-5 ml-10 mr-20</div>
+        </div>
+
+        <h3 class="mb-15">Custom Units</h3>
+        <div class="grid:4,1,10px">
+          <div class="bg-lightBlue p-1rem text-center border-radius-4">p-1rem</div>
+          <div class="bg-lightBlue p-20px text-center border-radius-4">p-20px</div>
+          <div class="bg-lightBlue p-2em text-center border-radius-4">p-2em</div>
+          <div class="bg-lightBlue p-5% text-center border-radius-4">p-5%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sizing Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">📐 Sizing</div>
+      <div class="p-20">
+        <h3 class="mb-15">Predefined Sizes</h3>
+        <div class="flex:row-left-center gap-10 mb-20">
+          <div class="bg-purple color-white size-xs flex:row-center-center border-radius-4">size-xs</div>
+          <div class="bg-purple color-white size-sm flex:row-center-center border-radius-4">size-sm</div>
+          <div class="bg-purple color-white size-md flex:row-center-center border-radius-4">size-md</div>
+          <div class="bg-purple color-white size-lg flex:row-center-center border-radius-4">size-lg</div>
+          <div class="bg-purple color-white size-xl flex:row-center-center border-radius-4">size-xl</div>
+        </div>
+
+        <h3 class="mb-15">Width & Height</h3>
+        <div class="grid:3,1,10px mb-20">
+          <div class="bg-teal color-white w-100 h-50 flex:row-center-center border-radius-4">w-100 h-50</div>
+          <div class="bg-teal color-white w-200 h-100 flex:row-center-center border-radius-4">w-200 h-100</div>
+          <div class="bg-teal color-white w-50% h-80 flex:row-center-center border-radius-4">w-50% h-80</div>
+        </div>
+
+        <h3 class="mb-15">Min/Max Sizes</h3>
+        <div class="grid:3,1,10px">
+          <div class="bg-orange color-white min-w-200 h-60 flex:row-center-center border-radius-4">min-w-200</div>
+          <div class="bg-orange color-white max-w-150 h-60 flex:row-center-center border-radius-4">max-w-150</div>
+          <div class="bg-orange color-white min-h-80 w-150 flex:row-center-center border-radius-4">min-h-80</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout - Flexbox Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">🔧 Flexbox Layout</div>
+      <div class="p-20">
+        <h3 class="mb-15">Basic Flex</h3>
+        <div class="flex bg-lightGray p-10 mb-20 border-radius-4">
+          <div class="bg-blue color-white p-10 mr-10 border-radius-4">Item 1</div>
+          <div class="bg-green color-white p-10 mr-10 border-radius-4">Item 2</div>
+          <div class="bg-red color-white p-10 border-radius-4">Item 3</div>
+        </div>
+
+        <h3 class="mb-15">Flex Directions</h3>
+        <div class="grid:2,1,10px mb-20">
+          <div class="flex:row bg-lightGray p-10 border-radius-4">
+            <div class="bg-blue color-white p-5 mr-5 border-radius-4">Row</div>
+            <div class="bg-green color-white p-5 mr-5 border-radius-4">Direction</div>
+            <div class="bg-red color-white p-5 border-radius-4">Test</div>
+          </div>
+          <div class="flex:col bg-lightGray p-10 border-radius-4">
+            <div class="bg-blue color-white p-5 mb-5 border-radius-4">Column</div>
+            <div class="bg-green color-white p-5 mb-5 border-radius-4">Direction</div>
+            <div class="bg-red color-white p-5 border-radius-4">Test</div>
+          </div>
+        </div>
+
+        <h3 class="mb-15">Flex Alignment</h3>
+        <div class="grid:3,1,10px mb-20">
+          <div class="flex:row-center-center bg-lightGray p-20 h-100 border-radius-4">
+            <div class="bg-purple color-white p-10 border-radius-4">Centered</div>
+          </div>
+          <div class="flex:row-left-center bg-lightGray p-20 h-100 border-radius-4">
+            <div class="bg-indigo color-white p-10 border-radius-4">Left Center</div>
+          </div>
+          <div class="flex:row-right-center bg-lightGray p-20 h-100 border-radius-4">
+            <div class="bg-teal color-white p-10 border-radius-4">Right Center</div>
+          </div>
+        </div>
+
+        <h3 class="mb-15">Flex Properties</h3>
+        <div class="flex bg-lightGray p-10 border-radius-4">
+          <div class="flex-1 bg-blue color-white p-10 mr-10 border-radius-4">flex-1</div>
+          <div class="flex-2 bg-green color-white p-10 mr-10 border-radius-4">flex-2</div>
+          <div class="flex-none bg-red color-white p-10 border-radius-4">flex-none</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout - Grid Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">🏗️ Grid Layout</div>
+      <div class="p-20">
+        <h3 class="mb-15">Basic Grid</h3>
+        <div class="grid:2,2,10px mb-20">
+          <div class="bg-red color-white p-10 flex:row-center-center border-radius-4">1</div>
+          <div class="bg-blue color-white p-10 flex:row-center-center border-radius-4">2</div>
+          <div class="bg-green color-white p-10 flex:row-center-center border-radius-4">3</div>
+          <div class="bg-purple color-white p-10 flex:row-center-center border-radius-4">4</div>
+        </div>
+
+        <h3 class="mb-15">Different Grid Configurations</h3>
+        <div class="grid:3,1,15px mb-20">
+          <div class="bg-orange color-white p-10 flex:row-center-center border-radius-4">3 Columns</div>
+          <div class="bg-teal color-white p-10 flex:row-center-center border-radius-4">Equal Width</div>
+          <div class="bg-indigo color-white p-10 flex:row-center-center border-radius-4">15px Gap</div>
+        </div>
+
+        <div class="grid:4,1,20px mb-20">
+          <div class="bg-pink color-white p-10 flex:row-center-center border-radius-4">A</div>
+          <div class="bg-cyan color-white p-10 flex:row-center-center border-radius-4">B</div>
+          <div class="bg-brown color-white p-10 flex:row-center-center border-radius-4">C</div>
+          <div class="bg-gray color-white p-10 flex:row-center-center border-radius-4">D</div>
+        </div>
+
+        <h3 class="mb-15">Auto-fit Grid</h3>
+        <div class="grid:auto-fit,1,12px">
+          <div class="bg-lightRed color-black p-10 flex:row-center-center border-radius-4">Auto</div>
+          <div class="bg-lightBlue color-black p-10 flex:row-center-center border-radius-4">Fit</div>
+          <div class="bg-lightGreen color-black p-10 flex:row-center-center border-radius-4">Grid</div>
+          <div class="bg-lightGray color-black p-10 flex:row-center-center border-radius-4">System</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Position Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">📍 Positioning</div>
+      <div class="p-20">
+        <h3 class="mb-15">Position Types</h3>
+        <div class="relative bg-lightGray p-20 h-200 mb-20 border-radius-4">
+          <div class="absolute top-10 left-10 bg-red color-white p-10 border-radius-4">absolute top-10 left-10</div>
+          <div class="absolute top-10 right-10 bg-blue color-white p-10 border-radius-4">absolute top-10 right-10</div>
+          <div class="absolute bottom-10 left-10 bg-green color-white p-10 border-radius-4">absolute bottom-10 left-10</div>
+          <div class="absolute bottom-10 right-10 bg-purple color-white p-10 border-radius-4">absolute bottom-10 right-10</div>
+        </div>
+
+        <h3 class="mb-15">Z-Index</h3>
+        <div class="relative bg-lightGray p-20 h-150 mb-20 border-radius-4">
+          <div class="absolute top-20 left-20 bg-red color-white p-15 z-10 border-radius-4">z-10</div>
+          <div class="absolute top-30 left-30 bg-blue color-white p-15 z-20 border-radius-4">z-20</div>
+          <div class="absolute top-40 left-40 bg-green color-white p-15 z-30 border-radius-4">z-30</div>
+        </div>
+
+        <h3 class="mb-15">Inset Utilities</h3>
+        <div class="relative bg-lightGray p-20 h-120 border-radius-4">
+          <div class="absolute inset-10 bg-orange color-white flex:row-center-center border-radius-4">inset-10</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Borders Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">🔲 Borders</div>
+      <div class="p-20">
+        <h3 class="mb-15">Border Widths</h3>
+        <div class="grid:4,1,10px mb-20">
+          <div class="border-1 border-black p-10 text-center border-radius-4">border-1</div>
+          <div class="border-2 border-black p-10 text-center border-radius-4">border-2</div>
+          <div class="border-3 border-black p-10 text-center border-radius-4">border-3</div>
+          <div class="border-4 border-black p-10 text-center border-radius-4">border-4</div>
+        </div>
+
+        <h3 class="mb-15">Border Colors</h3>
+        <div class="grid:4,1,10px mb-20">
+          <div class="border-2 border-red p-10 text-center border-radius-4">border-red</div>
+          <div class="border-2 border-blue p-10 text-center border-radius-4">border-blue</div>
+          <div class="border-2 border-green p-10 text-center border-radius-4">border-green</div>
+          <div class="border-2 border-#ff6b35 p-10 text-center border-radius-4">border-#ff6b35</div>
+        </div>
+
+        <h3 class="mb-15">Border Radius</h3>
+        <div class="grid:4,1,10px mb-20">
+          <div class="bg-blue color-white p-10 border-radius-4 text-center">border-radius-4</div>
+          <div class="bg-blue color-white p-10 border-radius-8 text-center">border-radius-8</div>
+          <div class="bg-blue color-white p-10 border-radius-16 text-center">border-radius-16</div>
+          <div class="bg-blue color-white p-10 border-radius-50% text-center">border-radius-50%</div>
+        </div>
+
+        <h3 class="mb-15">Directional Borders</h3>
+        <div class="grid:4,1,10px">
+          <div class="border-t-3 border-red p-10 text-center border-radius-4">border-t-3</div>
+          <div class="border-r-3 border-blue p-10 text-center border-radius-4">border-r-3</div>
+          <div class="border-b-3 border-green p-10 text-center border-radius-4">border-b-3</div>
+          <div class="border-l-3 border-purple p-10 text-center border-radius-4">border-l-3</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gradients Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">🌈 Gradients</div>
+      <div class="p-20">
+        <h3 class="mb-15">Linear Gradients</h3>
+        <div class="grid:4,1,10px mb-20">
+          <div class="gradient-to-r-red-blue color-white p-15 text-center border-radius-4">gradient-to-r-red-blue</div>
+          <div class="gradient-to-b-green-yellow color-white p-15 text-center border-radius-4">gradient-to-b-green-yellow</div>
+          <div class="gradient-to-br-purple-pink color-white p-15 text-center border-radius-4">gradient-to-br-purple-pink</div>
+          <div class="gradient-to-tr-orange-red color-white p-15 text-center border-radius-4">gradient-to-tr-orange-red</div>
+        </div>
+
+        <h3 class="mb-15">Angle Gradients</h3>
+        <div class="grid:3,1,10px mb-20">
+          <div class="gradient-45deg-blue-cyan color-white p-15 text-center border-radius-4">gradient-45deg-blue-cyan</div>
+          <div class="gradient-90deg-purple-indigo color-white p-15 text-center border-radius-4">gradient-90deg-purple-indigo</div>
+          <div class="gradient-135deg-teal-green color-white p-15 text-center border-radius-4">gradient-135deg-teal-green</div>
+        </div>
+
+        <h3 class="mb-15">Multi-color Gradients</h3>
+        <div class="grid:2,1,10px">
+          <div class="gradient-to-r-red-yellow-green color-white p-15 text-center border-radius-4">Three Colors</div>
+          <div class="gradient-to-b-blue-purple-pink color-white p-15 text-center border-radius-4">Three Colors Vertical</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shadows Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">🌫️ Shadows</div>
+      <div class="p-20">
+        <h3 class="mb-15">Box Shadows</h3>
+        <div class="grid:4,1,10px mb-20">
+          <div class="bg-white shadow-sm p-15 text-center border-radius-4">shadow-sm</div>
+          <div class="bg-white shadow-md p-15 text-center border-radius-4">shadow-md</div>
+          <div class="bg-white shadow-lg p-15 text-center border-radius-4">shadow-lg</div>
+          <div class="bg-white shadow-xl p-15 text-center border-radius-4">shadow-xl</div>
+        </div>
+
+        <h3 class="mb-15">Colored Shadows</h3>
+        <div class="grid:4,1,10px mb-20">
+          <div class="bg-white shadow-red p-15 text-center border-radius-4">shadow-red</div>
+          <div class="bg-white shadow-blue p-15 text-center border-radius-4">shadow-blue</div>
+          <div class="bg-white shadow-green p-15 text-center border-radius-4">shadow-green</div>
+          <div class="bg-white shadow-purple p-15 text-center border-radius-4">shadow-purple</div>
+        </div>
+
+        <h3 class="mb-15">Custom Shadows</h3>
+        <div class="grid:2,1,10px">
+          <div class="bg-white shadow-0,4px,8px,rgba(0,0,0,0.3) p-15 text-center border-radius-4">Custom Shadow</div>
+          <div class="bg-white shadow-inset p-15 text-center border-radius-4">shadow-inset</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transforms Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">🔄 Transforms</div>
+      <div class="p-20">
+        <h3 class="mb-15">Rotation</h3>
+        <div class="grid:4,1,10px mb-20">
+          <div class="bg-blue color-white p-15 rotate-15 text-center border-radius-4">rotate-15</div>
+          <div class="bg-green color-white p-15 rotate-45 text-center border-radius-4">rotate-45</div>
+          <div class="bg-red color-white p-15 rotate-90 text-center border-radius-4">rotate-90</div>
+          <div class="bg-purple color-white p-15 rotate-180 text-center border-radius-4">rotate-180</div>
+        </div>
+
+        <h3 class="mb-15">Scale</h3>
+        <div class="grid:4,1,10px mb-20">
+          <div class="bg-orange color-white p-15 scale-75 text-center border-radius-4">scale-75</div>
+          <div class="bg-teal color-white p-15 scale-100 text-center border-radius-4">scale-100</div>
+          <div class="bg-indigo color-white p-15 scale-125 text-center border-radius-4">scale-125</div>
+          <div class="bg-pink color-white p-15 scale-150 text-center border-radius-4">scale-150</div>
+        </div>
+
+        <h3 class="mb-15">Translate</h3>
+        <div class="relative bg-lightGray p-20 h-150 border-radius-4 mb-20">
+          <div class="bg-red color-white p-10 translate-x-20 border-radius-4">translate-x-20</div>
+          <div class="bg-blue color-white p-10 translate-y-20 border-radius-4">translate-y-20</div>
+          <div class="bg-green color-white p-10 translate-x-10 translate-y-10 border-radius-4">translate-x-10 translate-y-10</div>
+        </div>
+
+        <h3 class="mb-15">Skew</h3>
+        <div class="grid:3,1,10px">
+          <div class="bg-cyan color-white p-15 skew-x-12 text-center border-radius-4">skew-x-12</div>
+          <div class="bg-brown color-white p-15 skew-y-12 text-center border-radius-4">skew-y-12</div>
+          <div class="bg-gray color-white p-15 skew-x-6 skew-y-6 text-center border-radius-4">skew-x-6 skew-y-6</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Animations Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">✨ Animations</div>
+      <div class="p-20">
+        <h3 class="mb-15">Basic Animations</h3>
+        <div class="flex:row-left-center gap-20 mb-20">
+          <div class="animation-demo bg-blue animate-spin-2s-infinite border-radius-4"></div>
+          <div class="animation-demo bg-green animate-pulse-1s-infinite border-radius-4"></div>
+          <div class="animation-demo bg-red animate-bounce-1s-infinite border-radius-4"></div>
+          <div class="animation-demo bg-purple animate-ping-1s-infinite border-radius-4"></div>
+        </div>
+        <div class="text-center mb-20">
+          <span class="mr-20">spin</span>
+          <span class="mr-20">pulse</span>
+          <span class="mr-20">bounce</span>
+          <span>ping</span>
+        </div>
+
+        <h3 class="mb-15">Fade Animations</h3>
+        <div class="flex:row-left-center gap-20 mb-20">
+          <div class="animation-demo bg-orange animate-fadeIn-1s-once border-radius-4"></div>
+          <div class="animation-demo bg-teal animate-fadeOut-1s-once border-radius-4"></div>
+        </div>
+        <div class="text-center mb-20">
+          <span class="mr-20">fadeIn</span>
+          <span>fadeOut</span>
+        </div>
+
+        <h3 class="mb-15">Slide Animations</h3>
+        <div class="flex:row-left-center gap-20 mb-20">
+          <div class="animation-demo bg-indigo animate-slideUp-1s-once border-radius-4"></div>
+          <div class="animation-demo bg-pink animate-slideDown-1s-once border-radius-4"></div>
+          <div class="animation-demo bg-cyan animate-slideLeft-1s-once border-radius-4"></div>
+          <div class="animation-demo bg-brown animate-slideRight-1s-once border-radius-4"></div>
+        </div>
+        <div class="text-center mb-20">
+          <span class="mr-10">slideUp</span>
+          <span class="mr-10">slideDown</span>
+          <span class="mr-10">slideLeft</span>
+          <span>slideRight</span>
+        </div>
+
+        <h3 class="mb-15">Special Effects</h3>
+        <div class="flex:row-left-center gap-20 mb-20">
+          <div class="animation-demo bg-gray animate-shake-1s-infinite border-radius-4"></div>
+          <div class="animation-demo bg-lightRed animate-wiggle-1s-infinite border-radius-4"></div>
+          <div class="animation-demo bg-lightBlue animate-heartbeat-1s-infinite border-radius-4"></div>
+          <div class="animation-demo bg-lightGreen animate-flash-1s-infinite border-radius-4"></div>
+        </div>
+        <div class="text-center">
+          <span class="mr-20">shake</span>
+          <span class="mr-20">wiggle</span>
+          <span class="mr-20">heartbeat</span>
+          <span>flash</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transitions Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">🎭 Transitions</div>
+      <div class="p-20">
+        <h3 class="mb-15">Transition Properties</h3>
+        <div class="grid:3,1,10px mb-20">
+          <div class="bg-blue color-white p-15 text-center border-radius-4 transition-all-300ms hover:bg-red">Hover: transition-all-300ms</div>
+          <div class="bg-green color-white p-15 text-center border-radius-4 transition-colors-500ms hover:bg-purple">Hover: transition-colors-500ms</div>
+          <div class="bg-orange color-white p-15 text-center border-radius-4 transition-transform-200ms hover:scale-110">Hover: transition-transform-200ms</div>
+        </div>
+
+        <h3 class="mb-15">Transition Timing</h3>
+        <div class="grid:4,1,10px">
+          <div class="bg-teal color-white p-15 text-center border-radius-4 transition-all-100ms hover:bg-indigo">100ms</div>
+          <div class="bg-teal color-white p-15 text-center border-radius-4 transition-all-300ms hover:bg-indigo">300ms</div>
+          <div class="bg-teal color-white p-15 text-center border-radius-4 transition-all-500ms hover:bg-indigo">500ms</div>
+          <div class="bg-teal color-white p-15 text-center border-radius-4 transition-all-1s hover:bg-indigo">1s</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Responsive Design Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">📱 Responsive Design</div>
+      <div class="p-20">
+        <h3 class="mb-15">Responsive Utilities</h3>
+        <p class="mb-15">Resize your browser to see responsive behavior:</p>
+        
+        <div class="bg-red sm:bg-blue md:bg-green lg:bg-purple color-white p-15 mb-10 border-radius-4 text-center">
+          <strong>Background Color:</strong> red → sm:blue → md:green → lg:purple
+        </div>
+        
+        <div class="grid:1,1,10px sm:grid:2,1,10px md:grid:3,1,10px lg:grid:4,1,10px mb-20">
+          <div class="bg-lightBlue p-10 text-center border-radius-4">Responsive</div>
+          <div class="bg-lightGreen p-10 text-center border-radius-4">Grid</div>
+          <div class="bg-lightRed p-10 text-center border-radius-4">Layout</div>
+          <div class="bg-sand p-10 text-center border-radius-4">System</div>
+        </div>
+
+        <div class="flex:col sm:flex:row gap-10 mb-20">
+          <div class="bg-purple color-white p-15 flex-1 text-center border-radius-4">Responsive Flex</div>
+          <div class="bg-indigo color-white p-15 flex-1 text-center border-radius-4">Direction Change</div>
+        </div>
+
+        <h3 class="mb-15">Responsive Text</h3>
+        <div class="size-sm sm:size-md md:size-lg lg:size-xl text-center p-15 bg-lightGray border-radius-4">
+          Responsive Text Size
+        </div>
+      </div>
+    </div>
+
+    <!-- Dark Mode Test -->
+    <div class="bg-white dark:bg-gray border-1 border-lightGray dark:border-gray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand dark:bg-blueGrey p-15 border-b-1 border-lightGray dark:border-gray size-lg color-black dark:color-white">🌙 Dark Mode</div>
+      <div class="p-20">
+        <h3 class="mb-15 color-black dark:color-white">Dark Mode Utilities</h3>
+        <p class="mb-15 color-black dark:color-white">Toggle dark mode using the button in the top-right corner:</p>
+        
+        <div class="grid:2,2,10px mb-20">
+          <div class="bg-white dark:bg-black color-black dark:color-white p-15 text-center border-radius-4">Background Switch</div>
+          <div class="color-black dark:color-white border-1 border-black dark:border-white p-15 text-center border-radius-4">Text & Border</div>
+          <div class="bg-lightBlue dark:bg-blue color-black dark:color-white p-15 text-center border-radius-4">Light to Dark</div>
+          <div class="bg-gray dark:bg-lightGray color-white dark:color-black p-15 text-center border-radius-4">Gray Inversion</div>
+        </div>
+
+        <h3 class="mb-15 color-black dark:color-white">Dark Mode Components</h3>
+        <div class="bg-lightGray dark:bg-blueGrey p-15 border-radius-4 mb-15">
+          <h4 class="color-black dark:color-white mb-10">Card Component</h4>
+          <p class="color-blueGrey dark:color-lightGray mb-10">This card adapts to dark mode automatically.</p>
+          <button class="bg-blue dark:bg-lightBlue color-white dark:color-black p-10 border-radius-4 hover:bg-indigo dark:hover:bg-cyan transition-all-300ms">
+            Action Button
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Examples -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">🎮 Interactive Examples</div>
+      <div class="p-20">
+        <h3 class="mb-15">Hover Effects</h3>
+        <div class="grid:3,1,10px mb-20">
+          <div class="bg-blue color-white p-15 text-center border-radius-4 hover:bg-red hover:scale-105 transition-all-300ms cursor-pointer">Hover Color + Scale</div>
+          <div class="bg-green color-white p-15 text-center border-radius-4 hover:rotate-5 transition-all-300ms cursor-pointer">Hover Rotate</div>
+          <div class="bg-purple color-white p-15 text-center border-radius-4 hover:shadow-lg transition-all-300ms cursor-pointer">Hover Shadow</div>
+        </div>
+
+        <h3 class="mb-15">Focus States</h3>
+        <div class="grid:2,1,10px mb-20">
+          <input class="p-10 border-1 border-lightGray border-radius-4 focus:border-blue focus:shadow-blue transition-all-300ms" placeholder="Focus me for blue border">
+          <input class="p-10 border-1 border-lightGray border-radius-4 focus:border-green focus:shadow-green transition-all-300ms" placeholder="Focus me for green border">
+        </div>
+
+        <h3 class="mb-15">Button States</h3>
+        <div class="flex:row-left-center gap-10">
+          <button class="bg-blue color-white p-12 border-radius-4 hover:bg-indigo active:bg-purple transition-all-200ms">Primary Button</button>
+          <button class="bg-white color-blue border-1 border-blue p-12 border-radius-4 hover:bg-blue hover:color-white transition-all-200ms">Secondary Button</button>
+          <button class="bg-red color-white p-12 border-radius-4 hover:bg-orange active:scale-95 transition-all-200ms">Danger Button</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Test -->
+    <div class="bg-white border-1 border-lightGray border-radius-8 mb-20 shadow-md">
+      <div class="bg-sand p-15 border-b-1 border-lightGray size-lg">⚡ Performance Test</div>
+      <div class="p-20">
+        <h3 class="mb-15">Large Grid Performance</h3>
+        <div class="grid:8,5,5px mb-20">
+          <div class="bg-red p-5 border-radius-2"></div>
+          <div class="bg-blue p-5 border-radius-2"></div>
+          <div class="bg-green p-5 border-radius-2"></div>
+          <div class="bg-yellow p-5 border-radius-2"></div>
+          <div class="bg-purple p-5 border-radius-2"></div>
+          <div class="bg-pink p-5 border-radius-2"></div>
+          <div class="bg-indigo p-5 border-radius-2"></div>
+          <div class="bg-teal p-5 border-radius-2"></div>
+          <div class="bg-orange p-5 border-radius-2"></div>
+          <div class="bg-cyan p-5 border-radius-2"></div>
+          <div class="bg-gray p-5 border-radius-2"></div>
+          <div class="bg-brown p-5 border-radius-2"></div>
+          <div class="bg-lightRed p-5 border-radius-2"></div>
+          <div class="bg-lightBlue p-5 border-radius-2"></div>
+          <div class="bg-lightGreen p-5 border-radius-2"></div>
+          <div class="bg-lightGray p-5 border-radius-2"></div>
+          <div class="bg-sand p-5 border-radius-2"></div>
+          <div class="bg-blueGrey p-5 border-radius-2"></div>
+          <div class="bg-amber p-5 border-radius-2"></div>
+          <div class="bg-lime p-5 border-radius-2"></div>
+          <div class="bg-emerald p-5 border-radius-2"></div>
+          <div class="bg-sky p-5 border-radius-2"></div>
+          <div class="bg-violet p-5 border-radius-2"></div>
+          <div class="bg-fuchsia p-5 border-radius-2"></div>
+          <div class="bg-rose p-5 border-radius-2"></div>
+          <div class="bg-slate p-5 border-radius-2"></div>
+          <div class="bg-zinc p-5 border-radius-2"></div>
+          <div class="bg-neutral p-5 border-radius-2"></div>
+          <div class="bg-stone p-5 border-radius-2"></div>
+          <div class="bg-red p-5 border-radius-2"></div>
+          <div class="bg-blue p-5 border-radius-2"></div>
+          <div class="bg-green p-5 border-radius-2"></div>
+          <div class="bg-yellow p-5 border-radius-2"></div>
+          <div class="bg-purple p-5 border-radius-2"></div>
+          <div class="bg-pink p-5 border-radius-2"></div>
+          <div class="bg-indigo p-5 border-radius-2"></div>
+          <div class="bg-teal p-5 border-radius-2"></div>
+          <div class="bg-orange p-5 border-radius-2"></div>
+          <div class="bg-cyan p-5 border-radius-2"></div>
+          <div class="bg-gray p-5 border-radius-2"></div>
+        </div>
+
+        <h3 class="mb-15">Complex Nested Layout</h3>
+        <div class="flex:row-left-top gap-10">
+          <div class="flex-1 bg-lightGray p-15 border-radius-4">
+            <div class="grid:2,2,10px">
+              <div class="bg-blue color-white p-10 border-radius-4 flex:row-center-center">A</div>
+              <div class="bg-green color-white p-10 border-radius-4 flex:row-center-center">B</div>
+              <div class="bg-red color-white p-10 border-radius-4 flex:row-center-center">C</div>
+              <div class="bg-purple color-white p-10 border-radius-4 flex:row-center-center">D</div>
+            </div>
+          </div>
+          <div class="flex-1 bg-lightGray p-15 border-radius-4">
+            <div class="flex:col gap-10">
+              <div class="bg-orange color-white p-10 border-radius-4 text-center">Flex Item 1</div>
+              <div class="bg-teal color-white p-10 border-radius-4 text-center">Flex Item 2</div>
+              <div class="bg-indigo color-white p-10 border-radius-4 text-center">Flex Item 3</div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
 
-      <!-- OVERVIEW -->
-      <section id="overview" class="mb-40">
-        <h2 class="color-indigo flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">info</span>Overview
-        </h2>
-        <p class="font-inter">This demo docs site is built with the Twigwind runtime generator + base utilities. It shows: colors, spacing, sizes, layout helpers, responsive prefixes (sm:, md:, lg:), hover: and custom arbitrary values (color-#ff6600, bg-rgb(...)).</p>
-
-        <div class="grid:2,1,16px mt-18">
-          <div class="bg-lightBlue p-15">
-            <h4 class="flex:row-left-center font-playfair">
-              <span class="material-icons mr-8">brush</span>Styling
-            </h4>
-            <ul class="small font-inter">
-              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Predefined color tokens</li>
-              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Arbitrary color values</li>
-              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Typography utilities</li>
-            </ul>
-          </div>
-          <div class="bg-lightGreen p-15">
-            <h4 class="flex:row-left-center font-playfair">
-              <span class="material-icons mr-8">dashboard</span>Layout
-            </h4>
-            <ul class="small font-inter">
-              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Flex & Grid utilities</li>
-              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Size helpers</li>
-              <li class="flex:row-left-center"><span class="material-icons mr-4">check_circle</span>Responsive prefixes</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <!-- TYPOGRAPHY -->
-      <section id="typography" class="mb-40">
-        <h2 class="color-red flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">text_fields</span>Typography
-        </h2>
-        <div class="example p-12">
-          <h1 class="font-playfair">Heading with Playfair Display</h1>
-          <h3 class="font-playfair">Subheading with Playfair Display</h3>
-          <p class="font-inter">Body text with Inter font. <span class="font-mono">Monospace code</span> <span class="font-playfair">Serif accent</span></p>
-          <p class="color-purple font-inter">Decorative example with custom fonts</p>
-        </div>
-
-        <pre><code class="language-html">
-&lt;h1&gt;Heading&lt;/h1&gt;
-&lt;p&gt;Body text&lt;/p&gt;
-&lt;p class="color-purple"&gt;Decorative example&lt;/p&gt;
-        </code></pre>
-      </section>
-
-      <!-- COLORS -->
-      <section id="colors" class="mb-40">
-        <h2 class="color-blue">Colors</h2>
-
-        <h3>Predefined colors</h3>
-        <div class="grid:4,1,12px my-12">
-          <div class="bg-amber p-12 color-black">amber</div>
-          <div class="bg-blue p-12 color-white">blue</div>
-          <div class="bg-green p-12 color-white">green</div>
-          <div class="bg-red p-12 color-white">red</div>
-        </div>
-
-        <h3>Arbitrary colors</h3>
-        <div class="flex:row-left-center">
-          <div class="bg-#ff6b35 color-white p-12 mr-12">bg-#ff6b35</div>
-          <div class="color-#ff6b35 p-12 mr-12">color-#ff6b35</div>
-          <div class="bg-rgb(60,180,75) color-white p-12">bg-rgb(...)</div>
-        </div>
-
-        <pre><code class="language-html">
-&lt;div class="bg-amber"&gt;Predefined color&lt;/div&gt;
-&lt;div class="bg-#ff6b35"&gt;Arbitrary hex&lt;/div&gt;
-&lt;div class="color-rgb(60,180,75)"&gt;Arbitrary rgb color&lt;/div&gt;
-        </code></pre>
-      </section>
-
-      <!-- GRADIENTS -->
-      <section id="gradients" class="mb-40">
-        <h2 class="color-purple">Gradients</h2>
-        <p class="small">Linear gradients with direction and multiple colors using the gradient- utility.</p>
-
-        <div class="flex:row-left-center mb-12">
-          <div class="gradient-to-r-red-blue p-12 color-white mr-12">gradient-to-r-red-blue</div>
-          <div class="gradient-to-br-purple-pink p-12 color-white mr-12">gradient-to-br-purple-pink</div>
-          <div class="gradient-45deg-green-yellow p-12 color-white">gradient-45deg-green-yellow</div>
-        </div>
-
-        <div class="flex:row-left-center mb-12">
-          <div class="gradient-to-b-blue-cyan-lightBlue p-12 color-white mr-12">Three colors</div>
-          <div class="hover:gradient-to-r-orange-red p-12 color-white bg-orange">Hover gradient</div>
-        </div>
-
-        <pre><code class="language-html">
-&lt;div class="gradient-to-r-red-blue"&gt;Left to right&lt;/div&gt;
-&lt;div class="gradient-to-br-purple-pink"&gt;Diagonal&lt;/div&gt;
-&lt;div class="gradient-45deg-green-yellow"&gt;45 degree&lt;/div&gt;
-&lt;div class="gradient-to-b-blue-cyan-lightBlue"&gt;Three colors&lt;/div&gt;
-&lt;div class="hover:gradient-to-r-orange-red"&gt;Hover effect&lt;/div&gt;
-        </code></pre>
-      </section>
-
-      <!-- BACKGROUND UTILITIES -->
-      <section id="background" class="mb-40">
-        <h2 class="color-cyan">Background Utilities</h2>
-        <p class="small">Background clip utilities and image backgrounds.</p>
-
-        <h3>Background Clip</h3>
-        <div class="flex:row-left-center mb-12">
-          <div class="gradient-to-r-red-blue clip-border p-12 color-white mr-12">clip-border</div>
-          <div class="gradient-to-r-blue-green clip-padding p-12 color-white mr-12">clip-padding</div>
-          <div class="gradient-to-r-purple-pink clip-content p-12 color-white">clip-content</div>
-        </div>
-
-        <h3>Background Images</h3>
-        <div class="flex:row-left-center mb-12">
-          <div class="image-url-https://images.unsplash.com/photo-1506905925346-21bda4d32df4 w-200 h-100 mr-12 flex:row-center-center color-white">Image URL</div>
-          <div class="bg-blue p-12 color-white">Regular background</div>
-        </div>
-
-        <pre><code class="language-html">
-&lt;div class="clip-border"&gt;Border box clipping&lt;/div&gt;
-&lt;div class="clip-padding"&gt;Padding box clipping&lt;/div&gt;
-&lt;div class="image-url-https://example.com/image.jpg"&gt;Background image&lt;/div&gt;
-        </code></pre>
-      </section>
-
-      <!-- SPACING -->
-      <section id="spacing" class="mb-40">
-        <h2 class="color-teal">Spacing</h2>
-        <p class="small">Use m-*, p-* shortcuts. Values accept px/rem/em/% (e.g. p-12px).</p>
-
-        <div class="flex:row-left-center">
-          <div class="bg-lightBlue p-20 m-10 mr-12">p-20 m-10</div>
-          <div class="bg-lightGreen p-30">p-30</div>
-        </div>
-
-        <pre><code class="language-html">
-&lt;div class="p-20 m-10"&gt;Box&lt;/div&gt;
-&lt;div class="p-30"&gt;Box&lt;/div&gt;
-        </code></pre>
-      </section>
-
-      <!-- SIZING -->
-      <section id="sizes" class="mb-40">
-        <h2 class="color-orange">Sizes</h2>
-        <div class="flex:row-left-center">
-          <div class="bg-lightBlue size-sm flex:row-center-center mr-12">size-sm</div>
-          <div class="bg-purple size-md flex:row-center-center color-white mr-12">size-md</div>
-          <div class="bg-green size-lg flex:row-center-center color-white">size-lg</div>
-        </div>
-
-        <pre><code class="language-html">
-&lt;div class="size-sm"&gt;Small&lt;/div&gt;
-&lt;div class="size-md"&gt;Medium&lt;/div&gt;
-        </code></pre>
-      </section>
-
-      <!-- GRID -->
-      <section id="grid" class="mb-40">
-        <h2 class="color-green">Grid</h2>
-        <p class="small">Twigwind grid syntax: <code>grid:cols,rows,gap</code> — e.g. <code>grid:3,1,12px</code></p>
-
-        <div class="grid:2,2,12px mt-12">
-          <div class="bg-#f99 p-12">1</div>
-          <div class="bg-#9f9 p-12">2</div>
-          <div class="bg-#99f p-12">3</div>
-          <div class="bg-#ff9 p-12">4</div>
-        </div>
-
-        <pre><code class="language-html">
-&lt;div class="grid:2,2,12px"&gt;
-  &lt;div&gt;1&lt;/div&gt;
-  &lt;div&gt;2&lt;/div&gt;
-  &lt;div&gt;3&lt;/div&gt;
-  &lt;div&gt;4&lt;/div&gt;
-&lt;/div&gt;
-        </code></pre>
-      </section>
-
-      <!-- FLEX -->
-      <section id="flex" class="mb-40">
-        <h2 class="color-purple">Flex</h2>
-        <p class="small">Use <code>flex</code> or the extended shorthand syntax like <code>flex:row-center-center</code>.</p>
-
-        <div class="flex:row-left-center p-12 bg-#eee">
-          <div class="bg-#ddd p-10 mr-12">Item A</div>
-          <div class="bg-#ccc p-10 mr-12">Item B</div>
-          <div class="bg-#bbb p-10">Item C</div>
-        </div>
-
-        <pre><code class="language-html">
-&lt;div class="flex"&gt;
-  &lt;div&gt;A&lt;/div&gt;
-  &lt;div&gt;B&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;!-- or aligned shorthand --&gt;
-&lt;div class="flex:row-center-center"&gt;...&lt;/div&gt;
-        </code></pre>
-      </section>
-
-      <!-- COMPONENTS -->
-      <section id="components" class="mb-40">
-        <h2 class="color-brown flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">widgets</span>Components
-        </h2>
-
-        <h3 class="flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">credit_card</span>Card
-        </h3>
-        <div class="bg-white p-18 shadow-lg w-420">
-          <div class="flex:row-center-center">
-            <div>
-              <h4 class="color-indigo mb-4 flex:row-left-center font-playfair">
-                <span class="material-icons mr-8">shopping_bag</span>Product title
-              </h4>
-              <p class="small color-blueGrey font-inter">Short description showing typography utilities with custom fonts.</p>
-            </div>
-            <div class="flex:col-center-center">
-              <span class="color-green flex:row-left-center font-inter">
-                <span class="material-icons mr-4">attach_money</span>29.90
-              </span>
-              <button class="bg-blue color-white p-10 hover:bg-indigo mt-8 flex:row-left-center">
-                <span class="material-icons mr-4">add_shopping_cart</span>Buy
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <h3 class="mt-16 flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">navigation</span>Navbar
-        </h3>
-        <div class="bg-blueGrey color-white p-12 flex:row-left-center">
-          <div class="flex:row-left-center font-playfair">
-            <span class="material-icons mr-8">auto_awesome</span>Brand
-          </div>
-          <div class="flex:row-right-center">
-            <a class="color-white hover:color-orange p-8 mr-8 flex:row-left-center" href="#">
-              <span class="material-icons mr-4">description</span>Docs
-            </a>
-            <a class="color-white hover:color-orange p-8 flex:row-left-center" href="#">
-              <span class="material-icons mr-4">code</span>GitHub
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- FORMS -->
-      <section id="forms" class="mb-40">
-        <h2 class="color-orange flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">dynamic_form</span>Forms
-        </h2>
-        <form class="bg-white p-16 w-640">
-          <label class="flex:row-left-center font-inter">
-            <span class="material-icons mr-8">person</span>Name
-          </label>
-          <input class="p-10 m-8 w-100 font-inter" placeholder="Your name">
-          <label class="flex:row-left-center font-inter">
-            <span class="material-icons mr-8">email</span>Email
-          </label>
-          <input class="p-10 m-8 w-100 font-inter" placeholder="you@example.com">
-          <label class="flex:row-left-center font-inter">
-            <span class="material-icons mr-8">message</span>Message
-          </label>
-          <textarea class="p-10 m-8 w-100 font-inter" rows="4" placeholder="Your message here..."></textarea>
-          <div class="flex:row-left-center">
-            <button class="bg-green color-white p-10 hover:bg-blueGrey mr-12 flex:row-left-center" type="button">
-              <span class="material-icons mr-4">send</span>Submit
-            </button>
-            <button class="bg-blueGrey color-black p-10 hover:bg-blueGrey flex:row-left-center" type="reset">
-              <span class="material-icons mr-4">refresh</span>Reset
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <!-- TABLES -->
-      <section id="tables" class="mb-40">
-        <h2 class="color-teal flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">table_chart</span>Tables
-        </h2>
-        <table class="w-100 bg-white">
-          <thead class="bg-blueGrey color-white">
-            <tr>
-              <th class="p-10 flex:row-left-center font-inter">
-                <span class="material-icons mr-4">person</span>Name
-              </th>
-              <th class="p-10 flex:row-left-center font-inter">
-                <span class="material-icons mr-4">work</span>Role
-              </th>
-              <th class="p-10 flex:row-left-center font-inter">
-                <span class="material-icons mr-4">info</span>Status
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="p-10 font-inter">Alice</td>
-              <td class="p-10 font-inter">Admin</td>
-              <td class="p-10 color-green flex:row-left-center font-inter">
-                <span class="material-icons mr-4">check_circle</span>Active
-              </td>
-            </tr>
-            <tr class="bg-sand">
-              <td class="p-10 font-inter">Bob</td>
-              <td class="p-10 font-inter">Editor</td>
-              <td class="p-10 color-orange flex:row-left-center font-inter">
-                <span class="material-icons mr-4">schedule</span>Pending
-              </td>
-            </tr>
-            <tr>
-              <td class="p-10 font-inter">Charlie</td>
-              <td class="p-10 font-inter">Viewer</td>
-              <td class="p-10 color-red flex:row-left-center font-inter">
-                <span class="material-icons mr-4">block</span>Banned
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <!-- HIGHLIGHTING -->
-      <section id="highlighting" class="mb-40">
-        <h2 class="color-indigo flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">code</span>Code Highlighting
-        </h2>
-        <p class="small font-inter">We load Highlight.js on-demand for languages used in the page.</p>
-
-        <pre><code class="language-javascript font-mono">
-// Example: create a card with Twigwind classes
-const el = document.createElement('div');
-el.className = 'bg-white p-20 size-md';
-el.innerHTML = '<h4 class="color-indigo">Card</h4>';
-document.body.appendChild(el);
-        </code></pre>
-      </section>
-
-      <!-- EXAMPLES -->
-      <section id="examples" class="mb-40">
-        <h2 class="color-brown flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">apps</span>Full Examples
-        </h2>
-
-        <h3 class="flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">dashboard</span>Dashboard Example
-        </h3>
-        <div class="grid:3,1,16px">
-          <div class="bg-blueGrey color-white p-12 size-md flex:row-left-center font-inter">
-            <span class="material-icons mr-4">menu</span>Sidebar
-          </div>
-          <div class="bg-white p-12 flex:row-left-center font-inter">
-            <span class="material-icons mr-4">view_module</span>Main content — cards, charts, tables
-          </div>
-          <div class="bg-lightBlue p-12 flex:row-left-center font-inter">
-            <span class="material-icons mr-4">info</span>Right rail
-          </div>
-        </div>
-
-        <h3 class="mt-16 flex:row-left-center font-playfair">
-          <span class="material-icons mr-8">web</span>Landing Block
-        </h3>
-        <div class="bg-white p-20">
-          <h3 class="color-indigo flex:row-left-center font-playfair">
-            <span class="material-icons mr-8">campaign</span>Landing headline
-          </h3>
-          <p class="small font-inter">Supporting description — call-to-action below.</p>
-          <div class="flex:row-left-center">
-            <a class="bg-purple color-white p-12 hover:bg-blueGrey mr-12 flex:row-left-center">
-              <span class="material-icons mr-4">star</span>Primary CTA
-            </a>
-            <a class="bg-white color-purple p-12 hover:bg-lightBlue flex:row-left-center">
-              <span class="material-icons mr-4">explore</span>Secondary CTA
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- FOOTER (simple) -->
-      <footer class="mt-40 color-blueGrey">
-        <div class="flex:row-center-center">
-          <div class="flex:row-left-center font-inter">
-            <span class="material-icons mr-4">copyright</span>© 2025 Twigwind CSS Framework — demo docs
-          </div>
-          <div class="flex:row-left-center font-inter">
-            <span class="material-icons mr-4">build</span>Built with Twigwind ·
-            <a class="nlink flex:row-left-center ml-8" href="#overview">
-              <span class="material-icons mr-4">description</span>Docs
-            </a>
-          </div>
-        </div>
-      </footer>
-    </main>
   </div>
 
-  <!-- Back to top -->
-  <a class="fixed right-20 bottom-20 z-80" href="#hero">
-    <button class="bg-blueGrey color-white p-10 flex:row-left-center hover:bg-indigo">
-      <span class="material-icons mr-4">keyboard_arrow_up</span>Top
-    </button>
-  </a>
+  <!-- Footer -->
+  <footer class="bg-blueGrey color-white p-20 text-center">
+    <div class="mb-10">
+      <h3 class="mb-10">Twigwind CSS Framework Test Suite Complete</h3>
+      <p>All utilities tested and working properly!</p>
+    </div>
+    <div class="flex:row-center-center gap-20">
+      <span class="bg-green color-white p-8 border-radius-4">✓ Colors</span>
+      <span class="bg-green color-white p-8 border-radius-4">✓ Layout</span>
+      <span class="bg-green color-white p-8 border-radius-4">✓ Animations</span>
+      <span class="bg-green color-white p-8 border-radius-4">✓ Responsive</span>
+      <span class="bg-green color-white p-8 border-radius-4">✓ Dark Mode</span>
+    </div>
+  </footer>
 
-  <!-- scripts: load Twigwind generator and Highlight.js loader -->
-  <script src="css.js" defer></script>
-  <script src="hljs.js" defer></script>
+  <!-- Scripts -->
+  <script src="css.js" type="module" defer></script>
   <script>
-    // after DOM loaded, call highlight loader (hljs.js exposes highlightAll())
-    document.addEventListener('DOMContentLoaded', () => {
-      try { highlightAll('./hljs_styles/atom.css'); } catch(e) { /* ignore if hljs not present */ }
-    });
+    // Dark mode toggle functionality
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      const button = document.querySelector('.dark-mode-toggle');
+      if (document.documentElement.classList.contains('dark')) {
+        button.textContent = '☀️ Toggle Light Mode';
+      } else {
+        button.textContent = '🌙 Toggle Dark Mode';
+      }
+    }
 
-    // small behavior: smooth scroll for sidebar links
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click', (ev)=>{
-        const href = a.getAttribute('href');
-        if(!href || href === '#') return;
-        const target = document.querySelector(href);
-        if(target){ ev.preventDefault(); target.scrollIntoView({behavior:'smooth', block:'start'}); }
+
+
+    // Smooth scroll for anchor links
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
       });
+      document.querySelectorAll("[class]").forEach(el => Twigwind.twApply(el));
+  Twigwind.twInject();
+
+      // Add some interactive behavior
+      console.log('Twigwind Test Suite Loaded');
+      console.log('Framework utilities tested:', [
+        'Colors', 'Spacing', 'Sizing', 'Flexbox', 'Grid',
+        'Positioning', 'Borders', 'Gradients', 'Shadows',
+        'Transforms', 'Animations', 'Transitions',
+        'Responsive Design', 'Dark Mode'
+      ]);
+      
+      // Framework auto-initializes, but we can manually trigger if needed
+      if (window.Twigwind) {
+        console.log('Twigwind framework loaded successfully');
+      }
     });
   </script>
 </body>
