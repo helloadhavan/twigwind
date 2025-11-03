@@ -14,7 +14,7 @@ A utility-first CSS framework that's tiny, JS-powered, and designed for rapid pr
 - **Background utilities** - Image backgrounds with automatic sizing and positioning
 - **Responsive and hover-friendly classes** - sm:, md:, lg: prefixes and hover: states
 - **Build system** - Optional build-time CSS generation with file watching
-- **ES6 Module support** - Modern JavaScript module system
+- **Universal module support** - Works with both CommonJS and browser globals
 - **Runtime CSS generation** - Extreme flexibility with dynamic styling
 
 ---
@@ -105,7 +105,7 @@ Dynamic gradient generation:
   </section>
 
   <!-- Twigwind JS -->
-  <script src="src/css.js" type="module"></script>
+  <script src="src/css.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll("[class]").forEach(el => Twigwind.twApply(el));
@@ -204,13 +204,13 @@ The build system will:
 npm install twigwind
 ```
 
-### CDN (Coming Soon)
+### CDN
 ```html
 <!-- CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/twigwind/dist/css.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/helloadhavan/twigwind/src/css.css">
 
 <!-- JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/twigwind/dist/css.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/helloadhavan/twigwind/src/css.js"></script>
 ```
 
 ### Manual Download
@@ -224,16 +224,16 @@ Download the latest release from GitHub and include the files in your project:
 
 | Feature / Framework            | W3.CSS | Tailwind | Bootstrap | Twigwind |
 |--------------------------------|--------|----------|-----------|----------|
-| **Ease of Learning**           | ✔️      | ❌       | ⭐        | ✔️       |
-| **Utility-First Approach**     | ❌      | ⭐       | ❌        | ⭐       |
-| **Customization / Flexibility**| ✔️      | ⭐       | ✔️        | ⭐       |
-| **Responsive Design**          | ✔️      | ⭐       | ⭐        | ⭐       |
-| **Animation System**           | ❌      | ✔️       | ✔️        | ⭐       |
-| **Gradient Utilities**         | ❌      | ✔️       | ❌        | ⭐       |
-| **Position Utilities**         | ✔️      | ⭐       | ✔️        | ⭐       |
-| **File Size / Lightweight**    | ⭐      | ✔️       | ❌        | ⭐       |
-| **Dynamic/JS Integration**     | ❌      | ✔️       | ✔️        | ⭐       |
-| **Rapid Prototyping**          | ✔️      | ⭐       | ⭐        | ⭐       |
+| **Ease of Learning**           | ✔️      | ❌       | ⭐        | ✔️      |
+| **Utility-First Approach**     | ❌      | ⭐       | ❌        | ⭐      |
+| **Customization / Flexibility**| ✔️      | ⭐       | ✔️        | ⭐      |
+| **Responsive Design**          | ✔️      | ⭐       | ⭐        | ⭐      |
+| **Animation System**           | ❌      | ✔️       | ✔️        | ⭐      |
+| **Gradient Utilities**         | ❌      | ✔️       | ❌        | ⭐      |
+| **Position Utilities**         | ✔️      | ⭐       | ✔️        | ⭐      |
+| **File Size / Lightweight**    | ⭐      | ✔️       | ❌        | ⭐      |
+| **Dynamic/JS Integration**     | ❌      | ✔️       | ✔️        | ⭐      |
+| **Rapid Prototyping**          | ✔️      | ⭐       | ⭐        | ⭐      |
 
 **Legend:**  
 ⭐ = Excellent | ✔️ = Good | ❌ = Poor
@@ -250,18 +250,18 @@ Download the latest release from GitHub and include the files in your project:
 
 ```
 twigwind/
-├── css.css              # Base styles and animations
-├── css.js               # Dynamic utility generator
-├── hljs.js              # Syntax highlighting loader
+├── src/
+│   ├── css.css          # Base styles and animations
+│   └── css.js           # Dynamic utility generator
+├── build.js             # Build system
+├── package.json         # NPM package configuration
 ├── test.html            # Comprehensive demo page
+├── hljs.js              # Syntax highlighting loader
 ├── README.md
-├── twigwind.svg         # The twigwind logo  
-├── version.txt          # The version file (newest is 3.12)  
-└── hljs_styles/         # Syntax highlighting themes
-    ├── atom.css
-    ├── defalt.css
-    ├── jetbrains.css
-    └── vscode.css
+├── LICENSE.txt
+├── logo.png             # Twigwind logo
+├── twigwind.png         # Twigwind banner
+└── version.txt          # Version file
 ```
 
 ---

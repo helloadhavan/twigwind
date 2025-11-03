@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import fs from "fs";
-import path from "path";
-import { JSDOM } from "jsdom";
-import chokidar from "chokidar";
-import { Twigwind } from "./src/css.js";
+const fs = require("fs");
+const path = require("path");
+const { JSDOM } = require("jsdom");
+const chokidar = require("chokidar");
+const { Twigwind } = require("./src/css.js");
 
 // 💡 1️⃣ Define a reusable build function
 function build() {

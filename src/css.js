@@ -376,7 +376,15 @@ const Twigwind = (() => {
     pushCSS(cls, rule, hover, media, dark);
   }
 
-
+  const twopacity = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+    const { hover, dark, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^opacity-(\d{1,3})$/);
+    if (!match) return;
+    const value = Math.min(Math.max(parseInt(match[1], 10), 0), 100) / 100;
+    pushCSS(cls, `opacity: ${value};`, hover, media, dark);
+  }
   // --- Apply classes ---
   const twApply = (el) => {
     el.classList.forEach(cls => {
@@ -414,8 +422,14 @@ const Twigwind = (() => {
       else if (pure.startsWith("image-url-")) {
         twImage(cls);
       }
+      else if (pure.startsWith("opacity-")) {
+        twopacity(cls);
+      }
     });
   };
+
+  
+
 
   const twInject = () => {
     const style = document.createElement("style");
@@ -440,4 +454,3 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = { Twigwind };
 }
 
-export { Twigwind };
