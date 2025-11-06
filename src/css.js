@@ -1,4 +1,3 @@
-/// Simple Twigwind-like Framework
 const Twigwind = (() => {
   const css = [];
   const used = new Set();
@@ -22,7 +21,6 @@ const Twigwind = (() => {
   const sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px" };
   const breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
 
-  // --- Helpers ---
   const escapeClass = (cls) =>
     cls.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1");
 
@@ -385,6 +383,22 @@ const Twigwind = (() => {
     const value = Math.min(Math.max(parseInt(match[1], 10), 0), 100) / 100;
     pushCSS(cls, `opacity: ${value};`, hover, media, dark);
   }
+
+  const twTypography = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+    const sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
+    const { hover, dark, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^font-(size|weight|family|style|variant)(.+)$/);
+    if (!match) return;
+    const [, prop, val] = match;
+    if (prop === "size" && sizes[val]) {
+      return pushCSS(cls, `font-size: ${sizes[val]};`, hover, media, dark);
+    }
+    if (!prop) {prop = "family"}
+    pushCSS(cls, `font-${prop}: ${val.replace(/_/g, " ")};`, hover, media, dark);
+  }
+
   // --- Apply classes ---
   const twApply = (el) => {
     el.classList.forEach(cls => {
@@ -425,11 +439,11 @@ const Twigwind = (() => {
       else if (pure.startsWith("opacity-")) {
         twopacity(cls);
       }
+      else if (pure.startsWith("font-")) {
+        twTypography(cls);
+      }
     });
   };
-
-  
-
 
   const twInject = () => {
     const style = document.createElement("style");

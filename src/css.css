@@ -68,6 +68,22 @@
     height: fit-content;
 }
 
+.upercase {
+    text-transform: uppercase;
+}
+
+.lowercase {
+    text-transform: lowercase;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.normalcase {
+    text-transform: none;
+}
+
 
 /* ===========================
    Animation Keyframes
