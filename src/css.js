@@ -320,11 +320,17 @@ const Twigwind = (() => {
     }
   };
 
-  const TagHandler = () => {
+  const TagHandler = (selector=null) => {
     let twigcss = "";
-    document.querySelectorAll("twigwind").forEach(twig => {
-      twigcss += twig.textContent + "\n";
-    });
+    if (!selector) {
+      document.querySelectorAll("twigwind").forEach(twig => {
+        twigcss += twig.textContent + "\n";
+      });
+    } else {
+      selector.forEach(twig => {
+        twigcss += twig.textContent + "\n";
+      });
+    }
     const matches = [...twigcss.matchAll(/([a-zA-Z0-9_\-#\.]+):[ \t]*\{([^}]*)\}/gs)];
 
     for (const match of matches) {
@@ -361,8 +367,8 @@ const Twigwind = (() => {
 
 
   // --- Generic apply() and inject() ---
-  const twApply = (el) => {
-    TagHandler();
+  const twApply = (el, selector=null) => {
+    TagHandler(selector);
     el.classList.forEach(cls => {
       applyUtilityClass(cls);
     });
