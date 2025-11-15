@@ -51,7 +51,6 @@ Options:
   --input       Input directory (default: src)
   --output      Output directory (default: dist)
   --minify      Minify the output CSS
-  --compress    Compress the output CSS
   --watch       Watch for file changes and rebuild automatically
   -s            Generate Object Model
 
