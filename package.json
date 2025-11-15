@@ -1,24 +1,25 @@
 {
   "name": "twigwind",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "description": "A utility-first CSS framework that's tiny, JS-powered, and designed for rapid prototyping",
   "main": "src/css.js",
   "bin": {
-    "twigwind": "cli.js"
+    "twigwind": "cli.cjs"
   },
   "directories": {
     "src": "src",
     "dist": "dist"
   },
   "scripts": {
-    "build": "node build.js",
-    "dev": "node build.js",
+    "build": "node build.cjs",
+    "dev": "node build.cjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
     "src/",
     "dist/",
-    "build.js",
+    "build.cjs",
+    "cli.cjs",
     "README.md",
     "LICENSE.txt"
   ],

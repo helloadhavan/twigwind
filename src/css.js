@@ -1,6 +1,7 @@
 const Twigwind = (() => {
   const css = [];
   const used = new Set();
+  const twigom = new Object();
 
   const colors = {
     amber: "#ffc107", aqua: "#00ffff", blue: "#2196F3", lightBlue: "#87CEEB",
@@ -52,6 +53,8 @@ const Twigwind = (() => {
     if (hover) selector += ":hover";
     if (dark) selector = `.dark ${selector}`;
     const block = `${selector} { ${rule} }`;
+    const [prop, value] = rule.split(":");
+    twigom[selector] = [ prop, value ];
     css.push(media ? `${media}${block}}` : block);
   };
 
@@ -181,29 +184,29 @@ const Twigwind = (() => {
   };
 
   const twLinearGradient = (cls, cname) => {
-  if (used.has(cls)) return;
-  used.add(cls);
-  const { hover, dark, media, pure } = parsePrefix(cls);
-  const match = pure.match(/^gradient-(to-[a-z]+|\d+deg)-(.+)$/);
-  if (!match) return;
-  const [, direction, colorsRaw] = match;
-  const colorParts = colorsRaw.split("-");
-  if (colorParts.length < 2) return;
-  const gradientColors = colorParts
-    .map(c => colors[c] || c)
-    .join(", ");
-  const dirMap = {
-    "to-r": "to right",
-    "to-l": "to left",
-    "to-t": "to top",
-    "to-b": "to bottom",
-    "to-tr": "to top right",
-    "to-tl": "to top left",
-    "to-br": "to bottom right",
-    "to-bl": "to bottom left"
-  };
-  const directionCSS = dirMap[direction] || direction;
-  pushCSS(cls, `background-image: linear-gradient(${directionCSS}, ${gradientColors});`, hover, media, dark, cname);
+    if (used.has(cls)) return;
+    used.add(cls);
+    const { hover, dark, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^gradient-(to-[a-z]+|\d+deg)-(.+)$/);
+    if (!match) return;
+    const [, direction, colorsRaw] = match;
+    const colorParts = colorsRaw.split("-");
+    if (colorParts.length < 2) return;
+    const gradientColors = colorParts
+      .map(c => colors[c] || c)
+      .join(", ");
+    const dirMap = {
+      "to-r": "to right",
+      "to-l": "to left",
+      "to-t": "to top",
+      "to-b": "to bottom",
+      "to-tr": "to top right",
+      "to-tl": "to top left",
+      "to-br": "to bottom right",
+      "to-bl": "to bottom left"
+    };
+    const directionCSS = dirMap[direction] || direction;
+    pushCSS(cls, `background-image: linear-gradient(${directionCSS}, ${gradientColors});`, hover, media, dark, cname);
 };
 
   const twshadow = (cls, cname) => {
@@ -320,6 +323,20 @@ const Twigwind = (() => {
     }
   };
 
+  const twAnimation = (cls, cname) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+    const { hover, dark, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^animate-([a-zA-Z0-9_-]+)-(\d+)(ms|s)-(infinite|normal|reverse|alternate|alternate-reverse)$/);
+    if (match) {
+      const [_, animation, duration, unit, iteration] = match;
+      if (!unit) unit = "s";
+      if (!iteration) iteration = "infinite";
+      if (!duration) duration = "1";
+      return pushCSS(cls, `animation: ${animation} ${duration}${unit} ${iteration};`, hover, media, dark, cname);
+    }
+  }
+
   const TagHandler = (selector=null) => {
     let twigcss = "";
     if (!selector) {
@@ -360,6 +377,7 @@ const Twigwind = (() => {
              pure.match(/^(top|right|bottom|left)-(\d+)/) ||
              pure.match(/^z-(\d+)$/)) twPosition(cls, cname);
     else if (pure.startsWith("text-") || pure.startsWith("font-")) twText(cls, cname);
+    else if (pure.startsWith("animate-")) twAnimation(cls, cname);
     else if (pure.match(/^max-w-/) || pure === 'mx-auto' || pure === 'my-auto' || pure.match(/^gap-/)) twLayout(cls, cname);
     else if (pure.startsWith("transition-")) twTransition(cls, cname);
     else if (pure.startsWith("opacity-")) twOpacity(cls, cname);
@@ -398,7 +416,7 @@ const Twigwind = (() => {
     twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius,
     twTransform, twLinearGradient, twshadow, twPosition, twText, twLayout,
     twTransition, twOpacity, TagHandler, twApply, twInject, applyUtilityClass,
-    getCSS: () => css.join("\n")
+    getCSS: () => css.join("\n"), Object_Model: () => twigom
   };
 })();
 
