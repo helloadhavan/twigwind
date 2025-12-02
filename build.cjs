@@ -22,13 +22,13 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 
-const inputDir = flags.input || ".";
-const outputDir = flags.output || "dist";
+const inputDir = flags.input || process.cwd();
+const outputDir = flags.output || path.join(process.cwd(), "dist");;
 const minify = !!flags.minify;
 const watch = !!flags.watch;
 const model = !!flags.model;
 
-const outputCSS = path.resolve(__dirname, outputDir, "twigwind.css");
+const outputCSS = path.resolve(outputDir, "twigwind.css");
 fs.mkdirSync(path.dirname(outputCSS), { recursive: true });
 
 function getHTMLFiles(dir) {

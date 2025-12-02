@@ -3,15 +3,19 @@ const Twigwind = (() => {
   const used = new Set();
   const twigom = new Object();
 
-  const colors = {
-    amber: "#ffc107", aqua: "#00ffff", blue: "#2196F3", lightBlue: "#87CEEB",
-    brown: "#795548", cyan: "#00bcd4", blueGrey: "#607d8b", green: "#4CAF50",
-    lightGreen: "#8bc34a", indigo: "#3f51b5", khaki: "#f0e68c", lime: "#cddc39",
-    orange: "#ff9800", deepOrange: "#ff5722", pink: "#e91e63", purple: "#9c27b0",
-    deepPurple: "#673ab7", red: "#f44336", sand: "#fdf5e6", teal: "#009688",
-    yellow: "#ffeb3b", white: "#fff", black: "#000000ff",
-    lightGray: "#f5f5f5", gray: "#9e9e9e", darkGray: "#424242"
-  };
+const colors = {
+  'red': [[26, 0, 0], [71, 0, 0], [117, 0, 0], [163, 0, 0], [209, 0, 0], [255, 0, 0], [255, 63, 63], [255, 127, 127], [255, 191, 191], [255, 255, 255]],
+  'orange': [[26, 13, 0], [71, 35, 0], [117, 58, 0], [163, 81, 0], [209, 104, 0], [255, 127, 0], [255, 159, 63], [255, 191, 127], [255, 223, 191], [255, 255, 255]],
+  'yellow': [[26, 26, 0], [71, 71, 0], [117, 117, 0], [163, 163, 0], [209, 209, 0], [255, 255, 0], [255, 255, 63], [255, 255, 127], [255, 255, 191], [255, 255, 255]],
+  'lime': [[13, 26, 0], [35, 71, 0], [58, 117, 0], [81, 163, 0], [104, 209, 0], [127, 255, 0], [159, 255, 63], [191, 255, 127], [223, 255, 191], [255, 255, 255]],
+  'green': [[0, 26, 0], [0, 71, 0], [0, 117, 0], [0, 163, 0], [0, 209, 0], [0, 255, 0], [63, 255, 63], [127, 255, 127], [191, 255, 191], [255, 255, 255]],
+  'spring': [[0, 26, 13], [0, 71, 35], [0, 117, 58], [0, 163, 81], [0, 209, 104], [0, 255, 127], [63, 255, 159], [127, 255, 191], [191, 255, 223], [255, 255, 255]],
+  'cyan': [[0, 26, 26], [0, 71, 71], [0, 117, 117], [0, 163, 163], [0, 209, 209], [0, 255, 255], [63, 255, 255], [127, 255, 255], [191, 255, 255], [255, 255, 255]],
+  'blue': [[0, 0, 26], [0, 0, 71], [0, 0, 117], [0, 0, 163], [0, 0, 209], [0, 0, 255], [63, 63, 255], [127, 127, 255], [191, 191, 255], [255, 255, 255]],
+  'indigo': [[8, 0, 13], [21, 0, 36], [34, 0, 59], [48, 0, 83], [61, 0, 106], [75, 0, 130], [120, 63, 161], [165, 127, 192], [210, 191, 223], [255, 255, 255]],
+  'violet': [[15, 0, 21], [41, 0, 59], [68, 0, 97], [94, 0, 135], [121, 0, 173], [148, 0, 211], [174, 63, 222], [201, 127, 233], [228, 191, 244], [255, 255, 255]],
+  'grey': [[1, 1, 1], [2, 2, 2], [4, 4, 4], [6, 6, 6], [8, 8, 8], [10, 10, 10], [71, 71, 71], [132, 132, 132], [193, 193, 193], [255, 255, 255]],
+}
 
   const space = {
     p: "padding", pl: "padding-left", pr: "padding-right",
@@ -60,16 +64,71 @@ const Twigwind = (() => {
 
   // ========== Utility Generators ==========
 
+  /**
+   * Convert RGB array to CSS color value
+   * @param {Array|string} color - RGB array [r,g,b] or color name/hex
+   * @returns {string} CSS color value
+   */
+  const formatColor = (color) => {
+    if (typeof color === 'string') return color;
+    if (Array.isArray(color) && color.length >= 3) {
+      return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+    }
+    return color;
+  };
+
+  /**
+   * Generate color utilities (background-color, color)
+   * Supports both basic colors (red, blue) and numbered variants (red-5, blue-3)
+   */
   const twColor = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
     const { hover, dark, media, pure } = parsePrefix(cls);
     let prop, name;
-    if (pure.startsWith("bg-")) { prop = "background-color"; name = pure.slice(3); }
-    else if (pure.startsWith("color-")) { prop = "color"; name = pure.slice(6); }
-    else return;
-    const value = colors[name] || name;
-    pushCSS(cls, `${prop}: ${value};`, hover, media, dark, cname);
+    
+    if (pure.startsWith("bg-")) {
+      prop = "background-color";
+      name = pure.slice(3);
+    } else if (pure.startsWith("color-")) {
+      prop = "color";
+      name = pure.slice(6);
+    } else return;
+    
+    // Check for numbered color variants (e.g., "cyan-5", "red-3")
+    const colorMatch = name.match(/^([a-zA-Z]+)-?(\d+)?$/);
+    if (colorMatch) {
+      const [, colorName, colorIndex] = colorMatch;
+      const colorArray = colors[colorName];
+      
+      if (Array.isArray(colorArray)) {
+        let colorValue;
+        if (colorIndex !== undefined) {
+          // Use specific index (cyan-5 = index 5)
+          const index = parseInt(colorIndex);
+          if (index >= 0 && index < colorArray.length) {
+            colorValue = formatColor(colorArray[index]);
+          } else {
+            // Fallback to middle value if index out of range
+            const midIndex = Math.floor(colorArray.length / 2);
+            colorValue = formatColor(colorArray[midIndex]);
+          }
+        } else {
+          // No number specified, use middle value (cyan = cyan-5)
+          const midIndex = Math.floor(colorArray.length / 2);
+          colorValue = formatColor(colorArray[midIndex]);
+        }
+        pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, cname);
+      } else {
+        // Fallback for non-array colors or unknown colors
+        const colorValue = formatColor(colors[name] || name);
+        pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, cname);
+      }
+    } else {
+      // Fallback for non-matching patterns
+      const colorValue = formatColor(colors[name] || name);
+      pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, cname);
+    }
   };
 
   const twSpacing = (cls, cname) => {
@@ -88,16 +147,17 @@ const Twigwind = (() => {
     if (used.has(cls)) return;
     used.add(cls);
     const { hover, dark, media, pure } = parsePrefix(cls);
-    let match = pure.match(/^(w|h)-(\d+)(px|rem|em|%)?$/);
+    let match = pure.match(/^(max|min)?-?(w|h)-(\d+)(px|rem|em|%)?$/);
     if (match) {
-      const dim = match[1] === "w" ? "width" : "height";
-      const val = match[2] + (match[3] || "px");
-      return pushCSS(cls, `${dim}: ${val};`, hover, media, dark, cname);
+      const prefix = match[1] ? `${match[1]}-` : "";
+      const dim = match[2] === "w" ? "width" : "height";
+      const val = match[3] + (match[4] || "px");
+      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, cname);
     }
     // size-sm support
     match = pure.match(/^size-(\w+)$/);
-    if (match && sizes[match[1]]) {
-      const size = sizes[match[1]];
+    if (match && sizes[match[2]]) {
+      const size = sizes[match[2]];
       return pushCSS(cls, `font-size: ${size};`, hover, media, dark);
     }
   };
@@ -183,6 +243,10 @@ const Twigwind = (() => {
     pushCSS(cls, rule, hover, media, dark, cname);
   };
 
+  /**
+   * Generate linear gradient utilities
+   * Supports: gradient-to-r-red-blue, gradient-45deg-red-5-blue-3, etc.
+   */
   const twLinearGradient = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
@@ -190,11 +254,74 @@ const Twigwind = (() => {
     const match = pure.match(/^gradient-(to-[a-z]+|\d+deg)-(.+)$/);
     if (!match) return;
     const [, direction, colorsRaw] = match;
-    const colorParts = colorsRaw.split("-");
+    
+    // Parse color parts (e.g., "red-5-blue-3" -> ["red-5", "blue-3"])
+    const colorParts = [];
+    const parts = colorsRaw.split("-");
+    let currentColor = "";
+    
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      
+      // If it's a number and we have a current color, complete the numbered variant
+      if (/^\d+$/.test(part) && currentColor) {
+        colorParts.push(`${currentColor}-${part}`);
+        currentColor = "";
+      }
+      // If it's a color name
+      else if (colors[part]) {
+        // If we have a pending color, push it first
+        if (currentColor) {
+          colorParts.push(currentColor);
+        }
+        currentColor = part;
+      }
+      // If it's not a known color and not a number, treat as color name
+      else if (!currentColor) {
+        currentColor = part;
+      }
+    }
+    
+    // Push any remaining color
+    if (currentColor) {
+      colorParts.push(currentColor);
+    }
+    
     if (colorParts.length < 2) return;
-    const gradientColors = colorParts
-      .map(c => colors[c] || c)
-      .join(", ");
+    
+    // Convert color parts to CSS colors using the same logic as twColor
+    const gradientColors = colorParts.map(colorPart => {
+      const colorMatch = colorPart.match(/^([a-zA-Z]+)-?(\d+)?$/);
+      if (colorMatch) {
+        const [, colorName, colorIndex] = colorMatch;
+        const colorArray = colors[colorName];
+        
+        if (Array.isArray(colorArray)) {
+          if (colorIndex !== undefined) {
+            // Use specific index (red-5 = index 5)
+            const index = parseInt(colorIndex);
+            if (index >= 0 && index < colorArray.length) {
+              return formatColor(colorArray[index]);
+            } else {
+              // Fallback to middle value if index out of range
+              const midIndex = Math.floor(colorArray.length / 2);
+              return formatColor(colorArray[midIndex]);
+            }
+          } else {
+            // No number specified, use middle value (red = red-5)
+            const midIndex = Math.floor(colorArray.length / 2);
+            return formatColor(colorArray[midIndex]);
+          }
+        } else {
+          // Fallback for non-array colors
+          return formatColor(colors[colorName] || colorName);
+        }
+      } else {
+        // Fallback for non-matching patterns
+        return formatColor(colors[colorPart] || colorPart);
+      }
+    }).join(", ");
+    
     const dirMap = {
       "to-r": "to right",
       "to-l": "to left",
@@ -207,7 +334,7 @@ const Twigwind = (() => {
     };
     const directionCSS = dirMap[direction] || direction;
     pushCSS(cls, `background-image: linear-gradient(${directionCSS}, ${gradientColors});`, hover, media, dark, cname);
-};
+  };
 
   const twshadow = (cls, cname) => {
     if (used.has(cls)) return;
@@ -262,13 +389,22 @@ const Twigwind = (() => {
       const align = pure.replace('text-', '');
       return pushCSS(cls, `text-align: ${align};`, hover, media, dark, cname);
     }
-    
-    // Font sizes
-    const sizeMatch = pure.match(/^text-(\w+)$/);
-    if (sizeMatch && sizes[sizeMatch[1]]) {
-      return pushCSS(cls, `font-size: ${sizes[sizeMatch[1]]};`, hover, media, dark, cname);
-    }
   };
+
+  const twTypography = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+    const sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
+    const { hover, dark, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^font-(size|weight|family|style|variant)(.+)$/);
+    if (!match) return;
+    let [, prop, val] = match;
+    if (prop === "size" && sizes[val]) {
+      return pushCSS(cls, `font-size: ${sizes[val] || val};`, hover, media, dark);
+    }
+    if (!prop) {prop = "family"}
+    pushCSS(cls, `font-${prop}: ${val.replace(/_/g, " ")};`, hover, media, dark);
+} 
 
   const twLayout = (cls, cname) => {
     if (used.has(cls)) return;
@@ -380,6 +516,7 @@ const Twigwind = (() => {
     else if (pure.startsWith("animate-")) twAnimation(cls, cname);
     else if (pure.match(/^max-w-/) || pure === 'mx-auto' || pure === 'my-auto' || pure.match(/^gap-/)) twLayout(cls, cname);
     else if (pure.startsWith("transition-")) twTransition(cls, cname);
+    else if (pure.startsWith("font-")) twTypography(cls, cname);
     else if (pure.startsWith("opacity-")) twOpacity(cls, cname);
   };
 
