@@ -7,8 +7,7 @@
     "twigwind": "cli.cjs"
   },
   "directories": {
-    "src": "src",
-    "dist": "dist"
+    "src": "src"
   },
   "scripts": {
     "build": "node build.cjs",

@@ -435,11 +435,76 @@ const Twigwind = (() => {
     if (used.has(cls)) return;
     used.add(cls);
     const { hover, dark, media, pure } = parsePrefix(cls);
-    const match = pure.match(/^(bg-)?filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
-    if (match) {
-      const [, bg, filter, value] = match;
-      const property = bg ? `backdrop-${filter}(${value})` : `filter:${filter}(${value})`;
-      return pushCSS(cls, `${property};`, hover, media, dark, cname);
+    
+    // Handle backdrop filters
+    const backdropMatch = pure.match(/^backdrop-filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
+    if (backdropMatch) {
+      const [, filter, value] = backdropMatch;
+      let filterValue = value;
+      
+      // Add units for specific filters
+      if (filter === 'blur' && !value.includes('px')) {
+        filterValue = `${value}px`;
+      } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
+        filterValue = `${value}%`;
+      } else if (['grayscale', 'invert', 'sepia'].includes(filter) && !value.includes('%')) {
+        filterValue = `${value}%`;
+      } else if (filter === 'hue-rotate' && !value.includes('deg')) {
+        filterValue = `${value}deg`;
+      }
+      
+      return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, cname);
+    }
+    
+    // Handle regular filters
+    const filterMatch = pure.match(/^filter:(blur|brightness|contrast|drop-shadow|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
+    if (filterMatch) {
+      const [, filter, value] = filterMatch;
+      let filterValue = value;
+      
+      // Handle drop-shadow specially (format: x-y-blur-color)
+      if (filter === 'drop-shadow') {
+        const shadowParts = value.split('-');
+        if (shadowParts.length >= 3) {
+          const x = shadowParts[0] + 'px';
+          const y = shadowParts[1] + 'px';
+          const blur = shadowParts[2] + 'px';
+          const color = shadowParts[3] || 'rgba(0,0,0,0.5)';
+          filterValue = `${x} ${y} ${blur} ${color}`;
+        }
+      }
+      // Add units for specific filters
+      else if (filter === 'blur' && !value.includes('px')) {
+        filterValue = `${value}px`;
+      } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
+        filterValue = `${value}%`;
+      } else if (['grayscale', 'invert', 'sepia'].includes(filter) && !value.includes('%')) {
+        filterValue = `${value}%`;
+      } else if (filter === 'hue-rotate' && !value.includes('deg')) {
+        filterValue = `${value}deg`;
+      }
+      
+      return pushCSS(cls, `filter: ${filter}(${filterValue});`, hover, media, dark, cname);
+    }
+    
+    // Handle background filters (legacy support for bg-filter)
+    const bgFilterMatch = pure.match(/^bg-filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
+    if (bgFilterMatch) {
+      const [, filter, value] = bgFilterMatch;
+      let filterValue = value;
+      
+      // Add units for specific filters
+      if (filter === 'blur' && !value.includes('px')) {
+        filterValue = `${value}px`;
+      } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
+        filterValue = `${value}%`;
+      } else if (['grayscale', 'invert', 'sepia'].includes(filter) && !value.includes('%')) {
+        filterValue = `${value}%`;
+      } else if (filter === 'hue-rotate' && !value.includes('deg')) {
+        filterValue = `${value}deg`;
+      }
+      
+      return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, cname);
     }
   };
 
@@ -556,7 +621,7 @@ const Twigwind = (() => {
     else if (pure.startsWith("font-")) twTypography(cls, cname);
     else if (pure.startsWith("opacity-")) twOpacity(cls, cname);
     else if (pure.startsWith("image-url-")) twImage(cls, cname);
-    else if (pure.startsWith("filter") || pure.startsWith("bg-filter")) twFilter(cls, cname);
+    else if (pure.startsWith("filter") || pure.startsWith("bg-filter") || pure.startsWith("backdrop-filter")) twFilter(cls, cname);
   };
 
 
@@ -591,7 +656,7 @@ const Twigwind = (() => {
   return {
     twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius,
     twTransform, twLinearGradient, twshadow, twPosition, twText, twLayout,
-    twTransition, twOpacity, TagHandler, twApply, twInject, applyUtilityClass,
+    twTransition, twOpacity, twFilter, TagHandler, twApply, twInject, applyUtilityClass,
     getCSS: () => css.join("\n"), Object_Model: () => twigom
   };
 })();
