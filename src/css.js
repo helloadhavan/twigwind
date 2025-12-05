@@ -3,19 +3,19 @@ const Twigwind = (() => {
   const used = new Set();
   const twigom = new Object();
 
-const colors = {
-  'red': [[26, 0, 0], [71, 0, 0], [117, 0, 0], [163, 0, 0], [209, 0, 0], [255, 0, 0], [255, 63, 63], [255, 127, 127], [255, 191, 191], [255, 255, 255]],
-  'orange': [[26, 13, 0], [71, 35, 0], [117, 58, 0], [163, 81, 0], [209, 104, 0], [255, 127, 0], [255, 159, 63], [255, 191, 127], [255, 223, 191], [255, 255, 255]],
-  'yellow': [[26, 26, 0], [71, 71, 0], [117, 117, 0], [163, 163, 0], [209, 209, 0], [255, 255, 0], [255, 255, 63], [255, 255, 127], [255, 255, 191], [255, 255, 255]],
-  'lime': [[13, 26, 0], [35, 71, 0], [58, 117, 0], [81, 163, 0], [104, 209, 0], [127, 255, 0], [159, 255, 63], [191, 255, 127], [223, 255, 191], [255, 255, 255]],
-  'green': [[0, 26, 0], [0, 71, 0], [0, 117, 0], [0, 163, 0], [0, 209, 0], [0, 255, 0], [63, 255, 63], [127, 255, 127], [191, 255, 191], [255, 255, 255]],
-  'spring': [[0, 26, 13], [0, 71, 35], [0, 117, 58], [0, 163, 81], [0, 209, 104], [0, 255, 127], [63, 255, 159], [127, 255, 191], [191, 255, 223], [255, 255, 255]],
-  'cyan': [[0, 26, 26], [0, 71, 71], [0, 117, 117], [0, 163, 163], [0, 209, 209], [0, 255, 255], [63, 255, 255], [127, 255, 255], [191, 255, 255], [255, 255, 255]],
-  'blue': [[0, 0, 26], [0, 0, 71], [0, 0, 117], [0, 0, 163], [0, 0, 209], [0, 0, 255], [63, 63, 255], [127, 127, 255], [191, 191, 255], [255, 255, 255]],
-  'indigo': [[8, 0, 13], [21, 0, 36], [34, 0, 59], [48, 0, 83], [61, 0, 106], [75, 0, 130], [120, 63, 161], [165, 127, 192], [210, 191, 223], [255, 255, 255]],
-  'violet': [[15, 0, 21], [41, 0, 59], [68, 0, 97], [94, 0, 135], [121, 0, 173], [148, 0, 211], [174, 63, 222], [201, 127, 233], [228, 191, 244], [255, 255, 255]],
-  'grey': [[1, 1, 1], [2, 2, 2], [4, 4, 4], [6, 6, 6], [8, 8, 8], [10, 10, 10], [71, 71, 71], [132, 132, 132], [193, 193, 193], [255, 255, 255]],
-}
+  const colors = {
+    'red': [[26, 0, 0], [71, 0, 0], [117, 0, 0], [163, 0, 0], [209, 0, 0], [255, 0, 0], [255, 63, 63], [255, 127, 127], [255, 191, 191], [255, 255, 255]],
+    'orange': [[26, 13, 0], [71, 35, 0], [117, 58, 0], [163, 81, 0], [209, 104, 0], [255, 127, 0], [255, 159, 63], [255, 191, 127], [255, 223, 191], [255, 255, 255]],
+    'yellow': [[26, 26, 0], [71, 71, 0], [117, 117, 0], [163, 163, 0], [209, 209, 0], [255, 255, 0], [255, 255, 63], [255, 255, 127], [255, 255, 191], [255, 255, 255]],
+    'lime': [[13, 26, 0], [35, 71, 0], [58, 117, 0], [81, 163, 0], [104, 209, 0], [127, 255, 0], [159, 255, 63], [191, 255, 127], [223, 255, 191], [255, 255, 255]],
+    'green': [[0, 26, 0], [0, 71, 0], [0, 117, 0], [0, 163, 0], [0, 209, 0], [0, 255, 0], [63, 255, 63], [127, 255, 127], [191, 255, 191], [255, 255, 255]],
+    'spring': [[0, 26, 13], [0, 71, 35], [0, 117, 58], [0, 163, 81], [0, 209, 104], [0, 255, 127], [63, 255, 159], [127, 255, 191], [191, 255, 223], [255, 255, 255]],
+    'cyan': [[0, 26, 26], [0, 71, 71], [0, 117, 117], [0, 163, 163], [0, 209, 209], [0, 255, 255], [63, 255, 255], [127, 255, 255], [191, 255, 255], [255, 255, 255]],
+    'blue': [[0, 0, 26], [0, 0, 71], [0, 0, 117], [0, 0, 163], [0, 0, 209], [0, 0, 255], [63, 63, 255], [127, 127, 255], [191, 191, 255], [255, 255, 255]],
+    'indigo': [[8, 0, 13], [21, 0, 36], [34, 0, 59], [48, 0, 83], [61, 0, 106], [75, 0, 130], [120, 63, 161], [165, 127, 192], [210, 191, 223], [255, 255, 255]],
+    'violet': [[15, 0, 21], [41, 0, 59], [68, 0, 97], [94, 0, 135], [121, 0, 173], [148, 0, 211], [174, 63, 222], [201, 127, 233], [228, 191, 244], [255, 255, 255]],
+    'grey': [[1, 1, 1], [2, 2, 2], [4, 4, 4], [6, 6, 6], [8, 8, 8], [10, 10, 10], [71, 71, 71], [132, 132, 132], [193, 193, 193], [255, 255, 255]],
+  }
 
   const space = {
     p: "padding", pl: "padding-left", pr: "padding-right",
@@ -42,6 +42,8 @@ const colors = {
       if (prefix === "hover") {
         hover = true; pure = parts.slice(1).join(":");
       } else if (prefix === "dark") {
+        hover = true; pure = parts.slice(1).join(":");
+      }  else if (prefix === "dark") {
         dark = true; pure = parts.slice(1).join(":");
       } else if (breakpoints[prefix]) {
         media = `@media (min-width: ${breakpoints[prefix]}px){`;
@@ -406,6 +408,41 @@ const colors = {
     pushCSS(cls, `font-${prop}: ${val.replace(/_/g, " ")};`, hover, media, dark);
 } 
 
+  const twImage = (cls) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+    const { hover, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^image-url-(.+)$/);
+    if (!match) return;
+    
+    // Handle URL properly - replace underscores with spaces and decode if needed
+    let url = match[1];
+    // Replace underscores with spaces for URLs that need spaces
+    url = url.replace(/_/g, " ");
+    
+    // Add additional CSS properties for better background image handling
+    const rules = `
+      background-image: url('${url}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    `;
+    
+    pushCSS(cls, rules, hover, media);
+  };
+
+  const twFilter = (cls, cname) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+    const { hover, dark, media, pure } = parsePrefix(cls);
+    const match = pure.match(/^(bg-)?filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
+    if (match) {
+      const [, bg, filter, value] = match;
+      const property = bg ? `backdrop-${filter}(${value})` : `filter:${filter}(${value})`;
+      return pushCSS(cls, `${property};`, hover, media, dark, cname);
+    }
+  };
+
   const twLayout = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
@@ -518,6 +555,8 @@ const colors = {
     else if (pure.startsWith("transition-")) twTransition(cls, cname);
     else if (pure.startsWith("font-")) twTypography(cls, cname);
     else if (pure.startsWith("opacity-")) twOpacity(cls, cname);
+    else if (pure.startsWith("image-url-")) twImage(cls, cname);
+    else if (pure.startsWith("filter") || pure.startsWith("bg-filter")) twFilter(cls, cname);
   };
 
 

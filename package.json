@@ -1,6 +1,6 @@
 {
   "name": "twigwind",
-  "version": "3.4.7",
+  "version": "3.4.8",
   "description": "A utility-first CSS framework that's tiny, JS-powered, and designed for rapid prototyping",
   "main": "src/css.js",
   "bin": {
@@ -16,8 +16,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
-    "src/",
-    "dist/",
+    "src/css.css",
+    "src/css.js",
     "build.cjs",
     "cli.cjs",
     "README.md",
