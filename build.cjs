@@ -28,7 +28,7 @@ const minify = !!flags.minify;
 const watch = !!flags.watch;
 const model = !!flags.model;
 
-const outputCSS = path.resolve(outputDir, "twigwind.css");
+
 fs.mkdirSync(path.dirname(outputCSS), { recursive: true });
 
 function getHTMLFiles(dir) {
@@ -88,32 +88,31 @@ function build() {
 
   for (const file of htmlFiles) {
     const html = fs.readFileSync(file, "utf8");
-    extractClasses(html).forEach(c => all.add(c));
+    extractClasses(html).forEach(c => {all.add(c)
+      Twigwind.applyUtilityClass(c);
+    });
+    const outputCSS = path.resolve(outputDir, file.replace(inputDir, "").replace(/\.html$/, ".css"));
+    fs.writeFileSync(outputCSS, css);
+    console.log(`🎨 Processing ${all.size} unique CSS classes`);
+    let css = Twigwind.getCSS();
+    const om = Twigwind.Object_Model();
+
+    if (model) {
+      const omPath = path.resolve(__dirname, outputDir, "twigwind-object-model.json");
+      fs.writeFileSync(omPath, JSON.stringify(om, null, 2));
+      console.log(`📄 Object model saved to: ${omPath}`);
+    }
+
+    if (minify) {
+      css = css.replace(/\s+/g, " ").replace(/\/\*[\s\S]*?\*\//g, "").trim();
+      console.log(`🗜️  CSS minified`);
+    }
+
+    
+    console.log(`📊 Generated ${css.split('\n').length} lines of CSS`);
   }
 
-  console.log(`🎨 Processing ${all.size} unique CSS classes`);
-
-  all.forEach(cls => {
-    Twigwind.applyUtilityClass(cls);
-  });
-
-  let css = Twigwind.getCSS();
-  const om = Twigwind.Object_Model();
-
-  if (model) {
-    const omPath = path.resolve(__dirname, outputDir, "twigwind-object-model.json");
-    fs.writeFileSync(omPath, JSON.stringify(om, null, 2));
-    console.log(`📄 Object model saved to: ${omPath}`);
-  }
-
-  if (minify) {
-    css = css.replace(/\s+/g, " ").replace(/\/\*[\s\S]*?\*\//g, "").trim();
-    console.log(`🗜️  CSS minified`);
-  }
-
-  fs.writeFileSync(outputCSS, css);
-  console.log(`✅ CSS built successfully: ${outputCSS}`);
-  console.log(`📊 Generated ${css.split('\n').length} lines of CSS`);
+  
 }
 
 build();

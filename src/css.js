@@ -24,7 +24,7 @@ const Twigwind = (() => {
     mt: "margin-top", mb: "margin-bottom"
   };
 
-  const sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px" };
+  const sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px"};
   const breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
 
   const escapeClass = (cls) =>
@@ -149,18 +149,45 @@ const Twigwind = (() => {
     if (used.has(cls)) return;
     used.add(cls);
     const { hover, dark, media, pure } = parsePrefix(cls);
-    let match = pure.match(/^(max|min)?-?(w|h)-(\d+)(px|rem|em|%)?$/);
+    
+    // Handle percentage values like w-100%, h-50%, etc.
+    let match = pure.match(/^(max|min)?-?(w|h)-(\d+%|\d+(?:px|rem|em|%)?)$/);
     if (match) {
       const prefix = match[1] ? `${match[1]}-` : "";
       const dim = match[2] === "w" ? "width" : "height";
-      const val = match[3] + (match[4] || "px");
+      let val = match[3];
+      
+      // If no unit specified and not percentage, default to px
+      if (/^\d+$/.test(val)) {
+        val += "px";
+      }
+      
       return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, cname);
     }
+    
+    // Handle viewport units like w-100vw, h-100vh
+    match = pure.match(/^(max|min)?-?(w|h)-(\d+(?:vw|vh|vmin|vmax))$/);
+    if (match) {
+      const prefix = match[1] ? `${match[1]}-` : "";
+      const dim = match[2] === "w" ? "width" : "height";
+      const val = match[3];
+      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, cname);
+    }
+    
+    // Handle special viewport cases like h-100vh, w-100vw
+    match = pure.match(/^(max|min)?-?(w|h)-(\d+)(vh|vw|vmin|vmax)$/);
+    if (match) {
+      const prefix = match[1] ? `${match[1]}-` : "";
+      const dim = match[2] === "w" ? "width" : "height";
+      const val = match[3] + match[4];
+      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, cname);
+    }
+    
     // size-sm support
     match = pure.match(/^size-(\w+)$/);
-    if (match && sizes[match[2]]) {
-      const size = sizes[match[2]];
-      return pushCSS(cls, `font-size: ${size};`, hover, media, dark);
+    if (match && sizes[match[1]]) {
+      const size = sizes[match[1]];
+      return pushCSS(cls, `font-size: ${size};`, hover, media, dark, cname);
     }
   };
 
@@ -393,20 +420,36 @@ const Twigwind = (() => {
     }
   };
 
-  const twTypography = (cls) => {
+  const twTypography = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
     const sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
     const { hover, dark, media, pure } = parsePrefix(cls);
-    const match = pure.match(/^font-(size|weight|family|style|variant)(.+)$/);
+    const match = pure.match(/^font-(size|weight|family|style|variant)-(.+)$/);
     if (!match) return;
     let [, prop, val] = match;
-    if (prop === "size" && sizes[val]) {
-      return pushCSS(cls, `font-size: ${sizes[val] || val};`, hover, media, dark);
+    
+    if (prop === "size") {
+      // Handle predefined sizes
+      if (sizes[val]) {
+        return pushCSS(cls, `font-size: ${sizes[val]};`, hover, media, dark, cname);
+      }
+      // Handle custom rem/px/em values like font-size-3rem, font-size-24px
+      if (val.match(/^\d+(\.\d+)?(rem|px|em|%)$/)) {
+        return pushCSS(cls, `font-size: ${val};`, hover, media, dark, cname);
+      }
     }
-    if (!prop) {prop = "family"}
-    pushCSS(cls, `font-${prop}: ${val.replace(/_/g, " ")};`, hover, media, dark);
-} 
+    
+    if (prop === "family") {
+      // Handle font-family specially - replace dashes with spaces and add quotes if needed
+      val = val.replace(/-/g, " ");
+      if (!val.includes('"') && !val.includes("'") && val !== 'serif' && val !== 'sans-serif' && val !== 'monospace') {
+        val = `"${val}"`;
+      }
+    }
+    
+    pushCSS(cls, `font-${prop}: ${val};`, hover, media, dark, cname);
+  };
 
   const twImage = (cls) => {
     if (used.has(cls)) return;
@@ -541,9 +584,18 @@ const Twigwind = (() => {
     used.add(cls);
     const { hover, dark, media, pure } = parsePrefix(cls);
     
-    const match = pure.match(/^transition-(.+)-(\d+)ms$/);
-    if (match) {
-      const [, property, duration] = match;
+    // Handle transition:all_300ms syntax
+    const colonMatch = pure.match(/^transition:(.+)_(\d+)ms$/);
+    if (colonMatch) {
+      const [, property, duration] = colonMatch;
+      const prop = property === 'all' ? 'all' : property.replace('-', '-');
+      return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, cname);
+    }
+    
+    // Handle transition-property-duration syntax
+    const dashMatch = pure.match(/^transition-(.+)-(\d+)ms$/);
+    if (dashMatch) {
+      const [, property, duration] = dashMatch;
       const prop = property === 'all' ? 'all' : property.replace('-', '-');
       return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, cname);
     }
@@ -598,7 +650,7 @@ const Twigwind = (() => {
     }
   };
 
-  const applyUtilityClass = (cls, cname) => {
+  const applyUtilityClass = (cls, cname, element_name) => {
     const { pure } = parsePrefix(cls);
 
     if (pure.startsWith("bg-") || pure.startsWith("color-")) twColor(cls, cname);
@@ -614,14 +666,17 @@ const Twigwind = (() => {
     else if (['fixed', 'absolute', 'relative', 'static', 'sticky'].includes(pure) ||
              pure.match(/^(top|right|bottom|left)-(\d+)/) ||
              pure.match(/^z-(\d+)$/)) twPosition(cls, cname);
-    else if (pure.startsWith("text-") || pure.startsWith("font-")) twText(cls, cname);
+    else if (pure.startsWith("text-")) twText(cls, cname);
+    else if (pure.startsWith("font-")) twTypography(cls, cname);
     else if (pure.startsWith("animate-")) twAnimation(cls, cname);
     else if (pure.match(/^max-w-/) || pure === 'mx-auto' || pure === 'my-auto' || pure.match(/^gap-/)) twLayout(cls, cname);
     else if (pure.startsWith("transition-")) twTransition(cls, cname);
-    else if (pure.startsWith("font-")) twTypography(cls, cname);
     else if (pure.startsWith("opacity-")) twOpacity(cls, cname);
     else if (pure.startsWith("image-url-")) twImage(cls, cname);
     else if (pure.startsWith("filter") || pure.startsWith("bg-filter") || pure.startsWith("backdrop-filter")) twFilter(cls, cname);
+    else {
+      console.warn(`Twigwind: Error compiling "${cls}" in element "${element_name || cname || 'unknown'}" - utility not recognized.`);
+    }
   };
 
 
@@ -629,7 +684,7 @@ const Twigwind = (() => {
   const twApply = (el, selector=null) => {
     TagHandler(selector);
     el.classList.forEach(cls => {
-      applyUtilityClass(cls);
+      applyUtilityClass(cls, null, el.tagName.toLowerCase());
     });
   };
 
@@ -655,7 +710,7 @@ const Twigwind = (() => {
 
   return {
     twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius,
-    twTransform, twLinearGradient, twshadow, twPosition, twText, twLayout,
+    twTransform, twLinearGradient, twshadow, twPosition, twText, twTypography, twLayout,
     twTransition, twOpacity, twFilter, TagHandler, twApply, twInject, applyUtilityClass,
     getCSS: () => css.join("\n"), Object_Model: () => twigom
   };
