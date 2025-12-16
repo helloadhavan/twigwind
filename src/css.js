@@ -292,20 +292,17 @@ const Twigwind = (() => {
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
       
-      // If it's a number and we have a current color, complete the numbered variant
+
       if (/^\d+$/.test(part) && currentColor) {
         colorParts.push(`${currentColor}-${part}`);
         currentColor = "";
       }
-      // If it's a color name
       else if (colors[part]) {
-        // If we have a pending color, push it first
         if (currentColor) {
           colorParts.push(currentColor);
         }
         currentColor = part;
       }
-      // If it's not a known color and not a number, treat as color name
       else if (!currentColor) {
         currentColor = part;
       }
@@ -317,8 +314,6 @@ const Twigwind = (() => {
     }
     
     if (colorParts.length < 2) return;
-    
-    // Convert color parts to CSS colors using the same logic as twColor
     const gradientColors = colorParts.map(colorPart => {
       const colorMatch = colorPart.match(/^([a-zA-Z]+)-?(\d+)?$/);
       if (colorMatch) {

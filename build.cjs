@@ -23,13 +23,13 @@ for (let i = 0; i < args.length; i++) {
 }
 
 const inputDir = flags.input || process.cwd();
-const outputDir = flags.output || path.join(process.cwd(), "dist");;
+const outputDir = flags.output || path.join(process.cwd(), "dist");
 const minify = !!flags.minify;
 const watch = !!flags.watch;
-const model = !!flags.model;
+const model = !!flags.Object_Model;
 
-
-fs.mkdirSync(path.dirname(outputCSS), { recursive: true });
+// Ensure output directory exists
+fs.mkdirSync(outputDir, { recursive: true });
 
 function getHTMLFiles(dir) {
   const out = [];
@@ -41,8 +41,9 @@ function getHTMLFiles(dir) {
       try {
         const stat = fs.statSync(full);
         if (stat.isDirectory()) {
+          // Recursively scan subdirectories (skip hidden and cache directories)
           if (!item.startsWith('.') && !item.includes('cache')) {
-            continue;
+            out.push(...getHTMLFiles(full));
           }
         } else if (item.endsWith(".html")) {
           out.push(full);
@@ -80,39 +81,75 @@ function resetTwigwind() {
 function build() {
   resetTwigwind();
 
-  const htmlFiles = getHTMLFiles(path.resolve(__dirname, inputDir));
-  const all = new Set();
-
-  console.log(`🔍 Scanning HTML files in: ${path.resolve(__dirname, inputDir)}`);
+  const htmlFiles = getHTMLFiles(path.resolve(inputDir));
+  console.log(`🔍 Scanning HTML files in: ${path.resolve(inputDir)}`);
   console.log(`📁 Found ${htmlFiles.length} HTML files`);
 
+  if (htmlFiles.length === 0) {
+    console.log(`⚠️  No HTML files found in ${path.resolve(inputDir)}`);
+    return;
+  }
+
+  // Process each HTML file individually
   for (const file of htmlFiles) {
+    console.log(`\n🔄 Processing: ${path.relative(process.cwd(), file)}`);
+    
+    // Reset Twigwind state for each file
+    resetTwigwind();
+    
     const html = fs.readFileSync(file, "utf8");
-    extractClasses(html).forEach(c => {all.add(c)
-      Twigwind.applyUtilityClass(c);
+    const classes = extractClasses(html);
+    
+    console.log(`🎨 Found ${classes.length} CSS classes in this file`);
+    
+    // Apply each class to generate CSS
+    classes.forEach(cls => {
+      Twigwind.applyUtilityClass(cls);
     });
-    const outputCSS = path.resolve(outputDir, file.replace(inputDir, "").replace(/\.html$/, ".css"));
-    fs.writeFileSync(outputCSS, css);
-    console.log(`🎨 Processing ${all.size} unique CSS classes`);
+    
+    // Generate CSS for this file
     let css = Twigwind.getCSS();
-    const om = Twigwind.Object_Model();
-
-    if (model) {
-      const omPath = path.resolve(__dirname, outputDir, "twigwind-object-model.json");
-      fs.writeFileSync(omPath, JSON.stringify(om, null, 2));
-      console.log(`📄 Object model saved to: ${omPath}`);
-    }
-
+    
     if (minify) {
       css = css.replace(/\s+/g, " ").replace(/\/\*[\s\S]*?\*\//g, "").trim();
       console.log(`🗜️  CSS minified`);
     }
-
     
-    console.log(`📊 Generated ${css.split('\n').length} lines of CSS`);
+    // Create output path for individual CSS file
+    const relativePath = path.relative(path.resolve(inputDir), file);
+    const outputCSS = path.join(outputDir, relativePath.replace(/\.html$/, ".css"));
+    
+    // Ensure output directory exists
+    fs.mkdirSync(path.dirname(outputCSS), { recursive: true });
+    
+    // Write individual CSS file
+    fs.writeFileSync(outputCSS, css);
+    console.log(`✅ Generated: ${path.relative(process.cwd(), outputCSS)}`);
+    console.log(`📊 CSS contains ${css.split('\n').filter(line => line.trim()).length} lines`);
   }
 
+  // Generate object model if requested
+  if (model) {
+    // Process all files together for complete object model
+    resetTwigwind();
+    const allClasses = new Set();
+    
+    for (const file of htmlFiles) {
+      const html = fs.readFileSync(file, "utf8");
+      extractClasses(html).forEach(cls => {
+        allClasses.add(cls);
+        Twigwind.applyUtilityClass(cls);
+      });
+    }
+    
+    const om = Twigwind.Object_Model();
+    const omPath = path.join(outputDir, "twigwind-object-model.json");
+    fs.writeFileSync(omPath, JSON.stringify(om, null, 2));
+    console.log(`\n📄 Object model saved to: ${path.relative(process.cwd(), omPath)}`);
+    console.log(`🔍 Total unique classes processed: ${allClasses.size}`);
+  }
   
+  console.log(`\n🎉 Build completed successfully!`);
 }
 
 build();
