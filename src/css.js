@@ -2,6 +2,7 @@ const Twigwind = (() => {
   const css = [];
   const used = new Set();
   const twigom = new Object();
+  const util = {};
 
   const colors = {
     'red': [[26, 0, 0], [71, 0, 0], [117, 0, 0], [163, 0, 0], [209, 0, 0], [255, 0, 0], [255, 63, 63], [255, 127, 127], [255, 191, 191], [255, 255, 255]],
@@ -27,6 +28,10 @@ const Twigwind = (() => {
   const sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px"};
   const breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
 
+  const rasise = (error) => {
+    console.log(`\x1b[1;31m${error}\x1b[0m`);
+  };
+
   const escapeClass = (cls) =>
     cls.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1");
 
@@ -42,8 +47,6 @@ const Twigwind = (() => {
       if (prefix === "hover") {
         hover = true; pure = parts.slice(1).join(":");
       } else if (prefix === "dark") {
-        hover = true; pure = parts.slice(1).join(":");
-      }  else if (prefix === "dark") {
         dark = true; pure = parts.slice(1).join(":");
       } else if (breakpoints[prefix]) {
         media = `@media (min-width: ${breakpoints[prefix]}px){`;
@@ -637,6 +640,7 @@ const Twigwind = (() => {
 
     for (const match of matches) {
       const cname = `.${match[1].trim()}`;  // e.g. ".button" or ".card"
+      util[cname] = cname || `.${escapeClass(match[1].trim())}`;
       const classBlock = match[2].trim(); // e.g. "bg-blue; p-10"
       const classes = classBlock.split(";").map(c => c.trim()).filter(Boolean);
       for (const cls of classes) {
@@ -670,7 +674,18 @@ const Twigwind = (() => {
     else if (pure.startsWith("image-url-")) twImage(cls, cname);
     else if (pure.startsWith("filter") || pure.startsWith("bg-filter") || pure.startsWith("backdrop-filter")) twFilter(cls, cname);
     else {
-      console.warn(`Twigwind: Error compiling "${cls}" in element "${element_name || cname || 'unknown'}" - utility not recognized.`);
+      if (!util[cls]) {
+      const errorMsg = `Twigwind: Error compiling "${cls}" in element "${element_name || cname || 'unknown'}" - utility not recognized.`;
+      if (typeof window !== 'undefined' && console && console.warn) {
+        console.warn(errorMsg);
+      }
+      else if (typeof process !== 'undefined' && console && console.error) {
+        rasise(`⚠️  ${errorMsg}`);
+      }
+      else if (console && console.log) {
+        console.log(`WARNING: ${errorMsg}`);
+      }
+      }
     }
   };
 

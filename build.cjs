@@ -7,7 +7,6 @@ const { Twigwind } = require("./src/css.js");
 
 // __dirname is available in CommonJS by default
 const args = process.argv.slice(2);
-
 const flags = {};
 for (let i = 0; i < args.length; i++) {
   if (args[i].startsWith("--")) {
@@ -30,6 +29,14 @@ const model = !!flags.Object_Model;
 
 // Ensure output directory exists
 fs.mkdirSync(outputDir, { recursive: true });
+
+function rgbColor(r, g, b) {
+  // \x1b is the escape character (ESC)
+  // 38;2 specifies foreground color with RGB
+  // R;G;B are the color values
+  // m marks the end of the sequence
+  return `\x1b[38;2;${r};${g};${b}m`;
+}
 
 function getHTMLFiles(dir) {
   const out = [];
@@ -103,10 +110,16 @@ function build() {
     console.log(`🎨 Found ${classes.length} CSS classes in this file`);
     
     // Apply each class to generate CSS
+    const start = performance.now();
     classes.forEach(cls => {
       Twigwind.applyUtilityClass(cls);
     });
-    
+    const end = performance.now();
+    if (end - start < 1000)
+      console.log(rgbColor(3, 173, 252) + `done in ${(end - start).toFixed(2)} ms` + `\x1b[0m`);
+    else
+      console.log(rgbColor(3, 173, 252) + `done in ${(end - start * 1000).toFixed(2)} μs` + `\x1b[0m`);
+
     // Generate CSS for this file
     let css = Twigwind.getCSS();
     
