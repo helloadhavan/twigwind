@@ -1,6 +1,6 @@
 {
   "name": "twigwind",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "description": "A utility-first CSS framework that's tiny, JS-powered, and designed for rapid prototyping",
   "main": "src/css.js",
   "bin": {
@@ -40,6 +40,7 @@
   },
   "homepage": "https://twigwind.github.io/",
   "dependencies": {
+    "appdata-path": "^1.0.0",
     "chokidar": "^4.0.3",
     "jsdom": "^27.0.1"
   }

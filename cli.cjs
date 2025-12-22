@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const { exec } = require("child_process"); 
-const path = require("path"); 
+const path = require("path");
+const fs = require("fs");
 
 // __dirname is available in CommonJS by default
 const args = process.argv.slice(2);
@@ -70,7 +71,7 @@ ${Object.keys(json.dependencies || {}).map(dep => `  ${dep}: ${json.dependencies
   process.exit(0);
 }
 
-// Execute the build command
+
 exec(command, (err, stdout, stderr) => {
   if (err) {
     console.error("❌ Error:", stderr || err);
@@ -78,3 +79,5 @@ exec(command, (err, stdout, stderr) => {
     console.log(stdout);
   }
 });
+
+

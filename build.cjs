@@ -3,9 +3,10 @@ const path = require("path");
 const chokidar = require("chokidar");
 const { JSDOM } = require("jsdom");
 
+// Import Twigwind
 const { Twigwind } = require("./src/css.js");
 
-// __dirname is available in CommonJS by default
+// Parse command line arguments
 const args = process.argv.slice(2);
 const flags = {};
 for (let i = 0; i < args.length; i++) {
@@ -31,10 +32,6 @@ const model = !!flags.Object_Model;
 fs.mkdirSync(outputDir, { recursive: true });
 
 function rgbColor(r, g, b) {
-  // \x1b is the escape character (ESC)
-  // 38;2 specifies foreground color with RGB
-  // R;G;B are the color values
-  // m marks the end of the sequence
   return `\x1b[38;2;${r};${g};${b}m`;
 }
 
@@ -49,7 +46,7 @@ function getHTMLFiles(dir) {
         const stat = fs.statSync(full);
         if (stat.isDirectory()) {
           // Recursively scan subdirectories (skip hidden and cache directories)
-          if (!item.startsWith('.') && !item.includes('cache')) {
+          if (!item.startsWith('.') && !item.includes('cache') && !item.includes('node_modules')) {
             out.push(...getHTMLFiles(full));
           }
         } else if (item.endsWith(".html")) {
@@ -80,14 +77,7 @@ function extractClasses(html) {
   return [...set];
 }
 
-function resetTwigwind() {
-  // Reset internal state - these are private to the IIFE, so we can't directly access them
-  // The framework will handle internal state management
-}
-
 function build() {
-  resetTwigwind();
-
   const htmlFiles = getHTMLFiles(path.resolve(inputDir));
   console.log(`🔍 Scanning HTML files in: ${path.resolve(inputDir)}`);
   console.log(`📁 Found ${htmlFiles.length} HTML files`);
@@ -97,30 +87,35 @@ function build() {
     return;
   }
 
-  // Process each HTML file individually
-  for (const file of htmlFiles) {
+  for (const file of htmlFiles) { 
+    var per = 0;
     console.log(`\n🔄 Processing: ${path.relative(process.cwd(), file)}`);
-    
-    // Reset Twigwind state for each file
-    resetTwigwind();
     
     const html = fs.readFileSync(file, "utf8");
     const classes = extractClasses(html);
     
     console.log(`🎨 Found ${classes.length} CSS classes in this file`);
-    
-    // Apply each class to generate CSS
-    const start = performance.now();
-    classes.forEach(cls => {
-      Twigwind.applyUtilityClass(cls);
-    });
-    const end = performance.now();
-    if (end - start < 1000)
-      console.log(rgbColor(3, 173, 252) + `done in ${(end - start).toFixed(2)} ms` + `\x1b[0m`);
-    else
-      console.log(rgbColor(3, 173, 252) + `done in ${(end - start * 1000).toFixed(2)} μs` + `\x1b[0m`);
 
-    // Generate CSS for this file
+    const start = performance.now();
+    
+    classes.forEach(cls => {
+      try {
+        Twigwind.applyUtilityClass(cls);
+      } catch (error) {
+        console.warn(`⚠️  Warning: Could not process class "${cls}": ${error.message}`);
+      }
+    });
+    
+    const end = performance.now();
+    const duration = end - start;
+      
+    if (duration >= 1) {
+      console.log(rgbColor(3, 173, 252) + `✓ Processing completed in ${duration.toFixed(2)} ms` + `\x1b[0m`);
+    } else {
+      console.log(rgbColor(3, 173, 252) + `✓ Processing completed in ${(duration * 1000).toFixed(2)} μs` + `\x1b[0m`);
+    }
+    per = per + duration;
+
     let css = Twigwind.getCSS();
     
     if (minify) {
@@ -128,41 +123,40 @@ function build() {
       console.log(`🗜️  CSS minified`);
     }
     
-    // Create output path for individual CSS file
     const relativePath = path.relative(path.resolve(inputDir), file);
     const outputCSS = path.join(outputDir, relativePath.replace(/\.html$/, ".css"));
     
-    // Ensure output directory exists
     fs.mkdirSync(path.dirname(outputCSS), { recursive: true });
     
-    // Write individual CSS file
     fs.writeFileSync(outputCSS, css);
     console.log(`✅ Generated: ${path.relative(process.cwd(), outputCSS)}`);
     console.log(`📊 CSS contains ${css.split('\n').filter(line => line.trim()).length} lines`);
   }
 
-  // Generate object model if requested
   if (model) {
-    // Process all files together for complete object model
-    resetTwigwind();
+    console.log(`\n📄 Generating object model...`);
     const allClasses = new Set();
     
     for (const file of htmlFiles) {
       const html = fs.readFileSync(file, "utf8");
       extractClasses(html).forEach(cls => {
         allClasses.add(cls);
-        Twigwind.applyUtilityClass(cls);
+        try {
+          Twigwind.applyUtilityClass(cls);
+        } catch (error) {
+          console.warn(`⚠️  Warning: Could not process class "${cls}" for object model: ${error.message}`);
+        }
       });
     }
     
     const om = Twigwind.Object_Model();
     const omPath = path.join(outputDir, "twigwind-object-model.json");
     fs.writeFileSync(omPath, JSON.stringify(om, null, 2));
-    console.log(`\n📄 Object model saved to: ${path.relative(process.cwd(), omPath)}`);
+    console.log(`📄 Object model saved to: ${path.relative(process.cwd(), omPath)}`);
     console.log(`🔍 Total unique classes processed: ${allClasses.size}`);
   }
-  
-  console.log(`\n🎉 Build completed successfully!`);
+
+  console.log(`${rgbColor(3, 173, 252)}\n🎉 Build completed successfully in ${per.toFixed(2)} ms!\x1b[0m`);
 }
 
 build();
