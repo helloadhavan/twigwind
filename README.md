@@ -120,10 +120,10 @@ Dynamic gradient generation:
 ### Option 2: Build-time Usage (Node.js)
 ```bash
 # Install dependencies
-npm install
+npm -g install twigwind
 
-# Build CSS from HTML files
-node build.js
+twigwind build --input [input folder] --output [output folder]
+twigwind help # for more info   
 ```
 
 The build system will:
