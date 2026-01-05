@@ -9,6 +9,7 @@ You MAY NOT:
 - use the Components, Templates, or Libraries to create End Products that are designed to allow an End User to build their own End Products using the Components, Templates, Libraries, or derivatives of them
 
 You MAY:
+- fork this repo
 - Use the framework locally for your projects.
 - Study, learn from, or experiment with the framework.
 - Use the Components, Templates, and Libraries to create unlimited Products.
