@@ -1,14 +1,15 @@
 const Twigwind = (() => {
-  const css = [];
-  const used = new Set();
+  const css = {}; // stores generated CSS rules
+  const used = new Set();       // tracks generated CSS
+  const processedElements = new WeakSet(); 
   const twigom = new Object();
   const util = {};
-  
   // Initialize configuration variables
   let colors = {};
   let space = {};
   let sizes = {};
   let breakpoints = {};
+  let components = {};
 
   const raise = (error) => {
     console.log(`\x1b[1;31m${error}\x1b[0m`);
@@ -42,6 +43,7 @@ const Twigwind = (() => {
 
     sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px"};
     breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
+    components = {};
 
   } else if (typeof module !== 'undefined' && module.exports) {
       try {
@@ -51,6 +53,7 @@ const Twigwind = (() => {
         space = js.space || {};
         sizes = js.sizes || {};
         breakpoints = js.breakpoints || {};
+        components = js.components || {};
       } catch (error) {
         raise(`Could not load twigwind.config.js, check twigwind.config.js path.`);
         process.exit(1);}
@@ -81,16 +84,18 @@ const Twigwind = (() => {
     return { hover, dark, media, pure };
   };
 
-  const pushCSS = (cls, rule, hover, media, dark = false, cname) => {
+  const pushCSS = (cls, hover, media, dark = false, cname) => {
     const safe = escapeClass(cls);
     let selector = cname || `.${safe}`;
     if (hover) selector += ":hover";
     if (dark) selector = `.dark ${selector}`;
-    const block = `${selector} { ${rule} }`;
-    const [prop, value] = rule.split(":");
-    twigom[selector] = [ prop, value ];
-    css.push(media ? `${media}${block}}` : block);
-  };
+
+    if (css[selector]) {
+      css[selector].push(media ? `${media}${block}}` : block);
+    } else { 
+      css[selector] = [media ? `${media}${block}}` : block]; 
+    }
+  }
 
   // ========== Utility Generators ==========
 
@@ -650,31 +655,7 @@ const Twigwind = (() => {
     }
   }
 
-  const TagHandler = (selector=null) => {
-    let twigcss = "";
-    if (!selector) {
-      document.querySelectorAll("twigwind").forEach(twig => {
-        twigcss += twig.textContent + "\n";
-      });
-    } else {
-      selector.querySelectorAll("twigwind").forEach(twig => {
-        twigcss += twig.textContent + "\n";
-      });
-    }
-    const matches = [...twigcss.matchAll(/([a-zA-Z0-9_\-#\.]+):[ \t]*\{([^}]*)\}/gs)];
-
-    for (const match of matches) {
-      const cname = `.${match[1].trim()}`;  // e.g. ".button" or ".card"
-      util[cname] = cname || `.${escapeClass(match[1].trim())}`;
-      const classBlock = match[2].trim(); // e.g. "bg-blue; p-10"
-      const classes = classBlock.split(";").map(c => c.trim()).filter(Boolean);
-      for (const cls of classes) {
-        applyUtilityClass(cls, cname);
-      }
-    }
-  };
-
-  const applyUtilityClass = (cls, cname, element_name) => {
+  const applyUtilityClass = (cls, cname, element_name='unknown') => {
     const { pure } = parsePrefix(cls);
 
     if (pure.startsWith("bg-") || pure.startsWith("color-")) twColor(cls, cname);
@@ -715,28 +696,32 @@ const Twigwind = (() => {
   };
 
 
-  // --- Generic apply() and inject() ---
-  const twApply = (el, selector=null) => {
-    TagHandler(selector);
-    el.classList.forEach(cls => {
-      applyUtilityClass(cls, null, el.tagName.toLowerCase());
+  const twApply = (el) => {
+    const isDOM = typeof el === "object" && el.classList;
+
+    if (isDOM && processedElements.has(el)) return;
+
+    const classes = isDOM ? el.classList : el;
+
+    classes.forEach(cls => {
+      if (components && components[cls]) {
+        for (const compCls of components[cls]) {
+          applyUtilityClass(compCls, cls);
+        }
+      } else {
+        applyUtilityClass(cls, null);
+      }
     });
+    if (isDOM) processedElements.add(el);
   };
 
+
+
   const twInject = () => {
-    const merged = {};
-    for (const line of css) {
-      const [selector, body] = line.split(/\s*\{\s*/);
-      if (!selector || !body) continue;
-      const cleanSelector = selector.trim();
-      const cleanBody = body.replace(/\}\s*$/, "").trim();
-      merged[cleanSelector] = (merged[cleanSelector] || "") + cleanBody + ";";
+    let final = "";
+    for (const rule in Object.entries(css)) {
+      final += `${rule[0]} {\n${rule[1].join("\n")}\n}\n`;
     }
-
-    const final = Object.entries(merged)
-      .map(([sel, body]) => `${sel} { ${body} }`)
-      .join("\n");
-
     const style = document.createElement("style");
     style.textContent = final;
     document.head.appendChild(style);
@@ -746,8 +731,8 @@ const Twigwind = (() => {
   return {
     twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius,
     twTransform, twLinearGradient, twshadow, twPosition, twText, twTypography, twLayout,
-    twTransition, twOpacity, twFilter, TagHandler, twApply, twInject, applyUtilityClass,
-    getCSS: () => css.join("\n"), Object_Model: () => twigom
+    twTransition, twOpacity, twFilter, twApply, twInject, applyUtilityClass,
+    getCSS: () => css.join("\n"), reset: () => { css.length = 0; used.clear(); }, Object_Model: () => twigom
   };
 })();
 

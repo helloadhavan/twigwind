@@ -78,6 +78,7 @@ function extractClasses(html) {
 }
 
 function build() {
+  let per = 0;
   const htmlFiles = getHTMLFiles(path.resolve(inputDir));
   console.log(`🔍 Scanning HTML files in: ${path.resolve(inputDir)}`);
   console.log(`📁 Found ${htmlFiles.length} HTML files`);
@@ -88,7 +89,6 @@ function build() {
   }
 
   for (const file of htmlFiles) { 
-    var per = 0;
     console.log(`\n🔄 Processing: ${path.relative(process.cwd(), file)}`);
     
     const html = fs.readFileSync(file, "utf8");
@@ -97,15 +97,7 @@ function build() {
     console.log(`🎨 Found ${classes.length} CSS classes in this file`);
 
     const start = performance.now();
-    
-    classes.forEach(cls => {
-      try {
-        Twigwind.applyUtilityClass(cls);
-      } catch (error) {
-        console.warn(`⚠️  Warning: Could not process class "${cls}": ${error.message}`);
-      }
-    });
-    
+    Twigwind.twApply(classes);
     const end = performance.now();
     const duration = end - start;
       
@@ -131,6 +123,7 @@ function build() {
     fs.writeFileSync(outputCSS, css);
     console.log(`✅ Generated: ${path.relative(process.cwd(), outputCSS)}`);
     console.log(`📊 CSS contains ${css.split('\n').filter(line => line.trim()).length} lines`);
+    Twigwind.reset();
   }
 
   if (model) {
