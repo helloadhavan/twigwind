@@ -86,8 +86,7 @@ const Twigwind = (() => {
 
   const pushCSS = (cls, block, hover, media, dark = false, cname) => {
     const safe = escapeClass(cls);
-    let selector = cname || `.${safe}`;
-
+    let selector = cname ? `.${escapeClass(cname)}` : `.${safe}`;
     if (hover) selector += ":hover";
     if (dark) selector = `.dark ${selector}`;
 
@@ -660,7 +659,7 @@ const Twigwind = (() => {
 
   const applyUtilityClass = (cls, cname, element_name='unknown') => {
     const { pure } = parsePrefix(cls);
-    
+
     if (pure.startsWith("bg-") || pure.startsWith("color-")) twColor(cls, cname);
     else if (pure.match(/^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/)) twSpacing(cls, cname);
     else if (pure.match(/^(w|h)-(\d+)(px|rem|em|%)?$/) || pure.startsWith("size-")) twSize(cls, cname);
@@ -698,9 +697,8 @@ const Twigwind = (() => {
     }
   };
 
-
   const twApply = (el) => {
-    const isDOM = el instanceof Element;
+    const isDOM = typeof HTMLElement !== 'undefined';
 
     if (isDOM && processedElements.has(el)) return;
 

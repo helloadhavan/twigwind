@@ -4,7 +4,8 @@ const chokidar = require("chokidar");
 const { JSDOM } = require("jsdom");
 
 // Import Twigwind
-const { Twigwind } = require("./src/css.js");
+const { Twigwind } = require("./src/css.js");;
+const tw = Twigwind(); 
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -97,7 +98,12 @@ function build() {
     console.log(`🎨 Found ${classes.length} CSS classes in this file`);
 
     const start = performance.now();
-    Twigwind.twApply(classes);
+    /*const mod = require("./src/css.js");
+    console.log("DEBUG require(css.js):", mod);
+    console.log("DEBUG keys:", Object.keys(mod));
+    console.log("DEBUG Twigwind:", mod.Twigwind);
+    process.exit(1);*/
+    tw.twApply(classes);
     const end = performance.now();
     const duration = end - start;
       
@@ -108,7 +114,7 @@ function build() {
     }
     per = per + duration;
 
-    let css = Twigwind.getCSS();
+    let css = tw.getCSS();
     
     if (minify) {
       css = css.replace(/\s+/g, " ").replace(/\/\*[\s\S]*?\*\//g, "").trim();
@@ -123,31 +129,13 @@ function build() {
     fs.writeFileSync(outputCSS, css);
     console.log(`✅ Generated: ${path.relative(process.cwd(), outputCSS)}`);
     console.log(`📊 CSS contains ${css.split('\n').filter(line => line.trim()).length} lines`);
-    Twigwind.reset();
+    tw.reset();
   }
 
-  if (model) {
-    console.log(`\n📄 Generating object model...`);
-    const allClasses = new Set();
-    
-    for (const file of htmlFiles) {
-      const html = fs.readFileSync(file, "utf8");
-      extractClasses(html).forEach(cls => {
-        allClasses.add(cls);
-        try {
-          Twigwind.applyUtilityClass(cls);
-        } catch (error) {
-          console.warn(`⚠️  Warning: Could not process class "${cls}" for object model: ${error.message}`);
-        }
-      });
-    }
-    
-    const om = Twigwind.Object_Model();
+    const om = tw.Object_Model();
     const omPath = path.join(outputDir, "twigwind-object-model.json");
     fs.writeFileSync(omPath, JSON.stringify(om, null, 2));
     console.log(`📄 Object model saved to: ${path.relative(process.cwd(), omPath)}`);
-    console.log(`🔍 Total unique classes processed: ${allClasses.size}`);
-  }
 
   console.log(`${rgbColor(3, 173, 252)}\n🎉 Build completed successfully in ${per.toFixed(2)} ms!\x1b[0m`);
 }

@@ -73,11 +73,14 @@ ${Object.keys(json.dependencies || {}).map(dep => `  ${dep}: ${json.dependencies
 
 
 exec(command, (err, stdout, stderr) => {
+  if (stdout) console.log(stdout);
+  if (stderr) console.error(stderr);
+
   if (err) {
-    console.error("❌ Error:", stderr || err);
-  } else {
-    console.log(stdout);
+    console.error("❌ Build process failed");
+    console.error(err.stack || err);
+    process.exit(err.code || 1);
   }
 });
-
+// --- IGNORE ---
 
