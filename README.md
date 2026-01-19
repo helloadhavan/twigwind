@@ -1,5 +1,4 @@
-# Twigwind CSS Framework
-
+# Twigwind CSS Framework [![](https://data.jsdelivr.com/v1/package/npm/twigwind/badge)](https://www.jsdelivr.com/package/npm/twigwind)
 A utility-first CSS framework that's tiny, JS-powered, and designed for rapid prototyping.
 
 ---
