@@ -1,5 +1,5 @@
 # Twigwind CSS Framework 
-[![](https://data.jsdelivr.com/v1/package/npm/twigwind/badge)](https://www.jsdelivr.com/package/npm/twigwind) ![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)
+[![](https://data.jsdelivr.com/v1/package/npm/twigwind/badge)](https://www.jsdelivr.com/package/npm/twigwind) [![npm](https://img.shields.io/badge/npm-red?logo=npm&logoColor=black)](https://www.npmjs.com/package/twigwind)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 
 
