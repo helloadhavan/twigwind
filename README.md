@@ -1,4 +1,8 @@
-# Twigwind CSS Framework [![](https://data.jsdelivr.com/v1/package/npm/twigwind/badge)](https://www.jsdelivr.com/package/npm/twigwind)
+# Twigwind CSS Framework 
+[![](https://data.jsdelivr.com/v1/package/npm/twigwind/badge)](https://www.jsdelivr.com/package/npm/twigwind) ![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+
+
 A utility-first CSS framework that's tiny, JS-powered, and designed for rapid prototyping.
 
 ---
