@@ -141,7 +141,6 @@ const Twigwind = (() => {
       if (Array.isArray(colorArray)) {
         let colorValue;
         if (colorIndex !== undefined) {
-          // Use specific index (cyan-5 = index 5)
           const index = parseInt(colorIndex);
           if (index >= 0 && index < colorArray.length) {
             colorValue = formatColor(colorArray[index]);
@@ -151,7 +150,6 @@ const Twigwind = (() => {
             colorValue = formatColor(colorArray[midIndex]);
           }
         } else {
-          // No number specified, use middle value (cyan = cyan-5)
           const midIndex = Math.floor(colorArray.length / 2);
           colorValue = formatColor(colorArray[midIndex]);
         }
@@ -308,79 +306,20 @@ const Twigwind = (() => {
   };
 
   /**
-   * Generate linear gradient utilities
-   * Supports: gradient-to-r-red-blue, gradient-45deg-red-5-blue-3, etc.
    */
   const twLinearGradient = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
-    const match = pure.match(/^gradient-(to-[a-z]+|\d+deg)-(.+)$/);
-    if (!match) return;
-    const [, direction, colorsRaw] = match;
-    
-    // Parse color parts (e.g., "red-5-blue-3" -> ["red-5", "blue-3"])
-    const colorParts = [];
-    const parts = colorsRaw.split("-");
-    let currentColor = "";
-    
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i];
-      
 
-      if (/^\d+$/.test(part) && currentColor) {
-        colorParts.push(`${currentColor}-${part}`);
-        currentColor = "";
-      }
-      else if (colors[part]) {
-        if (currentColor) {
-          colorParts.push(currentColor);
-        }
-        currentColor = part;
-      }
-      else if (!currentColor) {
-        currentColor = part;
-      }
-    }
-    
-    // Push any remaining color
-    if (currentColor) {
-      colorParts.push(currentColor);
-    }
-    
-    if (colorParts.length < 2) return;
-    const gradientColors = colorParts.map(colorPart => {
-      const colorMatch = colorPart.match(/^([a-zA-Z]+)-?(\d+)?$/);
-      if (colorMatch) {
-        const [, colorName, colorIndex] = colorMatch;
-        const colorArray = colors[colorName];
-        
-        if (Array.isArray(colorArray)) {
-          if (colorIndex !== undefined) {
-            // Use specific index (red-5 = index 5)
-            const index = parseInt(colorIndex);
-            if (index >= 0 && index < colorArray.length) {
-              return formatColor(colorArray[index]);
-            } else {
-              // Fallback to middle value if index out of range
-              const midIndex = Math.floor(colorArray.length / 2);
-              return formatColor(colorArray[midIndex]);
-            }
-          } else {
-            // No number specified, use middle value (red = red-5)
-            const midIndex = Math.floor(colorArray.length / 2);
-            return formatColor(colorArray[midIndex]);
-          }
-        } else {
-          // Fallback for non-array colors
-          return formatColor(colors[colorName] || colorName);
-        }
-      } else {
-        // Fallback for non-matching patterns
-        return formatColor(colors[colorPart] || colorPart);
-      }
-    }).join(", ");
-    
+    const { hover, dark, media, pure } = parsePrefix(cls);
+    if (!pure.startsWith("gradient:")) return;
+
+    const parts = pure.replace("gradient:", "").split("|");
+    if (parts.length < 3) return;
+
+    const type = parts.shift();       // linear | radial
+    const direction = parts.shift();  // to-r | 45deg | circle | etc
+
     const dirMap = {
       "to-r": "to right",
       "to-l": "to left",
@@ -391,8 +330,38 @@ const Twigwind = (() => {
       "to-br": "to bottom right",
       "to-bl": "to bottom left"
     };
-    const directionCSS = dirMap[direction] || direction;
-    pushCSS(cls, `background-image: linear-gradient(${directionCSS}, ${gradientColors});`, hover, media, dark, cname);
+
+    const resolveColor = (token) => {
+      const m = token.match(/^([a-zA-Z]+)-?(\d+)?$/);
+      if (!m) return token;
+
+      const [, name, idx] = m;
+      const arr = colors[name];
+
+      if (!Array.isArray(arr)) return colors[name] || name;
+
+      const i = idx ? parseInt(idx) : Math.floor(arr.length / 2);
+      return formatColor(arr[i] ?? arr[Math.floor(arr.length / 2)]);
+    };
+
+    const stops = parts.map(p => {
+      const [colorToken, stop] = p.split("@");
+      const color = resolveColor(colorToken);
+      return stop ? `${color} ${stop}` : color;
+    });
+
+    if (stops.length < 2) return;
+
+    const dir = dirMap[direction] || direction;
+
+    pushCSS(
+      cls,
+      `background-image: ${type}-gradient(${dir}, ${stops.join(", ")});`,
+      hover,
+      media,
+      dark,
+      cname
+    );
   };
 
   const twshadow = (cls, cname) => {
@@ -669,7 +638,7 @@ const Twigwind = (() => {
     else if (pure.startsWith("border")) twBorder(cls, cname);
     else if (pure.startsWith("transform:")) twTransform(cls, cname);
     else if (pure.startsWith("shadow")) twshadow(cls, cname);
-    else if (pure.startsWith("gradient-")) twLinearGradient(cls, cname);
+    else if (pure.startsWith("gradient:")) twLinearGradient(cls, cname);
     else if (['fixed', 'absolute', 'relative', 'static', 'sticky'].includes(pure) ||
              pure.match(/^(top|right|bottom|left)-(\d+)/) ||
              pure.match(/^z-(\d+)$/)) twPosition(cls, cname);
