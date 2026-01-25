@@ -106,13 +106,28 @@ const Twigwind = (() => {
    * @param {Array|string} color - RGB array [r,g,b] or color name/hex
    * @returns {string} CSS color value
    */
-  const formatColor = (color) => {
-    if (typeof color === 'string') return color;
-    if (Array.isArray(color) && color.length >= 3) {
-      return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-    }
-    return color;
-  };
+    const formatColor = (color) => {
+      // RGB array
+      if (Array.isArray(color) && color.length >= 3) {
+        return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+      }
+
+      if (typeof color !== 'string') return color;
+
+      const value = color.trim();
+
+      // rgb / rgba with dash-separated values
+      const match = value.match(/^(rgb|rgba)\(([^)]+)\)$/i);
+      if (match && match[2].includes('-')) {
+        const fn = match[1].toLowerCase();
+        const parts = match[2].split('-').map(v => v.trim());
+        return `${fn}(${parts.join(', ')})`;
+      }
+
+      // hex (already valid) → leave it alone
+      return value;
+    };
+
 
   /**
    * Generate color utilities (background-color, color)
@@ -332,17 +347,25 @@ const Twigwind = (() => {
     };
 
     const resolveColor = (token) => {
+      // Always normalize functional colors
+      if (token.startsWith("rgb") || token.startsWith("rgba")) {
+        return formatColor(token);
+      }
+
       const m = token.match(/^([a-zA-Z]+)-?(\d+)?$/);
-      if (!m) return token;
+      if (!m) return formatColor(token);
 
       const [, name, idx] = m;
       const arr = colors[name];
 
-      if (!Array.isArray(arr)) return colors[name] || name;
+      if (!Array.isArray(arr)) {
+        return formatColor(colors[name] || name);
+      }
 
       const i = idx ? parseInt(idx) : Math.floor(arr.length / 2);
       return formatColor(arr[i] ?? arr[Math.floor(arr.length / 2)]);
     };
+
 
     const stops = parts.map(p => {
       const [colorToken, stop] = p.split("@");

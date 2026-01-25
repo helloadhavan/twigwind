@@ -2,9 +2,10 @@ const fs = require("fs");
 const path = require("path");
 const chokidar = require("chokidar");
 const { JSDOM } = require("jsdom");
-
+const logs = {opened: "", saved: "", files: [], preformance: [], success: true};
 // Import Twigwind
-const { Twigwind } = require("./src/css.js");;
+const { Twigwind } = require("./src/css.js");const { log } = require("console");
+;
 const tw = Twigwind(); 
 
 // Parse command line arguments
@@ -79,65 +80,54 @@ function extractClasses(html) {
 }
 
 function build() {
-  let per = 0;
-  const htmlFiles = getHTMLFiles(path.resolve(inputDir));
-  console.log(`🔍 Scanning HTML files in: ${path.resolve(inputDir)}`);
-  console.log(`📁 Found ${htmlFiles.length} HTML files`);
+  try {
+    let per = 0;
+    let num = 0;
+    logs.opened = inputDir;
+    logs.saved = outputDir;
+    const htmlFiles = getHTMLFiles(path.resolve(inputDir));
+    console.log(`🔍 Scanning HTML files in: ${path.resolve(inputDir)}`);
+    console.log(`📁 Found ${htmlFiles.length} HTML files`);
 
-  if (htmlFiles.length === 0) {
-    console.log(`⚠️  No HTML files found in ${path.resolve(inputDir)}`);
-    return;
-  }
+    if (htmlFiles.length === 0) {
+      console.log(`⚠️  No HTML files found in ${path.resolve(inputDir)}`);
+      return;
+    }
 
-  for (const file of htmlFiles) { 
-    console.log(`\n🔄 Processing: ${path.relative(process.cwd(), file)}`);
-    
-    const html = fs.readFileSync(file, "utf8");
-    const classes = extractClasses(html);
-    
-    console.log(`🎨 Found ${classes.length} CSS classes in this file`);
+    for (const file of htmlFiles) { 
+      const html = fs.readFileSync(file, "utf8");
+      const classes = extractClasses(html);
+      num = num + classes.length;
+      const start = performance.now();
+      tw.twApply(classes);
+      const end = performance.now();
+      const duration = end - start;
+      per = per + duration;
 
-    const start = performance.now();
-    /*const mod = require("./src/css.js");
-    console.log("DEBUG require(css.js):", mod);
-    console.log("DEBUG keys:", Object.keys(mod));
-    console.log("DEBUG Twigwind:", mod.Twigwind);
-    process.exit(1);*/
-    tw.twApply(classes);
-    const end = performance.now();
-    const duration = end - start;
+      let css = tw.getCSS();
       
-    if (duration >= 1) {
-      console.log(rgbColor(3, 173, 252) + `✓ Processing completed in ${duration.toFixed(2)} ms` + `\x1b[0m`);
-    } else {
-      console.log(rgbColor(3, 173, 252) + `✓ Processing completed in ${(duration * 1000).toFixed(2)} μs` + `\x1b[0m`);
+      if (minify) {
+        css = css.replace(/\s+/g, " ").replace(/\/\*[\s\S]*?\*\//g, "").trim();
+        console.log(`🗜️  CSS minified`);
+      }
+      
+      const relativePath = path.relative(path.resolve(inputDir), file);
+      const outputCSS = path.join(outputDir, relativePath.replace(/\.html$/, ".css"));
+      
+      fs.mkdirSync(path.dirname(outputCSS), { recursive: true });
+      
+      fs.writeFileSync(outputCSS, css);
+      console.log(`✅ Generated: ${path.relative(process.cwd(), outputCSS)}`);
+      console.log(`📊 CSS contains ${css.split('\n').filter(line => line.trim()).length} lines`);
+      tw.reset();
     }
-    per = per + duration;
 
-    let css = tw.getCSS();
-    
-    if (minify) {
-      css = css.replace(/\s+/g, " ").replace(/\/\*[\s\S]*?\*\//g, "").trim();
-      console.log(`🗜️  CSS minified`);
-    }
-    
-    const relativePath = path.relative(path.resolve(inputDir), file);
-    const outputCSS = path.join(outputDir, relativePath.replace(/\.html$/, ".css"));
-    
-    fs.mkdirSync(path.dirname(outputCSS), { recursive: true });
-    
-    fs.writeFileSync(outputCSS, css);
-    console.log(`✅ Generated: ${path.relative(process.cwd(), outputCSS)}`);
-    console.log(`📊 CSS contains ${css.split('\n').filter(line => line.trim()).length} lines`);
-    tw.reset();
+    console.log(`${rgbColor(0, 255, 13)}Twigwind build completed successfully!\x1b[0m`);
+    console.log(`📂 input directory: ${logs.opened}`);
+    console.log(`💾 output directory: ${logs.saved}`);
+  } catch (error) {
+    console.error(`❌ Build failed: ${error.message}`);
   }
-
-    const om = tw.Object_Model();
-    const omPath = path.join(outputDir, "twigwind-object-model.json");
-    fs.writeFileSync(omPath, JSON.stringify(om, null, 2));
-    console.log(`📄 Object model saved to: ${path.relative(process.cwd(), omPath)}`);
-
-  console.log(`${rgbColor(3, 173, 252)}\n🎉 Build completed successfully in ${per.toFixed(2)} ms!\x1b[0m`);
 }
 
 build();
