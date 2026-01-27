@@ -1,6 +1,6 @@
 {
   "name": "twigwind",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A utility-first CSS framework that's tiny, JS-powered, and designed for rapid prototyping",
   "main": "src/css.js",
   "bin": {
