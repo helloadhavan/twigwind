@@ -1,148 +1,211 @@
+#!/usr/bin/env node
+
 const fs = require("fs");
 const path = require("path");
 const chokidar = require("chokidar");
 const { JSDOM } = require("jsdom");
-const logs = {opened: "", saved: "", files: [], preformance: [], success: true};
-// Import Twigwind
-const { Twigwind } = require("./src/css.js");const { log } = require("console");
-;
-const tw = Twigwind(); 
+const { performance } = require("perf_hooks");
 
-// Parse command line arguments
+// Import Twigwind
+const { Twigwind } = require("./src/css.js");
+const tw = Twigwind();
+
+/* ----------------------------------------
+ * CLI FLAGS
+ * -------------------------------------- */
+
 const args = process.argv.slice(2);
 const flags = {};
+
 for (let i = 0; i < args.length; i++) {
-  if (args[i].startsWith("--")) {
-    const key = args[i].replace(/^--/, "");
+  const arg = args[i];
+
+  // long flags
+  if (arg.startsWith("--")) {
+    const raw = arg.slice(2);
+
+    // --key=value
+    if (raw.includes("=")) {
+      const [key, value] = raw.split("=");
+      flags[key] = value === "false" ? false : value;
+      continue;
+    }
+
+    // --v alias
+    if (raw === "v") {
+      flags.verbose = true;
+      continue;
+    }
+
     const next = args[i + 1];
-    if (next && !next.startsWith("--")) {
-      flags[key] = next;
+    if (next && !next.startsWith("-")) {
+      flags[raw] = next;
       i++;
     } else {
-      flags[key] = true;
+      flags[raw] = true;
     }
+    continue;
+  }
+
+  // short flags
+  if (arg === "-v") {
+    flags.verbose = true;
   }
 }
+
+
 
 const inputDir = flags.input || process.cwd();
 const outputDir = flags.output || path.join(process.cwd(), "dist");
 const minify = !!flags.minify;
 const watch = !!flags.watch;
-const model = !!flags.Object_Model;
+const verbose = !!flags.verbose;
 
-// Ensure output directory exists
+/* ----------------------------------------
+ * UTILITIES
+ * -------------------------------------- */
+
 fs.mkdirSync(outputDir, { recursive: true });
-
-function rgbColor(r, g, b) {
-  return `\x1b[38;2;${r};${g};${b}m`;
-}
 
 function getHTMLFiles(dir) {
   const out = [];
-  try {
-    const items = fs.readdirSync(dir);
-
-    for (const item of items) {
-      const full = path.join(dir, item);
-      try {
-        const stat = fs.statSync(full);
-        if (stat.isDirectory()) {
-          // Recursively scan subdirectories (skip hidden and cache directories)
-          if (!item.startsWith('.') && !item.includes('cache') && !item.includes('node_modules')) {
-            out.push(...getHTMLFiles(full));
-          }
-        } else if (item.endsWith(".html")) {
-          out.push(full);
-        }
-      } catch (err) {
-        console.warn(`Warning: Could not access ${full}: ${err.message}`);
-        continue;
+  for (const item of fs.readdirSync(dir)) {
+    const full = path.join(dir, item);
+    const stat = fs.statSync(full);
+    if (stat.isDirectory()) {
+      if (!item.startsWith(".") && !item.includes("node_modules")) {
+        out.push(...getHTMLFiles(full));
       }
+    } else if (item.endsWith(".html")) {
+      out.push(full);
     }
-  } catch (err) {
-    console.warn(`Warning: Could not read directory ${dir}: ${err.message}`);
   }
   return out;
 }
 
+const color = {
+  reset: "\x1b[0m",
+  bold: s => `\x1b[1m${s}`,
+  gray: s => `\x1b[90m${s}\x1b[0m`,
+  blue: s => `\x1b[34m${s}\x1b[0m`,
+  cyan: s => `\x1b[36m${s}\x1b[0m`,
+  green: s => `\x1b[32m${s}\x1b[0m`,
+  yellow: s => `\x1b[33m${s}\x1b[0m`,
+  red: s => `\x1b[31m${s}\x1b[0m`
+  
+};
+
+const log = {
+  title: s => console.log(`\n${color.cyan(color.bold(s))}`),
+  info: s => console.log(color.gray(s)),
+  ok: s => console.log(color.green(`✔ ${s}`)),
+  warn: s => console.warn(color.yellow(`⚠ ${s}`)),
+  error: s => console.error(color.red(`✖ ${s}`))
+};
+
+
 function extractClasses(html) {
   const dom = new JSDOM(html);
-  const document = dom.window.document;
-  const nodes = [...document.querySelectorAll("[class]")];
+  const nodes = [...dom.window.document.querySelectorAll("[class]")];
   const set = new Set();
-
-  for (const el of nodes) {
-    el.className.split(/\s+/)
-      .filter(Boolean)
-      .forEach(c => set.add(c));
-  }
+  nodes.forEach(el =>
+    el.className.split(/\s+/).filter(Boolean).forEach(c => set.add(c))
+  );
   return [...set];
 }
 
+/* ----------------------------------------
+ * BUILD
+ * -------------------------------------- */
+
 function build() {
-  try {
-    let per = 0;
-    let num = 0;
-    logs.opened = inputDir;
-    logs.saved = outputDir;
-    const htmlFiles = getHTMLFiles(path.resolve(inputDir));
-    console.log(`🔍 Scanning HTML files in: ${path.resolve(inputDir)}`);
-    console.log(`📁 Found ${htmlFiles.length} HTML files`);
+  const stats = {
+    files: 0,
+    classes: 0,
+    rules: 0,
+    cssLines: 0,
+    time: 0,
+  };
 
-    if (htmlFiles.length === 0) {
-      console.log(`⚠️  No HTML files found in ${path.resolve(inputDir)}`);
-      return;
+  const htmlFiles = getHTMLFiles(path.resolve(inputDir));
+
+  if (!htmlFiles.length) {
+    console.log("⚠️  No HTML files found");
+    return;
+  }
+
+  for (const file of htmlFiles) {
+    const html = fs.readFileSync(file, "utf8");
+    const classes = extractClasses(html);
+
+    const start = performance.now();
+    tw.twApply(classes);
+    const end = performance.now();
+
+    let css = tw.getCSS();
+    if (minify) {
+      css = css.replace(/\s+/g, " ").replace(/\/\*[\s\S]*?\*\//g, "").trim();
     }
 
-    for (const file of htmlFiles) { 
-      const html = fs.readFileSync(file, "utf8");
-      const classes = extractClasses(html);
-      num = num + classes.length;
-      const start = performance.now();
-      tw.twApply(classes);
-      const end = performance.now();
-      const duration = end - start;
-      per = per + duration;
+    const rel = path.relative(path.resolve(inputDir), file);
+    const outFile = path.join(outputDir, rel.replace(/\.html$/, ".css"));
 
-      let css = tw.getCSS();
-      
-      if (minify) {
-        css = css.replace(/\s+/g, " ").replace(/\/\*[\s\S]*?\*\//g, "").trim();
-        console.log(`🗜️  CSS minified`);
-      }
-      
-      const relativePath = path.relative(path.resolve(inputDir), file);
-      const outputCSS = path.join(outputDir, relativePath.replace(/\.html$/, ".css"));
-      
-      fs.mkdirSync(path.dirname(outputCSS), { recursive: true });
-      
-      fs.writeFileSync(outputCSS, css);
-      console.log(`✅ Generated: ${path.relative(process.cwd(), outputCSS)}`);
-      console.log(`📊 CSS contains ${css.split('\n').filter(line => line.trim()).length} lines`);
-      tw.reset();
+    fs.mkdirSync(path.dirname(outFile), { recursive: true });
+    fs.writeFileSync(outFile, css);
+
+    const lines = css.split("\n").filter(l => l.trim()).length;
+
+    stats.files++;
+    stats.classes += classes.length;
+    stats.cssLines += lines;
+    stats.time += (end - start);
+
+    if (verbose) {
+      console.log(`✅ ${rel} → ${path.relative(process.cwd(), outFile)} (${lines} lines)`);
     }
 
-    console.log(`${rgbColor(0, 255, 13)}Twigwind build completed successfully!\x1b[0m`);
-    console.log(`📂 input directory: ${logs.opened}`);
-    console.log(`💾 output directory: ${logs.saved}`);
-  } catch (error) {
-    console.error(`❌ Build failed: ${error.message}`);
+    tw.reset();
+  }
+
+  /* ----------------------------------------
+   * SUMMARY OUTPUT
+   * -------------------------------------- */
+
+  console.log(`✔ Twigwind build successful`)
+log.title("Twigwind build");
+
+log.info(`Input      ${inputDir}`);
+log.info(`Output     ${outputDir}`);
+log.info(`HTML files ${stats.files}`);
+log.info(`Classes    ${stats.classes}`);
+log.info(`Time  ${stats.time} ms`);
+if (tw.getErrors().length) {
+  log.warn(`${tw.getErrors().length} warnings found`);
+  if (verbose) {
+    tw.getErrors().forEach(w => log.warn(w));
   }
 }
+
+log.ok("Build completed");
+}
+
+/* ----------------------------------------
+ * RUN / WATCH
+ * -------------------------------------- */
 
 build();
 
 if (watch) {
-  const root = path.resolve(__dirname, inputDir);
-  const srcPath = path.resolve(__dirname, "src", "css.js");
+  const root = path.resolve(inputDir);
+  const cssSrc = path.resolve(__dirname, "src", "css.js");
 
-  console.log(`👀 Watching for changes in: ${root}`);
-  console.log(`👀 Watching framework file: ${srcPath}`);
+  console.log(`👀 Watching ${root}`);
+  console.log(`👀 Watching ${cssSrc}`);
 
-  chokidar.watch([root, srcPath], { ignoreInitial: true })
-    .on("all", (event, filePath) => {
-      if (filePath.endsWith(".html") || filePath.endsWith("css.js")) {
-        console.log(`🔄 File changed: ${filePath}`);
+  chokidar.watch([root, cssSrc], { ignoreInitial: true })
+    .on("all", (_, file) => {
+      if (file.endsWith(".html") || file.endsWith("css.js")) {
+        console.log(`🔄 Changed: ${file}`);
         build();
       }
     });

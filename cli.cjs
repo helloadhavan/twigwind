@@ -28,8 +28,9 @@ const watch = flags.watch ? "--watch" : "";
 const minify = flags.minify ? "--minify" : "";
 const compress = flags.compress ? "--compress" : "";
 const Object_Model = flags.s ? "--Object_Model" : "";
+const verbose = flags.verbose ? "--verbose" : "";
 const buildScript = path.join(__dirname, "build.cjs");
-const command = `node ${buildScript} --input ${input} --output ${output} ${watch} ${minify} ${compress} ${Object_Model}`;
+const command = `node ${buildScript} --input ${input} --output ${output} ${watch} ${minify} ${compress} ${Object_Model} ${verbose}`.trim();
 
 console.log(`\n🌿 Twigwind running: ${command}\n`);
 console.log(`

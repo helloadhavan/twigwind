@@ -10,6 +10,8 @@ const Twigwind = (() => {
   let sizes = {};
   let breakpoints = {};
   let components = {};
+  let errors = [];
+
 
   const raise = (error) => {
     console.log(`\x1b[1;31m${error}\x1b[0m`);
@@ -676,15 +678,7 @@ const Twigwind = (() => {
     else {
       if (!util[cls]) {
       const errorMsg = `Twigwind: Error compiling "${cls}" in element "${element_name || cname || 'unknown'}" - utility not recognized.`;
-      if (typeof window !== 'undefined' && console && console.warn) {
-        console.warn(errorMsg);
-      }
-      else if (typeof process !== 'undefined' && console && console.error) {
-        raise(`⚠️  ${errorMsg}`);
-      }
-      else if (console && console.log) {
-        console.log(`WARNING: ${errorMsg}`);
-      }
+      errors.push(errorMsg);
       }
     }
   };
@@ -733,7 +727,7 @@ const Twigwind = (() => {
     twTransform, twLinearGradient, twshadow, twPosition, twText, twTypography, twLayout,
     twTransition, twOpacity, twFilter, twApply, twInject, applyUtilityClass,
     getCSS: () => {let out = ""; for (const [selector, rules] of Object.entries(css)) {out += `${selector} {\n${rules.join("\n")}\n}\n`;}return out;},
-    reset: () => {for (const key in css) delete css[key]; used.clear();}, Object_Model: () => twigom
+    reset: () => {for (const key in css) delete css[key]; used.clear();}, Object_Model: () => twigom, raise, getErrors: () => errors
   }});
 
 if (typeof window !== 'undefined') window.Twigwind = Twigwind;
