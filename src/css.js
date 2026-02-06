@@ -643,7 +643,7 @@ const Twigwind = (() => {
     const { hover, dark, media, pure } = parsePrefix(cls);
     const match = pure.match(/^animate-([a-zA-Z0-9_-]+)-(\d+)(ms|s)-(infinite|normal|reverse|alternate|alternate-reverse)$/);
     if (match) {
-      const [_, animation, duration, unit, iteration] = match;
+      let [_, animation, duration, unit, iteration] = match;
       if (!unit) unit = "s";
       if (!iteration) iteration = "infinite";
       if (!duration) duration = "1";
@@ -681,7 +681,7 @@ const Twigwind = (() => {
     else if (pure.startsWith("filter") || pure.startsWith("bg-filter") || pure.startsWith("backdrop-filter")) twFilter(cls, cname);
     else if (functions.length > 0) {
       for (const [func, pattern] of functions) {
-        if (pure.test(pattern)) {
+        if (pattern.test(pure)) {
           func(cls, cname);
           return;
         }
