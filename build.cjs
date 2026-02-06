@@ -8,7 +8,9 @@ const { performance } = require("perf_hooks");
 
 // Import Twigwind
 const { Twigwind } = require("./src/css.js");
+const { main } = require("./extension.js");
 const tw = Twigwind();
+main(tw);
 
 /* ----------------------------------------
  * CLI FLAGS

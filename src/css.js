@@ -11,10 +11,10 @@ const Twigwind = (() => {
   let breakpoints = {};
   let components = {};
   let errors = [];
-
+  let functions = [];
 
   const raise = (error) => {
-    console.log(`\x1b[1;31m${error}\x1b[0m`);
+    errors.push(error);
   };
   
   // Load configuration based on environment
@@ -651,6 +651,10 @@ const Twigwind = (() => {
     }
   }
 
+  const addfunction = (f, regex) => {
+    functions.push([ f, regex ]);
+  }
+
   const applyUtilityClass = (cls, cname, element_name='unknown') => {
     const { pure } = parsePrefix(cls);
 
@@ -675,10 +679,18 @@ const Twigwind = (() => {
     else if (pure.startsWith("opacity-")) twOpacity(cls, cname);
     else if (pure.startsWith("image-url-")) twImage(cls, cname);
     else if (pure.startsWith("filter") || pure.startsWith("bg-filter") || pure.startsWith("backdrop-filter")) twFilter(cls, cname);
+    else if (functions.length > 0) {
+      for (const [func, pattern] of functions) {
+        if (pure.test(pattern)) {
+          func(cls, cname);
+          return;
+        }
+      }
+    }
     else {
       if (!util[cls]) {
       const errorMsg = `Twigwind: Error compiling "${cls}" in element "${element_name || cname || 'unknown'}" - utility not recognized.`;
-      errors.push(errorMsg);
+      raise(errorMsg);
       }
     }
   };
@@ -700,9 +712,6 @@ const Twigwind = (() => {
 
     if (isDOM) processedElements.add(el);
   };
-
-
-
 
   const twInject = () => {
     let final = "";
@@ -727,7 +736,7 @@ const Twigwind = (() => {
     twTransform, twLinearGradient, twshadow, twPosition, twText, twTypography, twLayout,
     twTransition, twOpacity, twFilter, twApply, twInject, applyUtilityClass,
     getCSS: () => {let out = ""; for (const [selector, rules] of Object.entries(css)) {out += `${selector} {\n${rules.join("\n")}\n}\n`;}return out;},
-    reset: () => {for (const key in css) delete css[key]; used.clear();}, Object_Model: () => twigom, raise, getErrors: () => errors
+    reset: () => {for (const key in css) delete css[key]; used.clear();}, Object_Model: () => twigom, raise, getErrors: () => errors, addfunction
   }});
 
 if (typeof window !== 'undefined') window.Twigwind = Twigwind;
