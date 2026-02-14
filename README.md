@@ -1,6 +1,3 @@
-<<<<<<< HEAD
----
-
 # Twigwind CSS Framework
 [![npm](https://img.shields.io/badge/npm-red?logo=npm&logoColor=black)](https://www.npmjs.com/package/twigwind) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black) [![](https://data.jsdelivr.com/v1/package/npm/twigwind/badge)](https://www.jsdelivr.com/package/npm/twigwind)
 
@@ -22,4 +19,3 @@ Twigwind might be interesting for:
 ---
 
 For the code, documentation, and detailed examples, refer to the [Twigwind repository](https://github.com/helloadhavan/twigwind).
->>>>>>> parent of 7b3a8e7 (Update README.md with new badge and logo)
