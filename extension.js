@@ -1,4 +1,4 @@
-  function main(twigwind) {;
+  function main(twigwind) {
     function log(cls, cname) {
         console.log("Twigwind extension activated");
     }
