@@ -70,12 +70,15 @@ const Twigwind = (() => {
     let dark = false;
     let media = "";
     let pure = cls;
+    let focus = false;
     const parts = cls.split(":");
 
     if (parts.length > 1) {
       const prefix = parts[0];
       if (prefix === "hover") {
         hover = true; pure = parts.slice(1).join(":");
+      } else if (prefix === "focus") {
+        focus = true; pure = parts.slice(1).join(":");
       } else if (prefix === "dark") {
         dark = true; pure = parts.slice(1).join(":");
       } else if (breakpoints[prefix]) {
@@ -83,13 +86,14 @@ const Twigwind = (() => {
         pure = parts.slice(1).join(":");
       }
     }
-    return { hover, dark, media, pure };
+    return { hover, dark, media, focus, pure };
   };
 
-  const pushCSS = (cls, block, hover, media, dark = false, cname) => {
+  const pushCSS = (cls, block, hover, media, dark = false, focus = false, cname) => {
     const safe = escapeClass(cls);
     let selector = cname ? `.${escapeClass(cname)}` : `.${safe}`;
     if (hover) selector += ":hover";
+    if (focus) selector += ":focus";
     if (dark) selector = `.dark ${selector}`;
 
     const rule = media
@@ -138,7 +142,7 @@ const Twigwind = (() => {
   const twColor = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     let prop, name;
     
     if (pure.startsWith("bg-")) {
@@ -170,35 +174,35 @@ const Twigwind = (() => {
           const midIndex = Math.floor(colorArray.length / 2);
           colorValue = formatColor(colorArray[midIndex]);
         }
-        pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, cname);
+        pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, focus, cname);
       } else {
         // Fallback for non-array colors or unknown colors
         const colorValue = formatColor(colors[name] || name);
-        pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, cname);
+        pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, focus, cname);
       }
     } else {
       // Fallback for non-matching patterns
       const colorValue = formatColor(colors[name] || name);
-      pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, cname);
+      pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, focus, cname);
     }
   };
 
   const twSpacing = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/);
     if (!match) return;
     const [, key, amount, unit] = match;
     const prop = space[key];
     if (!prop) return;
-    pushCSS(cls, `${prop}: ${amount}${unit || "px"};`, hover, media, dark, cname);
+    pushCSS(cls, `${prop}: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
   };
 
   const twSize = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     
     // Handle percentage values like w-100%, h-50%, etc.
     let match = pure.match(/^(max|min)?-?(w|h)-(\d+%|\d+(?:px|rem|em|%)?)$/);
@@ -212,7 +216,7 @@ const Twigwind = (() => {
         val += "px";
       }
       
-      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, cname);
+      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
     }
     
     // Handle viewport units like w-100vw, h-100vh
@@ -221,7 +225,7 @@ const Twigwind = (() => {
       const prefix = match[1] ? `${match[1]}-` : "";
       const dim = match[2] === "w" ? "width" : "height";
       const val = match[3];
-      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, cname);
+      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
     }
     
     // Handle special viewport cases like h-100vh, w-100vw
@@ -230,21 +234,21 @@ const Twigwind = (() => {
       const prefix = match[1] ? `${match[1]}-` : "";
       const dim = match[2] === "w" ? "width" : "height";
       const val = match[3] + match[4];
-      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, cname);
+      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
     }
     
     // size-sm support
     match = pure.match(/^size-(\w+)$/);
     if (match && sizes[match[1]]) {
       const size = sizes[match[1]];
-      return pushCSS(cls, `font-size: ${size};`, hover, media, dark, cname);
+      return pushCSS(cls, `font-size: ${size};`, hover, media, dark, focus, cname);
     }
   };
 
   const twGrid = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^grid:(\d+),(\d+)(?:,([0-9a-zA-Z%]+))?$/);
     if (!match) return;
     const [, cols, rows, gap = "0"] = match;
@@ -254,13 +258,13 @@ const Twigwind = (() => {
       grid-template-rows: repeat(${rows}, auto);
       gap: ${gap};
     `;
-    pushCSS(cls, rules, hover, media, dark, cname);
+    pushCSS(cls, rules, hover, media, dark, focus, cname);
   };
 
   const twflex = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^flex(?::(row|col))?(?:-(center|right|left))?(?:-(center|right|left))?$/);
     if (!match) return;
     const [, dir, main, cross] = match;
@@ -270,14 +274,14 @@ const Twigwind = (() => {
     if (flexDir) rules += `flex-direction:${flexDir};`;
     if (main) rules += `justify-content:${map[main]};`;
     if (cross) rules += `align-items:${map[cross]};`;
-    pushCSS(cls, rules, hover, media, dark, cname);
+    pushCSS(cls, rules, hover, media, dark, focus, cname);
   };
 
 
   const twBorder = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^border(?:-(t|b|l|r))?-((?:\d+)|(?:.+))$/);
     if (!match) return;
     const [, side, val] = match;
@@ -289,23 +293,23 @@ const Twigwind = (() => {
       prop = side ? `border-${side}-color` : "border-color";
       value = colors[val] || val;
     }
-    pushCSS(cls, `${prop}: ${value};`, hover, media, dark, cname);
+    pushCSS(cls, `${prop}: ${value};`, hover, media, dark, focus, cname);
   };
 
   const twBorderRadius = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^border-radius(?:-(.+))?$/);
     if (!match) return;
     const radius = match[1] || "0";
-    pushCSS(cls, `border-radius: ${radius};`, hover, media, dark, cname);
+    pushCSS(cls, `border-radius: ${radius};`, hover, media, dark, focus, cname);
   };
 
   const twTransform = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^transform:(rotate|scale|skew|translate)-(.+)$/);
     if (!match) return;
     const [, type, value] = match;
@@ -319,7 +323,7 @@ const Twigwind = (() => {
         ? `translate(${parts[0].trim()}, ${parts[1].trim()});`
         : `translate(${value});`;
     }
-    pushCSS(cls, rule, hover, media, dark, cname);
+    pushCSS(cls, rule, hover, media, dark, focus, cname);
   };
 
   /**
@@ -328,7 +332,7 @@ const Twigwind = (() => {
     if (used.has(cls)) return;
     used.add(cls);
 
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     if (!pure.startsWith("gradient:")) return;
 
     const parts = pure.replace("gradient:", "").split("|");
@@ -385,6 +389,7 @@ const Twigwind = (() => {
       hover,
       media,
       dark,
+      focus,
       cname
     );
   };
@@ -392,7 +397,7 @@ const Twigwind = (() => {
   const twshadow = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     const map = {
       sm: "0 1px 2px rgba(0,0,0,0.05)", md: "0 4px 6px rgba(0,0,0,0.1)",
       lg: "0 10px 15px rgba(0,0,0,0.15)", xl: "0 20px 25px rgba(0,0,0,0.2)",
@@ -402,45 +407,45 @@ const Twigwind = (() => {
     const text = pure.match(/^text-shadow(?:-(.+))?$/);
     if (!match && !text) return;
     let val = match ? match[1] : text[1];
-    if (!val) pushCSS(cls, `box-shadow: ${map.sm};`, hover, media, dark, cname);
-    else if (map[val]) pushCSS(cls, `box-shadow: ${map[val]};`, hover, media, dark, cname);
-    else if (text) pushCSS(cls, `text-shadow: ${val};`, hover, media, dark, cname);
-    else pushCSS(cls, `box-shadow: ${val.replace(/_/g, " ")};`, hover, media, dark, cname);
+    if (!val) pushCSS(cls, `box-shadow: ${map.sm};`, hover, media, dark, focus, cname);
+    else if (map[val]) pushCSS(cls, `box-shadow: ${map[val]};`, hover, media, dark, focus, cname);
+    else if (text) pushCSS(cls, `text-shadow: ${val};`, hover, media, dark, focus, cname);
+    else pushCSS(cls, `box-shadow: ${val.replace(/_/g, " ")};`, hover, media, dark, focus, cname);
   };
 
   const twPosition = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     
     // Position types: fixed, absolute, relative, static, sticky
     if (['fixed', 'absolute', 'relative', 'static', 'sticky'].includes(pure)) {
-      return pushCSS(cls, `position: ${pure};`, hover, media, dark, cname);
+      return pushCSS(cls, `position: ${pure};`, hover, media, dark, focus, cname);
     }
     
     // Position values: top-10, right-20, bottom-5, left-15
     const match = pure.match(/^(top|right|bottom|left)-(\d+)(px|rem|em|%)?$/);
     if (match) {
       const [, side, amount, unit] = match;
-      return pushCSS(cls, `${side}: ${amount}${unit || "px"};`, hover, media, dark, cname);
+      return pushCSS(cls, `${side}: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
     }
     
     // Z-index: z-10, z-50, z-999
     const zMatch = pure.match(/^z-(\d+)$/);
     if (zMatch) {
-      return pushCSS(cls, `z-index: ${zMatch[1]};`, hover, media, dark, cname);
+      return pushCSS(cls, `z-index: ${zMatch[1]};`, hover, media, dark, focus, cname);
     }
   };
 
   const twText = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     
     // Text alignment
     if (['text-left', 'text-center', 'text-right', 'text-justify'].includes(pure)) {
       const align = pure.replace('text-', '');
-      return pushCSS(cls, `text-align: ${align};`, hover, media, dark, cname);
+      return pushCSS(cls, `text-align: ${align};`, hover, media, dark, focus, cname);
     }
   };
 
@@ -448,7 +453,7 @@ const Twigwind = (() => {
     if (used.has(cls)) return;
     used.add(cls);
     const sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^font-(size|weight|family|style|variant)-(.+)$/);
     if (!match) return;
     let [, prop, val] = match;
@@ -456,11 +461,11 @@ const Twigwind = (() => {
     if (prop === "size") {
       // Handle predefined sizes
       if (sizes[val]) {
-        return pushCSS(cls, `font-size: ${sizes[val]};`, hover, media, dark, cname);
+        return pushCSS(cls, `font-size: ${sizes[val]};`, hover, media, dark, focus, cname);
       }
       // Handle custom rem/px/em values like font-size-3rem, font-size-24px
       if (val.match(/^\d+(\.\d+)?(rem|px|em|%)$/)) {
-        return pushCSS(cls, `font-size: ${val};`, hover, media, dark, cname);
+        return pushCSS(cls, `font-size: ${val};`, hover, media, dark, focus, cname);
       }
     }
     
@@ -472,13 +477,13 @@ const Twigwind = (() => {
       }
     }
     
-    pushCSS(cls, `font-${prop}: ${val};`, hover, media, dark, cname);
+    pushCSS(cls, `font-${prop}: ${val};`, hover, media, dark, focus, cname);
   };
 
   const twImage = (cls) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, media, pure } = parsePrefix(cls);
+    const { hover, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^image-url-(.+)$/);
     if (!match) return;
     
@@ -495,13 +500,13 @@ const Twigwind = (() => {
       background-repeat: no-repeat;
     `;
     
-    pushCSS(cls, rules, hover, media);
+    pushCSS(cls, rules, hover, media, false, focus);
   };
 
   const twFilter = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     
     // Handle backdrop filters
     const backdropMatch = pure.match(/^backdrop-filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
@@ -520,7 +525,7 @@ const Twigwind = (() => {
         filterValue = `${value}deg`;
       }
       
-      return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, cname);
+      return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
     }
     
     // Handle regular filters
@@ -551,7 +556,7 @@ const Twigwind = (() => {
         filterValue = `${value}deg`;
       }
       
-      return pushCSS(cls, `filter: ${filter}(${filterValue});`, hover, media, dark, cname);
+      return pushCSS(cls, `filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
     }
     
     // Handle background filters (legacy support for bg-filter)
@@ -571,49 +576,49 @@ const Twigwind = (() => {
         filterValue = `${value}deg`;
       }
       
-      return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, cname);
+      return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
     }
   };
 
   const twLayout = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     
     // Max width
     const maxWMatch = pure.match(/^max-w-(\d+)(px|rem|em|%)?$/);
     if (maxWMatch) {
       const [, amount, unit] = maxWMatch;
-      return pushCSS(cls, `max-width: ${amount}${unit || "px"};`, hover, media, dark, cname);
+      return pushCSS(cls, `max-width: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
     }
     
     // Margin auto
     if (pure === 'mx-auto') {
-      return pushCSS(cls, `margin-left: auto; margin-right: auto;`, hover, media, dark, cname);
+      return pushCSS(cls, `margin-left: auto; margin-right: auto;`, hover, media, dark, focus, cname);
     }
     if (pure === 'my-auto') {
-      return pushCSS(cls, `margin-top: auto; margin-bottom: auto;`, hover, media, dark, cname);
+      return pushCSS(cls, `margin-top: auto; margin-bottom: auto;`, hover, media, dark, focus, cname);
     }
     
     // Gap for flexbox/grid
     const gapMatch = pure.match(/^gap-(\d+)(px|rem|em|%)?$/);
     if (gapMatch) {
       const [, amount, unit] = gapMatch;
-      return pushCSS(cls, `gap: ${amount}${unit || "px"};`, hover, media, dark, cname);
+      return pushCSS(cls, `gap: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
     }
   };
 
   const twTransition = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     
     // Handle transition:all_300ms syntax
     const colonMatch = pure.match(/^transition:(.+)_(\d+)ms$/);
     if (colonMatch) {
       const [, property, duration] = colonMatch;
       const prop = property === 'all' ? 'all' : property.replace('-', '-');
-      return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, cname);
+      return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, focus, cname);
     }
     
     // Handle transition-property-duration syntax
@@ -621,33 +626,33 @@ const Twigwind = (() => {
     if (dashMatch) {
       const [, property, duration] = dashMatch;
       const prop = property === 'all' ? 'all' : property.replace('-', '-');
-      return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, cname);
+      return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, focus, cname);
     }
   };
 
   const twOpacity = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     
     const match = pure.match(/^opacity-(\d+)$/);
     if (match) {
       const opacity = parseInt(match[1]) / 100;
-      return pushCSS(cls, `opacity: ${opacity};`, hover, media, dark, cname);
+      return pushCSS(cls, `opacity: ${opacity};`, hover, media, dark, focus, cname);
     }
   };
 
   const twAnimation = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, pure } = parsePrefix(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^animate-([a-zA-Z0-9_-]+)-(\d+)(ms|s)-(infinite|normal|reverse|alternate|alternate-reverse)$/);
     if (match) {
       let [_, animation, duration, unit, iteration] = match;
       if (!unit) unit = "s";
       if (!iteration) iteration = "infinite";
       if (!duration) duration = "1";
-      return pushCSS(cls, `animation: ${animation} ${duration}${unit} ${iteration};`, hover, media, dark, cname);
+      return pushCSS(cls, `animation: ${animation} ${duration}${unit} ${iteration};`, hover, media, dark, focus, cname);
     }
   }
 

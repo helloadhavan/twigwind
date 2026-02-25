@@ -25,7 +25,7 @@ const space = {
 const sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px"};
 const breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
 
-const components = {"hell": ["bg-red-600", "text-white", "p-4", "m-2", "border", "border-red-8", "rounded-lg", "shadow-lg"],};
+const components = {};
 
 module.exports = {
     colors: colors,

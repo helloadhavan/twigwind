@@ -1,9 +1,5 @@
-  function main(twigwind) {
-    function log(cls, cname) {
-        console.log("Twigwind extension activated");
-    }
-    twigwind.addfunction(log, /activate*/);
-}
+function main(twigwind) {}
 
 if (typeof window !== 'undefined') window.main = main;
 if (typeof module !== 'undefined' && module.exports) module.exports = { main };
+// twigwind extension will be added in the future,
