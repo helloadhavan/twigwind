@@ -18,4 +18,4 @@ Twigwind might be interesting for:
 
 ---
 
-For the code, documentation, and detailed examples, refer to the [Twigwind repository](https://github.com/helloadhavan/twigwind).
+For the code, documentation, and detailed examples, refer to the [Twigwind repository](https://twigwind.github.io).
