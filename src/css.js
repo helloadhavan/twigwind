@@ -12,6 +12,7 @@ const Twigwind = (() => {
   let components = {};
   let errors = [];
   let functions = [];
+  let display = {};
 
   const raise = (error) => {
     errors.push(error);
@@ -45,6 +46,15 @@ const Twigwind = (() => {
 
     sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px"};
     breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
+    display = {
+      'block': "block",
+      'inline': "inline",
+      'hidden': "none",
+      "inline-block": "inline-block",
+      "inline-flex": "inline-flex",
+      "inline-grid": "inline-grid"
+    };
+
     components = {};
 
   } else if (typeof module !== 'undefined' && module.exports) {
@@ -656,6 +666,14 @@ const Twigwind = (() => {
     }
   }
 
+  const twDisplay = (cls, cname) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+    const { hover, dark, media, focus, pure } = parsePrefix(cls);
+    
+    if (display[pure]) pushCSS(cls, `display:${display[pure]};`, hover, media, dark, focus, cname);
+  };
+
   const addfunction = (f, regex) => {
     functions.push([ f, regex ]);
   }
@@ -684,6 +702,7 @@ const Twigwind = (() => {
     else if (pure.startsWith("opacity-")) twOpacity(cls, cname);
     else if (pure.startsWith("image-url-")) twImage(cls, cname);
     else if (pure.startsWith("filter") || pure.startsWith("bg-filter") || pure.startsWith("backdrop-filter")) twFilter(cls, cname);
+    else if (display[pure]) twDisplay(cls, cname);
     else if (functions.length > 0) {
       for (const [func, pattern] of functions) {
         if (pattern.test(pure)) {
@@ -739,7 +758,7 @@ const Twigwind = (() => {
   return {
     twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius,
     twTransform, twLinearGradient, twshadow, twPosition, twText, twTypography, twLayout,
-    twTransition, twOpacity, twFilter, twApply, twInject, applyUtilityClass,
+    twTransition, twOpacity, twFilter, twApply, twInject, applyUtilityClass, twDisplay,
     getCSS: () => {let out = ""; for (const [selector, rules] of Object.entries(css)) {out += `${selector} {\n${rules.join("\n")}\n}\n`;}return out;},
     reset: () => {for (const key in css) delete css[key]; used.clear();}, Object_Model: () => twigom, raise, getErrors: () => errors, addfunction
   }});

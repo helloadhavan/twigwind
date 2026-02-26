@@ -22,6 +22,15 @@ const space = {
   mt: "margin-top", mb: "margin-bottom"
 };
 
+const display = {
+      'block': "block",
+      'inline': "inline",
+      'hidden': "none",
+      "inline-block": "inline-block",
+      "inline-flex": "inline-flex",
+      "inline-grid": "inline-grid"
+};
+
 const sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px"};
 const breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
 
@@ -33,4 +42,5 @@ module.exports = {
     sizes: sizes,
     breakpoints: breakpoints,
     components: components,
+    display: display,
 };
