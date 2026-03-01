@@ -13,9 +13,29 @@ Twigwind might be interesting for:
 - Anyone exploring alternative approaches to CSS frameworks
 - Developers interested in just-in-time (JIT) class generation
 - Those curious about integrating JavaScript with CSS utility frameworks
-
 [Visit the Twigwind Website](https://twigwind.github.io) to see it in action or to contribute to its development.
 
+## How to install it
+
+for mannual installation clone this repo or run:
+```bash
+git clone https://github.com/helloadhavan/twigwind.git
+```
+If you want to play with this framework put this line `<script src="https://cdn.jsdelivr.net/npm/twigwind@4.0.3/src/css.min.js"></script>` into the head of the document and insert
+```html
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("[class]").forEach(el => Twigwind.twApply(el));
+  Twigwind.twInject();
+});
+</script>
+```
+
+For CLI and build-time support install the offical npm package
+```bash
+npm install -g twigwind
+```
 ---
 
-For the code, documentation, and detailed examples, refer to the [Twigwind repository](https://twigwind.github.io).
+For the code, documentation, and detailed examples, refer to the [Twigwind website](https://twigwind.github.io).
+ 
