@@ -1,5 +1,5 @@
 # Twigwind CSS Framework
-[![npm](https://img.shields.io/badge/npm-red?logo=npm&logoColor=black)](https://www.npmjs.com/package/twigwind) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black) [![](https://data.jsdelivr.com/v1/package/npm/twigwind/badge)](https://www.jsdelivr.com/package/npm/twigwind)
+[![npm](https://img.shields.io/badge/npm-red?logo=npm&logoColor=black)](https://www.npmjs.com/package/twigwind) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black) [![](https://data.jsdelivr.com/v1/package/npm/twigwind/badge)](https://www.jsdelivr.com/package/npm/twigwind) ![GitHub stars](https://img.shields.io/github/stars/helloadhavan/twigwind?style=flat-square)
 
 [![Twigwind Logo](https://raw.githubusercontent.com/helloadhavan/twigwind/refs/heads/main/twigwind.svg)](https://adhavan.zipyoda.com)
 
@@ -36,6 +36,7 @@ For CLI and build-time support install the offical npm package
 npm install -g twigwind
 ```
 ---
+If you liked this framework please star the repo
 
 For the code, documentation, and detailed examples, refer to the [Twigwind website](https://twigwind.github.io).
  
