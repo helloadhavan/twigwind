@@ -13,6 +13,7 @@ const Twigwind = (() => {
   let errors = [];
   let functions = [];
   let display = {};
+  let font_sizes = {};
 
   const raise = (error) => {
     errors.push(error);
@@ -55,6 +56,7 @@ const Twigwind = (() => {
       "inline-grid": "inline-grid"
     };
 
+    font_sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
     components = {};
 
   } else if (typeof module !== 'undefined' && module.exports) {
@@ -462,16 +464,15 @@ const Twigwind = (() => {
   const twTypography = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
     const { hover, dark, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^font-(size|weight|family|style|variant)-(.+)$/);
     if (!match) return;
     let [, prop, val] = match;
     
-    if (prop === "size") {
+    if (prop === "size" || prop === "weight") {
       // Handle predefined sizes
-      if (sizes[val]) {
-        return pushCSS(cls, `font-size: ${sizes[val]};`, hover, media, dark, focus, cname);
+      if (font_sizes[val]) {
+        return pushCSS(cls, `font-size: ${font_sizes[val]};`, hover, media, dark, focus, cname);
       }
       // Handle custom rem/px/em values like font-size-3rem, font-size-24px
       if (val.match(/^\d+(\.\d+)?(rem|px|em|%)$/)) {

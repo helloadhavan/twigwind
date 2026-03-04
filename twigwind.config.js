@@ -33,7 +33,7 @@ const display = {
 
 const sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px"};
 const breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
-
+const font_sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
 const components = {};
 
 module.exports = {
@@ -41,6 +41,7 @@ module.exports = {
     space: space,
     sizes: sizes,
     breakpoints: breakpoints,
+    font_sizes: font_sizes,
     components: components,
     display: display,
 };
