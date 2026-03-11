@@ -11,8 +11,41 @@ const Twigwind = (() => {
   let breakpoints = {};
   let components = {};
   let errors = [];
-  let functions = [];
   let display = {};
+
+  let rules = [
+      { test: (p) => p.startsWith("bg-") || p.startsWith("color-"), run: twColor },
+      { test: (p) => /^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/.test(p), run: twSpacing },
+      { test: (p) => /^(w|h)-/.test(p) || p.startsWith("size-"), run: twSize },
+      { test: (p) => p.startsWith("flex"), run: twflex },
+      { test: (p) => p.startsWith("grid:"), run: twGrid },
+      { test: (p) => p.startsWith("border-radius"), run: twBorderRadius },
+      { test: (p) => p.startsWith("border"), run: twBorder },
+      { test: (p) => p.startsWith("transform:"), run: twTransform },
+      { test: (p) => p.startsWith("shadow"), run: twshadow },
+      { test: (p) => p.startsWith("gradient:"), run: twLinearGradient },
+      { test: (p) =>
+          ["fixed","absolute","relative","static","sticky"].includes(p) ||
+          /^(top|right|bottom|left)-/.test(p) ||
+          /^z-\d+$/.test(p),
+        run: twPosition
+      },
+      { test: (p) => p.startsWith("text-"), run: twText },
+      { test: (p) => p.startsWith("font-"), run: twTypography },
+      { test: (p) => p.startsWith("animate-"), run: twAnimation },
+      { test: (p) =>
+          p.startsWith("max-w-") ||
+          p === "mx-auto" ||
+          p === "my-auto" ||
+          /^gap-/.test(p),
+        run: twLayout
+      },
+      { test: (p) => p.startsWith("transition-") || p.startsWith("transition:"), run: twTransition },
+      { test: (p) => p.startsWith("opacity-"), run: twOpacity },
+      { test: (p) => p.startsWith("image-url-"), run: twImage },
+      { test: (p) => p.startsWith("filter") || p.startsWith("bg-filter") || p.startsWith("backdrop-filter"), run: twFilter },
+      { test: (p) => display[p], run: twDisplay }
+  ]
 
   const raise = (error) => {
     errors.push(error);
@@ -674,50 +707,25 @@ const Twigwind = (() => {
     if (display[pure]) pushCSS(cls, `display:${display[pure]};`, hover, media, dark, focus, cname);
   };
 
-  const addfunction = (f, regex) => {
-    functions.push([ f, regex ]);
+  const addfunction = (test, run) => {
+    rules.test = test
+    rules.run = run
   }
 
-  const applyUtilityClass = (cls, cname, element_name='unknown') => {
-    const { pure } = parsePrefix(cls);
+  function applyUtilityClass(cls, cname, element_name = "unknown") {
+    const { pure } = parsePrefix(cls)
 
-    if (pure.startsWith("bg-") || pure.startsWith("color-")) twColor(cls, cname);
-    else if (pure.match(/^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/)) twSpacing(cls, cname);
-    else if (pure.match(/^(w|h)-(\d+)(px|rem|em|%)?$/) || pure.startsWith("size-")) twSize(cls, cname);
-    else if (pure.startsWith("flex")) twflex(cls, cname);
-    else if (pure.startsWith("grid:")) twGrid(cls, cname);
-    else if (pure.startsWith("border-radius")) twBorderRadius(cls, cname);
-    else if (pure.startsWith("border")) twBorder(cls, cname);
-    else if (pure.startsWith("transform:")) twTransform(cls, cname);
-    else if (pure.startsWith("shadow")) twshadow(cls, cname);
-    else if (pure.startsWith("gradient:")) twLinearGradient(cls, cname);
-    else if (['fixed', 'absolute', 'relative', 'static', 'sticky'].includes(pure) ||
-             pure.match(/^(top|right|bottom|left)-(\d+)/) ||
-             pure.match(/^z-(\d+)$/)) twPosition(cls, cname);
-    else if (pure.startsWith("text-")) twText(cls, cname);
-    else if (pure.startsWith("font-")) twTypography(cls, cname);
-    else if (pure.startsWith("animate-")) twAnimation(cls, cname);
-    else if (pure.match(/^max-w-/) || pure === 'mx-auto' || pure === 'my-auto' || pure.match(/^gap-/)) twLayout(cls, cname);
-    else if (pure.startsWith("transition-")) twTransition(cls, cname);
-    else if (pure.startsWith("opacity-")) twOpacity(cls, cname);
-    else if (pure.startsWith("image-url-")) twImage(cls, cname);
-    else if (pure.startsWith("filter") || pure.startsWith("bg-filter") || pure.startsWith("backdrop-filter")) twFilter(cls, cname);
-    else if (display[pure]) twDisplay(cls, cname);
-    else if (functions.length > 0) {
-      for (const [func, pattern] of functions) {
-        if (pattern.test(pure)) {
-          func(cls, cname);
-          return;
-        }
+    for (const rule of rules) {
+      if (rule.test(pure)) {
+        rule.run(cls, cname)
+        return
       }
     }
-    else {
-      if (!util[cls]) {
-      const errorMsg = `Twigwind: Error compiling "${cls}" in element "${element_name || cname || 'unknown'}" - utility not recognized.`;
-      raise(errorMsg);
-      }
+    if (!util[cls]) {
+      const errorMsg = `Twigwind: Error compiling "${cls}" in element "${element_name}" - utility not recognized.`
+      raise(errorMsg)
     }
-  };
+  }
 
   const twApply = (el) => {
     const isDOM = typeof HTMLElement !== 'undefined';
