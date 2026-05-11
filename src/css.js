@@ -106,10 +106,14 @@ const Twigwind = (() => {
         process.exit(1);}
       }
     
-
   const escapeClass = (cls) =>
     cls.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1");
 
+  /**
+   * 
+   * @param {string} cls 
+   * @returns {object} { hover, dark, media, focus, pure }
+   */
   const parsePrefix = (cls) => {
     let hover = false;
     let dark = false;
@@ -498,7 +502,8 @@ const Twigwind = (() => {
     if (used.has(cls)) return;
     used.add(cls);
     const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    const match = pure.match(/^font-(size|weight|family|style|variant)-(.+)$/);
+    // Support both dash and colon separators: font-family-value OR font-family:value
+    const match = pure.match(/^font-(size|weight|family|style|variant)[-:](.+)$/);
     if (!match) return;
     let [, prop, val] = match;
     
@@ -514,9 +519,20 @@ const Twigwind = (() => {
     }
     
     if (prop === "family") {
-      // Handle font-family specially - replace dashes with spaces and add quotes if needed
-      val = val.replace(/-/g, " ");
-      if (!val.includes('"') && !val.includes("'") && val !== 'serif' && val !== 'sans-serif' && val !== 'monospace') {
+      // Replace underscores with spaces for multi-word font names (e.g. Momo_Trust_Sans → Momo Trust Sans)
+      val = val.replace(/_/g, " ");
+      
+      const genericFamilies = ['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'system-ui', 'math', 'emoji', 'fangsong'];
+      
+      if (val.includes(',')) {
+        // Comma-separated font stack: quote non-generic families individually
+        val = val.split(',').map(f => {
+          f = f.trim();
+          if (genericFamilies.includes(f)) return f;
+          if (f.startsWith('"') || f.startsWith("'")) return f;
+          return `"${f}"`;
+        }).join(', ');
+      } else if (!genericFamilies.includes(val) && !val.startsWith('"') && !val.startsWith("'")) {
         val = `"${val}"`;
       }
     }

@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 4.0.4
+=======
+4.0.5
+>>>>>>> 4a9f8f9 (Fix typography handling and config updates)

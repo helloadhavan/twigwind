@@ -40,6 +40,7 @@
   },
   "homepage": "https://twigwind.github.io/",
   "dependencies": {
+    "app-data": "^1.0.0",
     "chokidar": "^4.0.3",
     "jsdom": "^27.0.1"
   }
