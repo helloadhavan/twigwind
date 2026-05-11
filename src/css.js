@@ -14,39 +14,7 @@ const Twigwind = (() => {
   let display = {};
   let font_sizes = {};
 
-  let rules = [
-      { test: (p) => p.startsWith("bg-") || p.startsWith("color-"), run: twColor },
-      { test: (p) => /^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/.test(p), run: twSpacing },
-      { test: (p) => /^(w|h)-/.test(p) || p.startsWith("size-"), run: twSize },
-      { test: (p) => p.startsWith("flex"), run: twflex },
-      { test: (p) => p.startsWith("grid:"), run: twGrid },
-      { test: (p) => p.startsWith("border-radius"), run: twBorderRadius },
-      { test: (p) => p.startsWith("border"), run: twBorder },
-      { test: (p) => p.startsWith("transform:"), run: twTransform },
-      { test: (p) => p.startsWith("shadow"), run: twshadow },
-      { test: (p) => p.startsWith("gradient:"), run: twLinearGradient },
-      { test: (p) =>
-          ["fixed","absolute","relative","static","sticky"].includes(p) ||
-          /^(top|right|bottom|left)-/.test(p) ||
-          /^z-\d+$/.test(p),
-        run: twPosition
-      },
-      { test: (p) => p.startsWith("text-"), run: twText },
-      { test: (p) => p.startsWith("font-"), run: twTypography },
-      { test: (p) => p.startsWith("animate-"), run: twAnimation },
-      { test: (p) =>
-          p.startsWith("max-w-") ||
-          p === "mx-auto" ||
-          p === "my-auto" ||
-          /^gap-/.test(p),
-        run: twLayout
-      },
-      { test: (p) => p.startsWith("transition-") || p.startsWith("transition:"), run: twTransition },
-      { test: (p) => p.startsWith("opacity-"), run: twOpacity },
-      { test: (p) => p.startsWith("image-url-"), run: twImage },
-      { test: (p) => p.startsWith("filter") || p.startsWith("bg-filter") || p.startsWith("backdrop-filter"), run: twFilter },
-      { test: (p) => display[p], run: twDisplay }
-  ]
+  let rules = [];
 
   const raise = (error) => {
     errors.push(error);
@@ -723,6 +691,41 @@ const Twigwind = (() => {
     
     if (display[pure]) pushCSS(cls, `display:${display[pure]};`, hover, media, dark, focus, cname);
   };
+
+  // Initialize rules array after all utility functions are defined
+  rules = [
+      { test: (p) => p.startsWith("bg-") || p.startsWith("color-"), run: twColor },
+      { test: (p) => /^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/.test(p), run: twSpacing },
+      { test: (p) => /^(w|h)-/.test(p) || p.startsWith("size-"), run: twSize },
+      { test: (p) => p.startsWith("flex"), run: twflex },
+      { test: (p) => p.startsWith("grid:"), run: twGrid },
+      { test: (p) => p.startsWith("border-radius"), run: twBorderRadius },
+      { test: (p) => p.startsWith("border"), run: twBorder },
+      { test: (p) => p.startsWith("transform:"), run: twTransform },
+      { test: (p) => p.startsWith("shadow"), run: twshadow },
+      { test: (p) => p.startsWith("gradient:"), run: twLinearGradient },
+      { test: (p) =>
+          ["fixed","absolute","relative","static","sticky"].includes(p) ||
+          /^(top|right|bottom|left)-/.test(p) ||
+          /^z-\d+$/.test(p),
+        run: twPosition
+      },
+      { test: (p) => p.startsWith("text-"), run: twText },
+      { test: (p) => p.startsWith("font-") || /^font-(size|weight|family|style|variant):/.test(p), run: twTypography },
+      { test: (p) => p.startsWith("animate-"), run: twAnimation },
+      { test: (p) =>
+          p.startsWith("max-w-") ||
+          p === "mx-auto" ||
+          p === "my-auto" ||
+          /^gap-/.test(p),
+        run: twLayout
+      },
+      { test: (p) => p.startsWith("transition-") || p.startsWith("transition:"), run: twTransition },
+      { test: (p) => p.startsWith("opacity-"), run: twOpacity },
+      { test: (p) => p.startsWith("image-url-"), run: twImage },
+      { test: (p) => p.startsWith("filter") || p.startsWith("bg-filter") || p.startsWith("backdrop-filter"), run: twFilter },
+      { test: (p) => display[p], run: twDisplay }
+  ];
 
   const addfunction = (test, run) => {
     rules.test = test
