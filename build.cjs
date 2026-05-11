@@ -56,8 +56,8 @@ for (let i = 0; i < args.length; i++) {
 }
 
 
-const inputDir = flags.input || process.cwd();
-const outputDir = flags.output || path.join(process.cwd(), "dist");
+const inputDir = path.resolve(process.cwd(), flags.input || ".");
+const outputDir = path.resolve(process.cwd(), flags.output || "dist");
 const minify = !!flags.minify;
 const watch = !!flags.watch;
 const verbose = !!flags.verbose;

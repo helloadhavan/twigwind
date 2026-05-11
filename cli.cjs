@@ -73,7 +73,7 @@ ${Object.keys(json.dependencies || {}).map(dep => `  ${dep}: ${json.dependencies
 }
 
 
-exec(command, (err, stdout, stderr) => {
+exec(command, { cwd: process.cwd() }, (err, stdout, stderr) => {
   if (stdout) console.log(stdout);
   if (stderr) console.error(stderr);
 
