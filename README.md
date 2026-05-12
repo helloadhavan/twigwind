@@ -36,6 +36,34 @@ For CLI and build-time support install the offical npm package
 npm install -g twigwind
 ```
 ---
+
+## Currently Implemented Features
+
+| Category | Utilities | Example |
+|---|---|---|
+| Colors | `bg-*`, `color-*` | `bg-red-5`, `color-cyan` |
+| Spacing | `p-*`, `m-*`, `pt-*`, `ml-*` etc. | `p-16px`, `mt-10` |
+| Sizing | `w-*`, `h-*`, `size-*` | `w-100%`, `h-50vh` |
+| Flexbox | `flex`, `flex:row`, `flex:col` | `flex:col-center-left` |
+| Grid | `grid:cols,rows,gap` | `grid:3,2,10px` |
+| Borders | `border-*`, `border-radius-*` | `border-2`, `border-radius-8px` |
+| Transforms | `transform:rotate\|scale\|skew\|translate` | `transform:rotate-45` |
+| Gradients | `gradient:type\|dir\|colors` | `gradient:linear\|to-r\|red\|blue` |
+| Shadows | `shadow-*`, `text-shadow-*` | `shadow-lg` |
+| Positioning | `fixed`, `absolute`, `top-*`, `z-*` | `absolute`, `z-10` |
+| Text align | `text-left\|center\|right\|justify` | `text-center` |
+| Typography | `font-size-*`, `font-weight-*`, `font-family-*` | `font-size-lg` |
+| Layout | `max-w-*`, `mx-auto`, `gap-*` | `mx-auto`, `gap-16` |
+| Transitions | `transition:prop_duration` | `transition:all_300ms` |
+| Opacity | `opacity-*` | `opacity-50` |
+| Animations | `animate-name-dur-iter` | `animate-spin-1s-infinite` |
+| Images | `image-url-*` | `image-url-bg.jpg` |
+| Filters | `filter:*`, `backdrop-filter:*` | `filter:blur-5` |
+| Display | `block`, `hidden`, `inline-flex` | `inline-block` |
+| Pseudo | `hover:`, `focus:`, `dark:` | `hover:bg-red-5` |
+| Responsive | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` | `md:flex:row` |
+| Cofiguration | `colors`, `functions`, etc | `-` |
+
 If you liked this framework please star the repo
 
 For the code, documentation, and detailed examples, refer to the [Twigwind website](https://twigwind.github.io).
