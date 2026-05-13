@@ -21,7 +21,6 @@ const colors = {
   "grey": [[13, 13, 13], [36, 36, 36], [59, 59, 59], [82, 82, 82], [105, 105, 105], [128, 128, 128], [159, 159, 159], [191, 191, 191], [223, 223, 223], [255, 255, 255]],
 }
   
-
 const space = {
   p: "padding", pl: "padding-left", pr: "padding-right",
   pt: "padding-top", pb: "padding-bottom",
@@ -40,8 +39,10 @@ const display = {
 
 const sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px"};
 const breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
-const font_sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
+const font_sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" }; 
+const variables = { "black": "#000000", "white": "#ffffff" }; // Add more variables as needed
 const components = {};
+
 
 module.exports = {
     colors: colors,
@@ -51,4 +52,5 @@ module.exports = {
     font_sizes: font_sizes,
     components: components,
     display: display,
+    variables: variables,
 };

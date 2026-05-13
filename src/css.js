@@ -13,6 +13,7 @@ const Twigwind = (() => {
   let errors = [];
   let display = {};
   let font_sizes = {};
+  let variables = {};
 
   let rules = [];
 
@@ -66,7 +67,7 @@ const Twigwind = (() => {
 
     font_sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
     components = {};
-
+    variables = {};
   } else if (typeof module !== 'undefined' && module.exports) {
       try {
         const path = require('path');
@@ -76,6 +77,7 @@ const Twigwind = (() => {
         sizes = js.sizes || {};
         breakpoints = js.breakpoints || {};
         components = js.components || {};
+        variables = js.variables || {};
       } catch (error) {
         raise(`Could not load twigwind.config.js, check twigwind.config.js path.`);
         process.exit(1);}
@@ -110,6 +112,8 @@ const Twigwind = (() => {
         pure = parts.slice(1).join(":");
       }
     }
+    let vars = pure.match(/@([a-zA-Z0-9 _-]+)/g);
+    if (vars) {for (const v of vars) { pure = pure.replace(new RegExp(v, 'g'), variables[v.replace('@', '')] || raise(`Variable not found: ${v}`)); }}
     return { hover, dark, media, focus, pure };
   };
 
