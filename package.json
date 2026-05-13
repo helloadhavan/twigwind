@@ -1,6 +1,6 @@
 {
   "name": "twigwind",
-  "version": "4.0.5",
+  "version": "4.2.5",
   "description": "A utility-first CSS framework that's tiny, JS-powered, and designed for rapid prototyping",
   "main": "src/css.js",
   "bin": {
@@ -31,7 +31,10 @@
     "framework",
     "utility-first",
     "tailwind",
-    "jit"
+    "jit",
+    "prototyping",
+    "parser",
+    "complier"
   ],
   "author": "Adhavan Yuvaraj",
   "license": "ISC",
