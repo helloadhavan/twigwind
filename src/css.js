@@ -113,7 +113,7 @@ const Twigwind = (() => {
       }
     }
     let vars = pure.match(/@([a-zA-Z0-9 _-]+)/g);
-    if (vars) {for (const v of vars) { pure = pure.replace(new RegExp(v, 'g'), variables[v.replace('@', '')] || raise(`Variable not found: ${v}`)); }}
+    if (vars) {for (const v of vars) { pure = pure.replace(new RegExp(v, 'g'), variables[v.replace('@', '')] || raise(`Variable not found: ${v}`)); }} 
     return { hover, dark, media, focus, pure };
   };
 
@@ -182,7 +182,7 @@ const Twigwind = (() => {
     } else return;
     
     // Check for numbered color variants (e.g., "cyan-5", "red-3")
-    const colorMatch = name.match(/^([a-zA-Z]+)-?(\d+)?$/);
+    const colorMatch = name.match(/^([a-zA-Z][a-zA-Z_]*)-?(\d+)?$/);
     if (colorMatch) {
       const [, colorName, colorIndex] = colorMatch;
       const colorArray = colors[colorName];
@@ -386,7 +386,7 @@ const Twigwind = (() => {
         return formatColor(token);
       }
 
-      const m = token.match(/^([a-zA-Z]+)-?(\d+)?$/);
+      const m = token.match(/^([a-zA-Z][a-zA-Z_]*)-?(\d+)?$/);
       if (!m) return formatColor(token);
 
       const [, name, idx] = m;
