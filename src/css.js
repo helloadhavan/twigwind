@@ -783,199 +783,273 @@ const Twigwind = (() => {
   const twImage = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, media, focus, pure } = parsePrefix(cls);
-    const match = pure.match(/^image-url-(.+)$/);
-    if (!match) {
-      raise(`Invalid image class: "${cls}" — expected "image-url-*" format.`);
-      return;
+    try {
+      const { hover, media, focus, pure } = parsePrefix(cls);
+      const match = pure.match(/^image-url-(.+)$/);
+      if (!match) {
+        raise(`twImage: "${cls}" does not match "image-url-*" format.`);
+        return;
+      }
+      
+      // Handle URL properly - replace underscores with spaces and decode if needed
+      let url = match[1];
+      if (!url || url.trim().length === 0) {
+        raise(`twImage: empty URL in class "${cls}".`);
+        return;
+      }
+      // Replace underscores with spaces for URLs that need spaces
+      url = url.replace(/_/g, " ");
+      
+      // Add additional CSS properties for better background image handling
+      const rules = `
+        background-image: url('${url}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      `;
+      
+      pushCSS(cls, rules, hover, media, false, focus, cname);
+    } catch (err) {
+      raise(`twImage: unexpected error processing "${cls}": ${err.message || err}`);
     }
-    
-    // Handle URL properly - replace underscores with spaces and decode if needed
-    let url = match[1];
-    // Replace underscores with spaces for URLs that need spaces
-    url = url.replace(/_/g, " ");
-    
-    // Add additional CSS properties for better background image handling
-    const rules = `
-      background-image: url('${url}');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    `;
-    
-    pushCSS(cls, rules, hover, media, false, focus, cname);
   };
 
   const twFilter = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    
-    // Handle backdrop filters
-    const backdropMatch = pure.match(/^backdrop-filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
-    if (backdropMatch) {
-      const [, filter, value] = backdropMatch;
-      let filterValue = value;
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+
+      /** Validate that a numeric filter value is actually numeric */
+      const validateFilterNum = (filter, value) => {
+        const numericFilters = ['blur', 'brightness', 'contrast', 'grayscale', 'invert', 'saturate', 'sepia', 'hue-rotate'];
+        if (numericFilters.includes(filter)) {
+          const raw = value.replace(/(px|%|deg)$/, '');
+          if (isNaN(parseFloat(raw))) {
+            raise(`twFilter: filter "${filter}" value "${value}" is not numeric in class "${cls}".`);
+          }
+        }
+      };
       
-      // Add units for specific filters
-      if (filter === 'blur' && !value.includes('px')) {
-        filterValue = `${value}px`;
-      } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
-        filterValue = `${value}%`;
-      } else if (['grayscale', 'invert', 'sepia'].includes(filter) && !value.includes('%')) {
-        filterValue = `${value}%`;
-      } else if (filter === 'hue-rotate' && !value.includes('deg')) {
-        filterValue = `${value}deg`;
+      // Handle backdrop filters
+      const backdropMatch = pure.match(/^backdrop-filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
+      if (backdropMatch) {
+        const [, filter, value] = backdropMatch;
+        validateFilterNum(filter, value);
+        let filterValue = value;
+        
+        // Add units for specific filters
+        if (filter === 'blur' && !value.includes('px')) {
+          filterValue = `${value}px`;
+        } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
+          filterValue = `${value}%`;
+        } else if (['grayscale', 'invert', 'sepia'].includes(filter) && !value.includes('%')) {
+          filterValue = `${value}%`;
+        } else if (filter === 'hue-rotate' && !value.includes('deg')) {
+          filterValue = `${value}deg`;
+        }
+        
+        return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
       }
       
-      return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
-    }
-    
-    // Handle regular filters
-    const filterMatch = pure.match(/^filter:(blur|brightness|contrast|drop-shadow|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
-    if (filterMatch) {
-      const [, filter, value] = filterMatch;
-      let filterValue = value;
-      
-      // Handle drop-shadow specially (format: x-y-blur-color)
-      if (filter === 'drop-shadow') {
-        const shadowParts = value.split('-');
-        if (shadowParts.length >= 3) {
+      // Handle regular filters
+      const filterMatch = pure.match(/^filter:(blur|brightness|contrast|drop-shadow|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
+      if (filterMatch) {
+        const [, filter, value] = filterMatch;
+        let filterValue = value;
+        
+        // Handle drop-shadow specially (format: x-y-blur-color)
+        if (filter === 'drop-shadow') {
+          const shadowParts = value.split('-');
+          if (shadowParts.length < 3) {
+            raise(`twFilter: drop-shadow requires at least x-y-blur values in class "${cls}".`);
+            return;
+          }
           const x = shadowParts[0] + 'px';
           const y = shadowParts[1] + 'px';
           const blur = shadowParts[2] + 'px';
           const color = shadowParts[3] || 'rgba(0,0,0,0.5)';
           filterValue = `${x} ${y} ${blur} ${color}`;
         }
-      }
-      // Add units for specific filters
-      else if (filter === 'blur' && !value.includes('px')) {
-        filterValue = `${value}px`;
-      } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
-        filterValue = `${value}%`;
-      } else if (['grayscale', 'invert', 'sepia'].includes(filter) && !value.includes('%')) {
-        filterValue = `${value}%`;
-      } else if (filter === 'hue-rotate' && !value.includes('deg')) {
-        filterValue = `${value}deg`;
-      }
-      
-      return pushCSS(cls, `filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
-    }
-    
-    // Handle background filters (legacy support for bg-filter)
-    const bgFilterMatch = pure.match(/^bg-filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
-    if (bgFilterMatch) {
-      const [, filter, value] = bgFilterMatch;
-      let filterValue = value;
-      
-      // Add units for specific filters
-      if (filter === 'blur' && !value.includes('px')) {
-        filterValue = `${value}px`;
-      } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
-        filterValue = `${value}%`;
-      } else if (['grayscale', 'invert', 'sepia'].includes(filter) && !value.includes('%')) {
-        filterValue = `${value}%`;
-      } else if (filter === 'hue-rotate' && !value.includes('deg')) {
-        filterValue = `${value}deg`;
+        // Add units for specific filters
+        else {
+          validateFilterNum(filter, value);
+          if (filter === 'blur' && !value.includes('px')) {
+            filterValue = `${value}px`;
+          } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
+            filterValue = `${value}%`;
+          } else if (['grayscale', 'invert', 'sepia'].includes(filter) && !value.includes('%')) {
+            filterValue = `${value}%`;
+          } else if (filter === 'hue-rotate' && !value.includes('deg')) {
+            filterValue = `${value}deg`;
+          }
+        }
+        
+        return pushCSS(cls, `filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
       }
       
-      return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
+      // Handle background filters (legacy support for bg-filter)
+      const bgFilterMatch = pure.match(/^bg-filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
+      if (bgFilterMatch) {
+        const [, filter, value] = bgFilterMatch;
+        validateFilterNum(filter, value);
+        let filterValue = value;
+        
+        // Add units for specific filters
+        if (filter === 'blur' && !value.includes('px')) {
+          filterValue = `${value}px`;
+        } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
+          filterValue = `${value}%`;
+        } else if (['grayscale', 'invert', 'sepia'].includes(filter) && !value.includes('%')) {
+          filterValue = `${value}%`;
+        } else if (filter === 'hue-rotate' && !value.includes('deg')) {
+          filterValue = `${value}deg`;
+        }
+        
+        return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
+      }
+
+      raise(`twFilter: "${cls}" did not match any filter pattern.`);
+    } catch (err) {
+      raise(`twFilter: unexpected error processing "${cls}": ${err.message || err}`);
     }
   };
 
   const twLayout = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    
-    // Max width
-    const maxWMatch = pure.match(/^max-w-(\d+)(px|rem|em|%)?$/);
-    if (maxWMatch) {
-      const [, amount, unit] = maxWMatch;
-      return pushCSS(cls, `max-width: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
-    }
-    
-    // Margin auto
-    if (pure === 'mx-auto') {
-      return pushCSS(cls, `margin-left: auto; margin-right: auto;`, hover, media, dark, focus, cname);
-    }
-    if (pure === 'my-auto') {
-      return pushCSS(cls, `margin-top: auto; margin-bottom: auto;`, hover, media, dark, focus, cname);
-    }
-    
-    // Gap for flexbox/grid
-    const gapMatch = pure.match(/^gap-(\d+)(px|rem|em|%)?$/);
-    if (gapMatch) {
-      const [, amount, unit] = gapMatch;
-      return pushCSS(cls, `gap: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      
+      // Max width
+      const maxWMatch = pure.match(/^max-w-(\d+)(px|rem|em|%)?$/);
+      if (maxWMatch) {
+        const [, amount, unit] = maxWMatch;
+        return pushCSS(cls, `max-width: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
+      }
+      
+      // Margin auto
+      if (pure === 'mx-auto') {
+        return pushCSS(cls, `margin-left: auto; margin-right: auto;`, hover, media, dark, focus, cname);
+      }
+      if (pure === 'my-auto') {
+        return pushCSS(cls, `margin-top: auto; margin-bottom: auto;`, hover, media, dark, focus, cname);
+      }
+      
+      // Gap for flexbox/grid
+      const gapMatch = pure.match(/^gap-(\d+)(px|rem|em|%)?$/);
+      if (gapMatch) {
+        const [, amount, unit] = gapMatch;
+        return pushCSS(cls, `gap: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
+      }
+
+      raise(`twLayout: "${cls}" did not match any layout pattern (max-w-*, mx-auto, my-auto, gap-*).`);
+    } catch (err) {
+      raise(`twLayout: unexpected error processing "${cls}": ${err.message || err}`);
     }
   };
 
   const twTransition = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    
-    // Handle transition:all_300ms syntax
-    const colonMatch = pure.match(/^transition:(.+)_(\d+)ms$/);
-    if (colonMatch) {
-      const [, property, duration] = colonMatch;
-      const prop = property === 'all' ? 'all' : property.replace('-', '-');
-      return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, focus, cname);
-    }
-    
-    // Handle transition-property-duration syntax
-    const dashMatch = pure.match(/^transition-(.+)-(\d+)ms$/);
-    if (dashMatch) {
-      const [, property, duration] = dashMatch;
-      const prop = property === 'all' ? 'all' : property.replace('-', '-');
-      return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      
+      // Handle transition:all_300ms syntax
+      const colonMatch = pure.match(/^transition:(.+)_(\d+)ms$/);
+      if (colonMatch) {
+        const [, property, duration] = colonMatch;
+        const prop = property === 'all' ? 'all' : property.replace('-', '-');
+        return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, focus, cname);
+      }
+      
+      // Handle transition-property-duration syntax
+      const dashMatch = pure.match(/^transition-(.+)-(\d+)ms$/);
+      if (dashMatch) {
+        const [, property, duration] = dashMatch;
+        const prop = property === 'all' ? 'all' : property.replace('-', '-');
+        return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, focus, cname);
+      }
+
+      raise(`twTransition: "${cls}" does not match transition pattern (e.g. "transition:all_300ms" or "transition-opacity-200ms").`);
+    } catch (err) {
+      raise(`twTransition: unexpected error processing "${cls}": ${err.message || err}`);
     }
   };
 
   const twOpacity = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    
-    const match = pure.match(/^opacity-(\d+)$/);
-    if (match) {
-      const opacity = parseInt(match[1]) / 100;
-      return pushCSS(cls, `opacity: ${opacity};`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      
+      const match = pure.match(/^opacity-(\d+)$/);
+      if (match) {
+        const val = parseInt(match[1]);
+        if (val < 0 || val > 100) {
+          raise(`twOpacity: opacity value ${val} out of range (0-100) in class "${cls}". Clamping.`);
+        }
+        const opacity = Math.max(0, Math.min(1, val / 100));
+        return pushCSS(cls, `opacity: ${opacity};`, hover, media, dark, focus, cname);
+      }
+
+      raise(`twOpacity: "${cls}" does not match opacity pattern (e.g. "opacity-50", "opacity-100").`);
+    } catch (err) {
+      raise(`twOpacity: unexpected error processing "${cls}": ${err.message || err}`);
     }
   };
 
   const twAnimation = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    const match = pure.match(/^animate-([a-zA-Z0-9_-]+)-(\d+)(ms|s)-(infinite|normal|reverse|alternate|alternate-reverse)$/);
-    if (match) {
-      let [_, animation, duration, unit, iteration] = match;
-      if (!unit) unit = "s";
-      if (!iteration) iteration = "infinite";
-      if (!duration) duration = "1";
-      return pushCSS(cls, `animation: ${animation} ${duration}${unit} ${iteration};`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      const match = pure.match(/^animate-([a-zA-Z0-9_-]+)-(\d+)(ms|s)-(infinite|normal|reverse|alternate|alternate-reverse)$/);
+      if (match) {
+        let [_, animation, duration, unit, iteration] = match;
+        if (!unit) unit = "s";
+        if (!iteration) iteration = "infinite";
+        if (!duration) duration = "1";
+        return pushCSS(cls, `animation: ${animation} ${duration}${unit} ${iteration};`, hover, media, dark, focus, cname);
+      }
+
+      raise(`twAnimation: "${cls}" does not match animation pattern (e.g. "animate-fade-300ms-infinite").`);
+    } catch (err) {
+      raise(`twAnimation: unexpected error processing "${cls}": ${err.message || err}`);
     }
-  }
+  };
 
   const twTextDecoration = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    const match = pure.match(/^text-decoration-(underline|overline|line-through|none)$/);
-    if (match) {
-      const decoration = match[1];
-      return pushCSS(cls, `text-decoration: ${decoration};`, hover, media, dark, focus, cname);
-    }
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      const match = pure.match(/^text-decoration-(underline|overline|line-through|none)$/);
+      if (match) {
+        const decoration = match[1];
+        return pushCSS(cls, `text-decoration: ${decoration};`, hover, media, dark, focus, cname);
+      }
 
-  }
+      raise(`twTextDecoration: "${cls}" does not match text-decoration pattern. Valid: underline, overline, line-through, none.`);
+    } catch (err) {
+      raise(`twTextDecoration: unexpected error processing "${cls}": ${err.message || err}`);
+    }
+  };
+
   const twDisplay = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    
-    if (display[pure]) pushCSS(cls, `display:${display[pure]};`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      
+      if (display[pure]) {
+        pushCSS(cls, `display:${display[pure]};`, hover, media, dark, focus, cname);
+      } else {
+        raise(`twDisplay: "${cls}" is not a recognized display value. Valid: ${Object.keys(display).join(', ')}.`);
+      }
+    } catch (err) {
+      raise(`twDisplay: unexpected error processing "${cls}": ${err.message || err}`);
+    }
   };
 
   // Initialize rules array after all utility functions are defined
