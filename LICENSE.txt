@@ -14,4 +14,4 @@ You MAY:
 - Study, learn from, or experiment with the framework.
 - Use the Components, Templates, and Libraries to create unlimited Products.
 
-All rights not expressly granted are reserved by me.
+All rights not expressly granted are reserved by the author of the project.
