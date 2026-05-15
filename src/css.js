@@ -134,8 +134,13 @@ const Twigwind = (() => {
 ];
 
     
-  const escapeClass = (cls) =>
-    cls.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1");
+  const escapeClass = (cls) => {
+    if (typeof cls !== 'string') {
+      raise(`escapeClass: expected a string, got ${typeof cls}.`);
+      return '';
+    }
+    return cls.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1");
+  };
 
   /**
    * 
@@ -192,18 +197,31 @@ const Twigwind = (() => {
   };
 
   const pushCSS = (cls, block, hover, media, dark = false, focus = false, cname) => {
-    const safe = escapeClass(cls);
-    let selector = cname ? `.${escapeClass(cname)}` : `.${safe}`;
-    if (hover) selector += ":hover";
-    if (focus) selector += ":focus";
-    if (dark) selector = `.dark ${selector}`;
+    if (typeof cls !== 'string' || cls.length === 0) {
+      raise(`pushCSS: invalid class name (${typeof cls}).`);
+      return;
+    }
+    if (typeof block !== 'string' || block.trim().length === 0) {
+      raise(`pushCSS: empty or invalid CSS block for class "${cls}".`);
+      return;
+    }
 
-    const rule = media
-      ? `${media}\n${selector} { ${block} }\n}`
-      : `${block}`;
+    try {
+      const safe = escapeClass(cls);
+      let selector = cname ? `.${escapeClass(cname)}` : `.${safe}`;
+      if (hover) selector += ":hover";
+      if (focus) selector += ":focus";
+      if (dark) selector = `.dark ${selector}`;
 
-    if (!css[selector]) css[selector] = [];
-    css[selector].push(rule);
+      const rule = media
+        ? `${media}\n${selector} { ${block} }\n}`
+        : `${block}`;
+
+      if (!css[selector]) css[selector] = [];
+      css[selector].push(rule);
+    } catch (err) {
+      raise(`pushCSS: failed to generate rule for "${cls}": ${err.message || err}`);
+    }
   };
 
 
@@ -324,140 +342,215 @@ const Twigwind = (() => {
   const twSpacing = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    const match = pure.match(/^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/);
-    if (!match) return;
-    const [, key, amount, unit] = match;
-    const prop = space[key];
-    if (!prop) return;
-    pushCSS(cls, `${prop}: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      const match = pure.match(/^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/);
+      if (!match) {
+        raise(`twSpacing: "${cls}" does not match spacing pattern (e.g. "p-10", "mt-20px").`);
+        return;
+      }
+      const [, key, amount, unit] = match;
+      const prop = space[key];
+      if (!prop) {
+        raise(`twSpacing: unknown spacing key "${key}" in class "${cls}". Valid keys: ${Object.keys(space).join(', ')}.`);
+        return;
+      }
+      pushCSS(cls, `${prop}: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
+    } catch (err) {
+      raise(`twSpacing: unexpected error processing "${cls}": ${err.message || err}`);
+    }
   };
 
   const twSize = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    
-    // Handle percentage values like w-100%, h-50%, etc.
-    let match = pure.match(/^(max|min)?-?(w|h)-(\d+%|\d+(?:px|rem|em|%)?)$/);
-    if (match) {
-      const prefix = match[1] ? `${match[1]}-` : "";
-      const dim = match[2] === "w" ? "width" : "height";
-      let val = match[3];
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
       
-      // If no unit specified and not percentage, default to px
-      if (/^\d+$/.test(val)) {
-        val += "px";
+      // Handle percentage values like w-100%, h-50%, etc.
+      let match = pure.match(/^(max|min)?-?(w|h)-(\d+%|\d+(?:px|rem|em|%)?)$/);
+      if (match) {
+        const prefix = match[1] ? `${match[1]}-` : "";
+        const dim = match[2] === "w" ? "width" : "height";
+        let val = match[3];
+        
+        // If no unit specified and not percentage, default to px
+        if (/^\d+$/.test(val)) {
+          val += "px";
+        }
+        
+        return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
       }
       
-      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
-    }
-    
-    // Handle viewport units like w-100vw, h-100vh
-    match = pure.match(/^(max|min)?-?(w|h)-(\d+(?:vw|vh|vmin|vmax))$/);
-    if (match) {
-      const prefix = match[1] ? `${match[1]}-` : "";
-      const dim = match[2] === "w" ? "width" : "height";
-      const val = match[3];
-      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
-    }
-    
-    // Handle special viewport cases like h-100vh, w-100vw
-    match = pure.match(/^(max|min)?-?(w|h)-(\d+)(vh|vw|vmin|vmax)$/);
-    if (match) {
-      const prefix = match[1] ? `${match[1]}-` : "";
-      const dim = match[2] === "w" ? "width" : "height";
-      const val = match[3] + match[4];
-      return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
-    }
-    
-    // size-sm support
-    match = pure.match(/^size-(\w+)$/);
-    if (match && sizes[match[1]]) {
-      const size = sizes[match[1]];
-      return pushCSS(cls, `font-size: ${size};`, hover, media, dark, focus, cname);
+      // Handle viewport units like w-100vw, h-100vh
+      match = pure.match(/^(max|min)?-?(w|h)-(\d+(?:vw|vh|vmin|vmax))$/);
+      if (match) {
+        const prefix = match[1] ? `${match[1]}-` : "";
+        const dim = match[2] === "w" ? "width" : "height";
+        const val = match[3];
+        return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
+      }
+      
+      // Handle special viewport cases like h-100vh, w-100vw
+      match = pure.match(/^(max|min)?-?(w|h)-(\d+)(vh|vw|vmin|vmax)$/);
+      if (match) {
+        const prefix = match[1] ? `${match[1]}-` : "";
+        const dim = match[2] === "w" ? "width" : "height";
+        const val = match[3] + match[4];
+        return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
+      }
+      
+      // size-sm support
+      match = pure.match(/^size-(\w+)$/);
+      if (match) {
+        if (sizes[match[1]]) {
+          const size = sizes[match[1]];
+          return pushCSS(cls, `font-size: ${size};`, hover, media, dark, focus, cname);
+        }
+        raise(`twSize: unknown size key "${match[1]}" in class "${cls}". Valid keys: ${Object.keys(sizes).join(', ')}.`);
+        return;
+      }
+
+      raise(`twSize: "${cls}" did not match any size pattern.`);
+    } catch (err) {
+      raise(`twSize: unexpected error processing "${cls}": ${err.message || err}`);
     }
   };
 
   const twGrid = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    const match = pure.match(/^grid:(\d+),(\d+)(?:,([0-9a-zA-Z%]+))?$/);
-    if (!match) return;
-    const [, cols, rows, gap = "0"] = match;
-    const rules = `
-      display: grid;
-      grid-template-columns: repeat(${cols}, 1fr);
-      grid-template-rows: repeat(${rows}, auto);
-      gap: ${gap};
-    `;
-    pushCSS(cls, rules, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      const match = pure.match(/^grid:(\d+),(\d+)(?:,([0-9a-zA-Z%]+))?$/);
+      if (!match) {
+        raise(`twGrid: "${cls}" does not match grid pattern (e.g. "grid:3,2" or "grid:3,2,10px").`);
+        return;
+      }
+      const [, cols, rows, gap = "0"] = match;
+      const colCount = parseInt(cols);
+      const rowCount = parseInt(rows);
+      if (colCount <= 0 || rowCount <= 0) {
+        raise(`twGrid: columns (${cols}) and rows (${rows}) must be positive integers in class "${cls}".`);
+        return;
+      }
+      const rules = `
+        display: grid;
+        grid-template-columns: repeat(${colCount}, 1fr);
+        grid-template-rows: repeat(${rowCount}, auto);
+        gap: ${gap};
+      `;
+      pushCSS(cls, rules, hover, media, dark, focus, cname);
+    } catch (err) {
+      raise(`twGrid: unexpected error processing "${cls}": ${err.message || err}`);
+    }
   };
 
   const twflex = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    const match = pure.match(/^flex(?::(row|col))?(?:-(center|right|left))?(?:-(center|right|left))?$/);
-    if (!match) return;
-    const [, dir, main, cross] = match;
-    const map = { center: "center", left: "flex-start", right: "flex-end" };
-    const flexDir = dir === "col" ? "column" : dir;
-    let rules = "display:flex;";
-    if (flexDir) rules += `flex-direction:${flexDir};`;
-    if (main) rules += `justify-content:${map[main]};`;
-    if (cross) rules += `align-items:${map[cross]};`;
-    pushCSS(cls, rules, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      const match = pure.match(/^flex(?::(row|col))?(?:-(center|right|left))?(?:-(center|right|left))?$/);
+      if (!match) {
+        raise(`twflex: "${cls}" does not match flex pattern (e.g. "flex", "flex:col-center-left").`);
+        return;
+      }
+      const [, dir, main, cross] = match;
+      const map = { center: "center", left: "flex-start", right: "flex-end" };
+      const flexDir = dir === "col" ? "column" : dir;
+      let rules = "display:flex;";
+      if (flexDir) rules += `flex-direction:${flexDir};`;
+      if (main) rules += `justify-content:${map[main]};`;
+      if (cross) rules += `align-items:${map[cross]};`;
+      pushCSS(cls, rules, hover, media, dark, focus, cname);
+    } catch (err) {
+      raise(`twflex: unexpected error processing "${cls}": ${err.message || err}`);
+    }
   };
 
 
   const twBorder = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    const match = pure.match(/^border(?:-(t|b|l|r))?-((?:\d+)|(?:.+))$/);
-    if (!match) return;
-    const [, side, val] = match;
-    let prop, value;
-    if (/^\d+$/.test(val)) {
-      prop = side ? `border-${side}` : "border";
-      value = `${val}px solid`;
-    } else {
-      prop = side ? `border-${side}-color` : "border-color";
-      value = colors[val] || val;
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      const match = pure.match(/^border(?:-(t|b|l|r))?-((?:\d+)|(?:.+))$/);
+      if (!match) {
+        raise(`twBorder: "${cls}" does not match border pattern (e.g. "border-2", "border-t-red").`);
+        return;
+      }
+      const [, side, val] = match;
+      let prop, value;
+      if (/^\d+$/.test(val)) {
+        prop = side ? `border-${side}` : "border";
+        value = `${val}px solid`;
+      } else {
+        prop = side ? `border-${side}-color` : "border-color";
+        const colorVal = colors[val];
+        // colors[val] could be an array (palette) — resolve to middle swatch
+        if (Array.isArray(colorVal)) {
+          const midIndex = Math.floor(colorVal.length / 2);
+          value = formatColor(colorVal[midIndex]);
+        } else {
+          value = colorVal || val;
+        }
+      }
+      pushCSS(cls, `${prop}: ${value};`, hover, media, dark, focus, cname);
+    } catch (err) {
+      raise(`twBorder: unexpected error processing "${cls}": ${err.message || err}`);
     }
-    pushCSS(cls, `${prop}: ${value};`, hover, media, dark, focus, cname);
   };
 
   const twBorderRadius = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    const match = pure.match(/^border-radius(?:-(.+))?$/);
-    if (!match) return;
-    const radius = match[1] || "0";
-    pushCSS(cls, `border-radius: ${radius};`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      const match = pure.match(/^border-radius(?:-(.+))?$/);
+      if (!match) {
+        raise(`twBorderRadius: "${cls}" does not match border-radius pattern.`);
+        return;
+      }
+      const radius = match[1] || "0";
+      pushCSS(cls, `border-radius: ${radius};`, hover, media, dark, focus, cname);
+    } catch (err) {
+      raise(`twBorderRadius: unexpected error processing "${cls}": ${err.message || err}`);
+    }
   };
 
   const twTransform = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    const match = pure.match(/^transform:(rotate|scale|skew|translate)-(.+)$/);
-    if (!match) return;
-    const [, type, value] = match;
-    let rule = "transform:";
-    if (type === "rotate") rule += `rotate(${value}${/deg$/.test(value) ? "" : "deg"});`;
-    else if (type === "scale") rule += `scale(${value});`;
-    else if (type === "skew") rule += `skew(${value}${/deg$/.test(value) ? "" : "deg"});`;
-    else if (type === "translate") {
-      const parts = value.split(",");
-      rule += parts.length === 2
-        ? `translate(${parts[0].trim()}, ${parts[1].trim()});`
-        : `translate(${value});`;
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      const match = pure.match(/^transform:(rotate|scale|skew|translate)-(.+)$/);
+      if (!match) {
+        raise(`twTransform: "${cls}" does not match transform pattern (e.g. "transform:rotate-45", "transform:scale-1.5").`);
+        return;
+      }
+      const [, type, value] = match;
+      let rule = "transform:";
+      if (type === "rotate") {
+        rule += `rotate(${value}${/deg$/.test(value) ? "" : "deg"});`;
+      } else if (type === "scale") {
+        if (isNaN(parseFloat(value))) {
+          raise(`twTransform: scale value "${value}" is not numeric in class "${cls}".`);
+          return;
+        }
+        rule += `scale(${value});`;
+      } else if (type === "skew") {
+        rule += `skew(${value}${/deg$/.test(value) ? "" : "deg"});`;
+      } else if (type === "translate") {
+        const parts = value.split(",");
+        rule += parts.length === 2
+          ? `translate(${parts[0].trim()}, ${parts[1].trim()});`
+          : `translate(${value});`;
+      }
+      pushCSS(cls, rule, hover, media, dark, focus, cname);
+    } catch (err) {
+      raise(`twTransform: unexpected error processing "${cls}": ${err.message || err}`);
     }
-    pushCSS(cls, rule, hover, media, dark, focus, cname);
   };
 
   /**
@@ -466,163 +559,225 @@ const Twigwind = (() => {
     if (used.has(cls)) return;
     used.add(cls);
 
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    if (!pure.startsWith("gradient:")) return;
-
-    const parts = pure.replace("gradient:", "").split("|");
-    if (parts.length < 3) return;
-
-    const type = parts.shift();       // linear | radial
-    const direction = parts.shift();  // to-r | 45deg | circle | etc
-
-    const dirMap = {
-      "to-r": "to right",
-      "to-l": "to left",
-      "to-t": "to top",
-      "to-b": "to bottom",
-      "to-tr": "to top right",
-      "to-tl": "to top left",
-      "to-br": "to bottom right",
-      "to-bl": "to bottom left"
-    };
-
-    const resolveColor = (token) => {
-      // Always normalize functional colors
-      if (token.startsWith("rgb") || token.startsWith("rgba")) {
-        return formatColor(token);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      if (!pure.startsWith("gradient:")) {
+        raise(`twLinearGradient: "${cls}" does not start with "gradient:" prefix.`);
+        return;
       }
 
-      const m = token.match(/^([a-zA-Z][a-zA-Z_]*)-?(\d+)?$/);
-      if (!m) return formatColor(token);
-
-      const [, name, idx] = m;
-      const arr = colors[name];
-
-      if (!Array.isArray(arr)) {
-        return formatColor(colors[name] || name);
+      const parts = pure.replace("gradient:", "").split("|");
+      if (parts.length < 3) {
+        raise(`twLinearGradient: "${cls}" requires at least type, direction, and 2 color stops (separated by "|").`);
+        return;
       }
 
-      const i = idx ? parseInt(idx) : Math.floor(arr.length / 2);
-      return formatColor(arr[i] ?? arr[Math.floor(arr.length / 2)]);
-    };
+      const type = parts.shift();       // linear | radial
+      const direction = parts.shift();  // to-r | 45deg | circle | etc
+
+      if (type !== 'linear' && type !== 'radial') {
+        raise(`twLinearGradient: unknown gradient type "${type}" in class "${cls}". Use "linear" or "radial".`);
+        return;
+      }
+
+      const dirMap = {
+        "to-r": "to right",
+        "to-l": "to left",
+        "to-t": "to top",
+        "to-b": "to bottom",
+        "to-tr": "to top right",
+        "to-tl": "to top left",
+        "to-br": "to bottom right",
+        "to-bl": "to bottom left"
+      };
+
+      const resolveColor = (token) => {
+        if (!token || token.trim().length === 0) {
+          raise(`twLinearGradient: empty color token in class "${cls}".`);
+          return 'transparent';
+        }
+
+        // Always normalize functional colors
+        if (token.startsWith("rgb") || token.startsWith("rgba")) {
+          return formatColor(token);
+        }
+
+        const m = token.match(/^([a-zA-Z][a-zA-Z_]*)-?(\d+)?$/);
+        if (!m) return formatColor(token);
+
+        const [, name, idx] = m;
+        const arr = colors[name];
+
+        if (!Array.isArray(arr)) {
+          return formatColor(colors[name] || name);
+        }
+
+        const i = idx ? parseInt(idx) : Math.floor(arr.length / 2);
+        if (idx && (i < 0 || i >= arr.length)) {
+          raise(`twLinearGradient: color index ${i} out of range for "${name}" (0-${arr.length - 1}) in class "${cls}".`);
+        }
+        return formatColor(arr[i] ?? arr[Math.floor(arr.length / 2)]);
+      };
 
 
-    const stops = parts.map(p => {
-      const [colorToken, stop] = p.split("@");
-      const color = resolveColor(colorToken);
-      return stop ? `${color} ${stop}` : color;
-    });
+      const stops = parts.map(p => {
+        const [colorToken, stop] = p.split("@");
+        const color = resolveColor(colorToken);
+        return stop ? `${color} ${stop}` : color;
+      });
 
-    if (stops.length < 2) return;
+      if (stops.length < 2) {
+        raise(`twLinearGradient: "${cls}" needs at least 2 color stops, got ${stops.length}.`);
+        return;
+      }
 
-    const dir = dirMap[direction] || direction;
+      const dir = dirMap[direction] || direction;
 
-    pushCSS(
-      cls,
-      `background-image: ${type}-gradient(${dir}, ${stops.join(", ")});`,
-      hover,
-      media,
-      dark,
-      focus,
-      cname
-    );
+      pushCSS(
+        cls,
+        `background-image: ${type}-gradient(${dir}, ${stops.join(", ")});`,
+        hover,
+        media,
+        dark,
+        focus,
+        cname
+      );
+    } catch (err) {
+      raise(`twLinearGradient: unexpected error processing "${cls}": ${err.message || err}`);
+    }
   };
 
   const twshadow = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    const map = {
-      sm: "0 1px 2px rgba(0,0,0,0.05)", md: "0 4px 6px rgba(0,0,0,0.1)",
-      lg: "0 10px 15px rgba(0,0,0,0.15)", xl: "0 20px 25px rgba(0,0,0,0.2)",
-      "2xl": "0 25px 50px rgba(0,0,0,0.25)"
-    };
-    const match = pure.match(/^shadow(?:-(.+))?$/);
-    const text = pure.match(/^text-shadow(?:-(.+))?$/);
-    if (!match && !text) return;
-    let val = match ? match[1] : text[1];
-    if (!val) pushCSS(cls, `box-shadow: ${map.sm};`, hover, media, dark, focus, cname);
-    else if (map[val]) pushCSS(cls, `box-shadow: ${map[val]};`, hover, media, dark, focus, cname);
-    else if (text) pushCSS(cls, `text-shadow: ${val};`, hover, media, dark, focus, cname);
-    else pushCSS(cls, `box-shadow: ${val.replace(/_/g, " ")};`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      const map = {
+        sm: "0 1px 2px rgba(0,0,0,0.05)", md: "0 4px 6px rgba(0,0,0,0.1)",
+        lg: "0 10px 15px rgba(0,0,0,0.15)", xl: "0 20px 25px rgba(0,0,0,0.2)",
+        "2xl": "0 25px 50px rgba(0,0,0,0.25)"
+      };
+      const match = pure.match(/^shadow(?:-(.+))?$/);
+      const text = pure.match(/^text-shadow(?:-(.+))?$/);
+      if (!match && !text) {
+        raise(`twshadow: "${cls}" does not match shadow pattern.`);
+        return;
+      }
+      let val = match ? match[1] : text[1];
+      if (!val) pushCSS(cls, `box-shadow: ${map.sm};`, hover, media, dark, focus, cname);
+      else if (map[val]) pushCSS(cls, `box-shadow: ${map[val]};`, hover, media, dark, focus, cname);
+      else if (text) pushCSS(cls, `text-shadow: ${val};`, hover, media, dark, focus, cname);
+      else pushCSS(cls, `box-shadow: ${val.replace(/_/g, " ")};`, hover, media, dark, focus, cname);
+    } catch (err) {
+      raise(`twshadow: unexpected error processing "${cls}": ${err.message || err}`);
+    }
   };
 
   const twPosition = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    
-    // Position types: fixed, absolute, relative, static, sticky
-    if (['fixed', 'absolute', 'relative', 'static', 'sticky'].includes(pure)) {
-      return pushCSS(cls, `position: ${pure};`, hover, media, dark, focus, cname);
-    }
-    
-    // Position values: top-10, right-20, bottom-5, left-15
-    const match = pure.match(/^(top|right|bottom|left)-(\d+)(px|rem|em|%)?$/);
-    if (match) {
-      const [, side, amount, unit] = match;
-      return pushCSS(cls, `${side}: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
-    }
-    
-    // Z-index: z-10, z-50, z-999
-    const zMatch = pure.match(/^z-(\d+)$/);
-    if (zMatch) {
-      return pushCSS(cls, `z-index: ${zMatch[1]};`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      
+      // Position types: fixed, absolute, relative, static, sticky
+      if (['fixed', 'absolute', 'relative', 'static', 'sticky'].includes(pure)) {
+        return pushCSS(cls, `position: ${pure};`, hover, media, dark, focus, cname);
+      }
+      
+      // Position values: top-10, right-20, bottom-5, left-15
+      const match = pure.match(/^(top|right|bottom|left)-(\d+)(px|rem|em|%)?$/);
+      if (match) {
+        const [, side, amount, unit] = match;
+        return pushCSS(cls, `${side}: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
+      }
+      
+      // Z-index: z-10, z-50, z-999
+      const zMatch = pure.match(/^z-(\d+)$/);
+      if (zMatch) {
+        return pushCSS(cls, `z-index: ${zMatch[1]};`, hover, media, dark, focus, cname);
+      }
+
+      raise(`twPosition: "${cls}" did not match any position/z-index pattern.`);
+    } catch (err) {
+      raise(`twPosition: unexpected error processing "${cls}": ${err.message || err}`);
     }
   };
 
   const twText = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    
-    // Text alignment
-    if (['text-left', 'text-center', 'text-right', 'text-justify'].includes(pure)) {
-      const align = pure.replace('text-', '');
-      return pushCSS(cls, `text-align: ${align};`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      
+      // Text alignment
+      if (['text-left', 'text-center', 'text-right', 'text-justify'].includes(pure)) {
+        const align = pure.replace('text-', '');
+        return pushCSS(cls, `text-align: ${align};`, hover, media, dark, focus, cname);
+      }
+
+      raise(`twText: "${cls}" did not match any text alignment pattern. Valid: text-left, text-center, text-right, text-justify.`);
+    } catch (err) {
+      raise(`twText: unexpected error processing "${cls}": ${err.message || err}`);
     }
   };
 
   const twTypography = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
-    const { hover, dark, media, focus, pure } = parsePrefix(cls);
-    // Support both dash and colon separators: font-family-value OR font-family:value
-    const match = pure.match(/^font-(size|weight|family|style|variant)[-:](.+)$/);
-    if (!match) return;
-    let [, prop, val] = match;
-    
-    if (prop === "size" || prop === "weight") {
-      // Handle predefined sizes
-      if (font_sizes[val]) {
-        return pushCSS(cls, `font-size: ${font_sizes[val]};`, hover, media, dark, focus, cname);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      // Support both dash and colon separators: font-family-value OR font-family:value
+      const match = pure.match(/^font-(size|weight|family|style|variant)[-:](.+)$/);
+      if (!match) {
+        raise(`twTypography: "${cls}" does not match font pattern (e.g. "font-size-lg", "font-family-Arial").`);
+        return;
       }
-      // Handle custom rem/px/em values like font-size-3rem, font-size-24px
-      if (val.match(/^\d+(\.\d+)?(rem|px|em|%)$/)) {
-        return pushCSS(cls, `font-size: ${val};`, hover, media, dark, focus, cname);
-      }
-    }
-    
-    if (prop === "family") {
-      // Replace underscores with spaces for multi-word font names (e.g. Momo_Trust_Sans → Momo Trust Sans)
-      val = val.replace(/_/g, " ");
+      let [, prop, val] = match;
       
-      const genericFamilies = ['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'system-ui', 'math', 'emoji', 'fangsong'];
-      
-      if (val.includes(',')) {
-        // Comma-separated font stack: quote non-generic families individually
-        val = val.split(',').map(f => {
-          f = f.trim();
-          if (genericFamilies.includes(f)) return f;
-          if (f.startsWith('"') || f.startsWith("'")) return f;
-          return `"${f}"`;
-        }).join(', ');
-      } else if (!genericFamilies.includes(val) && !val.startsWith('"') && !val.startsWith("'")) {
-        val = `"${val}"`;
+      if (prop === "weight") {
+        // Validate font-weight is a valid value
+        const validWeights = ['normal', 'bold', 'bolder', 'lighter', 'inherit'];
+        if (!validWeights.includes(val) && !/^\d{1,3}$/.test(val) && !/^[1-9]00$/.test(val)) {
+          raise(`twTypography: font-weight "${val}" in class "${cls}" may not be valid. Expected numeric (100-900) or keyword.`);
+        }
       }
+
+      if (prop === "size") {
+        // Handle predefined sizes
+        if (font_sizes[val]) {
+          return pushCSS(cls, `font-size: ${font_sizes[val]};`, hover, media, dark, focus, cname);
+        }
+        // Handle custom rem/px/em values like font-size-3rem, font-size-24px
+        if (val.match(/^\d+(\.\d+)?(rem|px|em|%)$/)) {
+          return pushCSS(cls, `font-size: ${val};`, hover, media, dark, focus, cname);
+        }
+        raise(`twTypography: unknown font-size "${val}" in class "${cls}". Valid keys: ${Object.keys(font_sizes).join(', ')}, or use a value with units (e.g. 16px, 1.5rem).`);
+        return;
+      }
+      
+      if (prop === "family") {
+        // Replace underscores with spaces for multi-word font names (e.g. Momo_Trust_Sans → Momo Trust Sans)
+        val = val.replace(/_/g, " ");
+        
+        const genericFamilies = ['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'system-ui', 'math', 'emoji', 'fangsong'];
+        
+        if (val.includes(',')) {
+          // Comma-separated font stack: quote non-generic families individually
+          val = val.split(',').map(f => {
+            f = f.trim();
+            if (genericFamilies.includes(f)) return f;
+            if (f.startsWith('"') || f.startsWith("'")) return f;
+            return `"${f}"`;
+          }).join(', ');
+        } else if (!genericFamilies.includes(val) && !val.startsWith('"') && !val.startsWith("'")) {
+          val = `"${val}"`;
+        }
+      }
+      
+      pushCSS(cls, `font-${prop}: ${val};`, hover, media, dark, focus, cname);
+    } catch (err) {
+      raise(`twTypography: unexpected error processing "${cls}": ${err.message || err}`);
     }
-    
-    pushCSS(cls, `font-${prop}: ${val};`, hover, media, dark, focus, cname);
   };
 
   const twImage = (cls, cname) => {
