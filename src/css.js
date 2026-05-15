@@ -1,10 +1,10 @@
 const Twigwind = (() => {
-  const css = {}; // stores generated CSS rules
-  const used = new Set();       // tracks generated CSS
+  const css = {}; 
+  const used = new Set();       
   const processedElements = new WeakSet();
   const twigom = new Object();
   const util = {};
-  // Initialize configuration variables
+  
   let colors = {};
   let space = {};
   let sizes = {};
@@ -33,9 +33,9 @@ const Twigwind = (() => {
     return fallback;
   };
   
-  // Load configuration based on environment
+  
   if (typeof window !== 'undefined' && typeof window.document !== 'undefined') {
-    // Browser environment - use inline configuration
+    
     colors = {
       "red": [[26, 0, 0], [71, 0, 0], [117, 0, 0], [163, 0, 0], [209, 0, 0], [255, 0, 0], [255, 63, 63], [255, 127, 127], [255, 191, 191], [255, 255, 255]], 
       "crimson": [[22, 2, 6], [61, 5, 16], [101, 9, 27], [140, 12, 38], [180, 16, 49], [220, 20, 60], [228, 78, 108], [237, 137, 157], [246, 196, 206], [255, 255, 255]], 
@@ -97,7 +97,7 @@ const Twigwind = (() => {
         }
       } catch (error) {
         raise(`Could not load twigwind.config.js: ${error.message || error}. Falling back to empty configuration.`);
-        // Graceful fallback — continue with empty defaults instead of crashing
+        
       }
     }
   
@@ -178,7 +178,7 @@ const Twigwind = (() => {
       }
     }
 
-    // Resolve @variable references
+    
     const vars = pure.match(/@([a-zA-Z0-9 _-]+)/g);
     if (vars) {
       for (const v of vars) {
@@ -225,7 +225,7 @@ const Twigwind = (() => {
   };
 
 
-  // ========== Utility Generators ==========
+  
 
   /**
    * Convert RGB array to CSS color value
@@ -238,7 +238,7 @@ const Twigwind = (() => {
         return 'inherit';
       }
 
-      // RGB array
+      
       if (Array.isArray(color)) {
         if (color.length < 3) {
           raise(`formatColor received an RGB array with fewer than 3 values: [${color.join(', ')}].`);
@@ -263,7 +263,7 @@ const Twigwind = (() => {
         return 'inherit';
       }
 
-      // rgb / rgba with dash-separated values
+      
       const match = value.match(/^(rgb|rgba)\(([^)]+)\)$/i);
       if (match && match[2].includes('-')) {
         const fn = match[1].toLowerCase();
@@ -271,10 +271,10 @@ const Twigwind = (() => {
         return `${fn}(${parts.join(', ')})`;
       }
 
-      // hex (already valid) → leave it alone
+      
       if (value.startsWith('#')) return value;
 
-      // HTML named color or other string — return as-is
+      
       return value;
     };
 
@@ -305,7 +305,7 @@ const Twigwind = (() => {
       return;
     }
     
-    // Check for numbered color variants (e.g., "cyan-5", "red-3")
+    
     const colorMatch = name.match(/^([a-zA-Z][a-zA-Z_]*)-?(\d+)?$/);
     if (colorMatch) {
       const [, colorName, colorIndex] = colorMatch;
@@ -328,12 +328,12 @@ const Twigwind = (() => {
         }
         pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, focus, cname);
       } else {
-        // Fallback for non-array colors or unknown colors
+        
         const colorValue = formatColor(colors[name] || name);
         pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, focus, cname);
       }
     } else {
-      // Fallback for non-matching patterns
+      
       const colorValue = formatColor(colors[name] || name);
       pushCSS(cls, `${prop}: ${colorValue};`, hover, media, dark, focus, cname);
     }
@@ -367,14 +367,14 @@ const Twigwind = (() => {
     try {
       const { hover, dark, media, focus, pure } = parsePrefix(cls);
       
-      // Handle percentage values like w-100%, h-50%, etc.
+      
       let match = pure.match(/^(max|min)?-?(w|h)-(\d+%|\d+(?:px|rem|em|%)?)$/);
       if (match) {
         const prefix = match[1] ? `${match[1]}-` : "";
         const dim = match[2] === "w" ? "width" : "height";
         let val = match[3];
         
-        // If no unit specified and not percentage, default to px
+        
         if (/^\d+$/.test(val)) {
           val += "px";
         }
@@ -382,7 +382,7 @@ const Twigwind = (() => {
         return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
       }
       
-      // Handle viewport units like w-100vw, h-100vh
+      
       match = pure.match(/^(max|min)?-?(w|h)-(\d+(?:vw|vh|vmin|vmax))$/);
       if (match) {
         const prefix = match[1] ? `${match[1]}-` : "";
@@ -391,7 +391,7 @@ const Twigwind = (() => {
         return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
       }
       
-      // Handle special viewport cases like h-100vh, w-100vw
+      
       match = pure.match(/^(max|min)?-?(w|h)-(\d+)(vh|vw|vmin|vmax)$/);
       if (match) {
         const prefix = match[1] ? `${match[1]}-` : "";
@@ -400,7 +400,7 @@ const Twigwind = (() => {
         return pushCSS(cls, `${prefix}${dim}: ${val};`, hover, media, dark, focus, cname);
       }
       
-      // size-sm support
+      
       match = pure.match(/^size-(\w+)$/);
       if (match) {
         if (sizes[match[1]]) {
@@ -488,7 +488,7 @@ const Twigwind = (() => {
       } else {
         prop = side ? `border-${side}-color` : "border-color";
         const colorVal = colors[val];
-        // colors[val] could be an array (palette) — resolve to middle swatch
+        
         if (Array.isArray(colorVal)) {
           const midIndex = Math.floor(colorVal.length / 2);
           value = formatColor(colorVal[midIndex]);
@@ -572,8 +572,8 @@ const Twigwind = (() => {
         return;
       }
 
-      const type = parts.shift();       // linear | radial
-      const direction = parts.shift();  // to-r | 45deg | circle | etc
+      const type = parts.shift();       
+      const direction = parts.shift();  
 
       if (type !== 'linear' && type !== 'radial') {
         raise(`twLinearGradient: unknown gradient type "${type}" in class "${cls}". Use "linear" or "radial".`);
@@ -597,7 +597,7 @@ const Twigwind = (() => {
           return 'transparent';
         }
 
-        // Always normalize functional colors
+        
         if (token.startsWith("rgb") || token.startsWith("rgba")) {
           return formatColor(token);
         }
@@ -679,19 +679,19 @@ const Twigwind = (() => {
     try {
       const { hover, dark, media, focus, pure } = parsePrefix(cls);
       
-      // Position types: fixed, absolute, relative, static, sticky
+      
       if (['fixed', 'absolute', 'relative', 'static', 'sticky'].includes(pure)) {
         return pushCSS(cls, `position: ${pure};`, hover, media, dark, focus, cname);
       }
       
-      // Position values: top-10, right-20, bottom-5, left-15
+      
       const match = pure.match(/^(top|right|bottom|left)-(\d+)(px|rem|em|%)?$/);
       if (match) {
         const [, side, amount, unit] = match;
         return pushCSS(cls, `${side}: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
       }
       
-      // Z-index: z-10, z-50, z-999
+      
       const zMatch = pure.match(/^z-(\d+)$/);
       if (zMatch) {
         return pushCSS(cls, `z-index: ${zMatch[1]};`, hover, media, dark, focus, cname);
@@ -709,7 +709,7 @@ const Twigwind = (() => {
     try {
       const { hover, dark, media, focus, pure } = parsePrefix(cls);
       
-      // Text alignment
+      
       if (['text-left', 'text-center', 'text-right', 'text-justify'].includes(pure)) {
         const align = pure.replace('text-', '');
         return pushCSS(cls, `text-align: ${align};`, hover, media, dark, focus, cname);
@@ -726,7 +726,7 @@ const Twigwind = (() => {
     used.add(cls);
     try {
       const { hover, dark, media, focus, pure } = parsePrefix(cls);
-      // Support both dash and colon separators: font-family-value OR font-family:value
+      
       const match = pure.match(/^font-(size|weight|family|style|variant)[-:](.+)$/);
       if (!match) {
         raise(`twTypography: "${cls}" does not match font pattern (e.g. "font-size-lg", "font-family-Arial").`);
@@ -735,7 +735,7 @@ const Twigwind = (() => {
       let [, prop, val] = match;
       
       if (prop === "weight") {
-        // Validate font-weight is a valid value
+        
         const validWeights = ['normal', 'bold', 'bolder', 'lighter', 'inherit'];
         if (!validWeights.includes(val) && !/^\d{1,3}$/.test(val) && !/^[1-9]00$/.test(val)) {
           raise(`twTypography: font-weight "${val}" in class "${cls}" may not be valid. Expected numeric (100-900) or keyword.`);
@@ -743,11 +743,11 @@ const Twigwind = (() => {
       }
 
       if (prop === "size") {
-        // Handle predefined sizes
+        
         if (font_sizes[val]) {
           return pushCSS(cls, `font-size: ${font_sizes[val]};`, hover, media, dark, focus, cname);
         }
-        // Handle custom rem/px/em values like font-size-3rem, font-size-24px
+        
         if (val.match(/^\d+(\.\d+)?(rem|px|em|%)$/)) {
           return pushCSS(cls, `font-size: ${val};`, hover, media, dark, focus, cname);
         }
@@ -756,13 +756,13 @@ const Twigwind = (() => {
       }
       
       if (prop === "family") {
-        // Replace underscores with spaces for multi-word font names (e.g. Momo_Trust_Sans → Momo Trust Sans)
+        
         val = val.replace(/_/g, " ");
         
         const genericFamilies = ['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'system-ui', 'math', 'emoji', 'fangsong'];
         
         if (val.includes(',')) {
-          // Comma-separated font stack: quote non-generic families individually
+          
           val = val.split(',').map(f => {
             f = f.trim();
             if (genericFamilies.includes(f)) return f;
@@ -791,16 +791,16 @@ const Twigwind = (() => {
         return;
       }
       
-      // Handle URL properly - replace underscores with spaces and decode if needed
+      
       let url = match[1];
       if (!url || url.trim().length === 0) {
         raise(`twImage: empty URL in class "${cls}".`);
         return;
       }
-      // Replace underscores with spaces for URLs that need spaces
+      
       url = url.replace(/_/g, " ");
       
-      // Add additional CSS properties for better background image handling
+      
       const rules = `
         background-image: url('${url}');
         background-size: cover;
@@ -831,14 +831,14 @@ const Twigwind = (() => {
         }
       };
       
-      // Handle backdrop filters
+      
       const backdropMatch = pure.match(/^backdrop-filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
       if (backdropMatch) {
         const [, filter, value] = backdropMatch;
         validateFilterNum(filter, value);
         let filterValue = value;
         
-        // Add units for specific filters
+        
         if (filter === 'blur' && !value.includes('px')) {
           filterValue = `${value}px`;
         } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
@@ -852,13 +852,13 @@ const Twigwind = (() => {
         return pushCSS(cls, `backdrop-filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
       }
       
-      // Handle regular filters
+      
       const filterMatch = pure.match(/^filter:(blur|brightness|contrast|drop-shadow|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
       if (filterMatch) {
         const [, filter, value] = filterMatch;
         let filterValue = value;
         
-        // Handle drop-shadow specially (format: x-y-blur-color)
+        
         if (filter === 'drop-shadow') {
           const shadowParts = value.split('-');
           if (shadowParts.length < 3) {
@@ -871,7 +871,7 @@ const Twigwind = (() => {
           const color = shadowParts[3] || 'rgba(0,0,0,0.5)';
           filterValue = `${x} ${y} ${blur} ${color}`;
         }
-        // Add units for specific filters
+        
         else {
           validateFilterNum(filter, value);
           if (filter === 'blur' && !value.includes('px')) {
@@ -888,14 +888,14 @@ const Twigwind = (() => {
         return pushCSS(cls, `filter: ${filter}(${filterValue});`, hover, media, dark, focus, cname);
       }
       
-      // Handle background filters (legacy support for bg-filter)
+      
       const bgFilterMatch = pure.match(/^bg-filter:(blur|brightness|contrast|grayscale|hue-rotate|invert|saturate|sepia)-(.+)$/);
       if (bgFilterMatch) {
         const [, filter, value] = bgFilterMatch;
         validateFilterNum(filter, value);
         let filterValue = value;
         
-        // Add units for specific filters
+        
         if (filter === 'blur' && !value.includes('px')) {
           filterValue = `${value}px`;
         } else if (['brightness', 'contrast', 'saturate'].includes(filter) && !value.includes('%')) {
@@ -921,14 +921,14 @@ const Twigwind = (() => {
     try {
       const { hover, dark, media, focus, pure } = parsePrefix(cls);
       
-      // Max width
+      
       const maxWMatch = pure.match(/^max-w-(\d+)(px|rem|em|%)?$/);
       if (maxWMatch) {
         const [, amount, unit] = maxWMatch;
         return pushCSS(cls, `max-width: ${amount}${unit || "px"};`, hover, media, dark, focus, cname);
       }
       
-      // Margin auto
+      
       if (pure === 'mx-auto') {
         return pushCSS(cls, `margin-left: auto; margin-right: auto;`, hover, media, dark, focus, cname);
       }
@@ -936,7 +936,7 @@ const Twigwind = (() => {
         return pushCSS(cls, `margin-top: auto; margin-bottom: auto;`, hover, media, dark, focus, cname);
       }
       
-      // Gap for flexbox/grid
+      
       const gapMatch = pure.match(/^gap-(\d+)(px|rem|em|%)?$/);
       if (gapMatch) {
         const [, amount, unit] = gapMatch;
@@ -955,7 +955,7 @@ const Twigwind = (() => {
     try {
       const { hover, dark, media, focus, pure } = parsePrefix(cls);
       
-      // Handle transition:all_300ms syntax
+      
       const colonMatch = pure.match(/^transition:(.+)_(\d+)ms$/);
       if (colonMatch) {
         const [, property, duration] = colonMatch;
@@ -963,7 +963,7 @@ const Twigwind = (() => {
         return pushCSS(cls, `transition: ${prop} ${duration}ms ease;`, hover, media, dark, focus, cname);
       }
       
-      // Handle transition-property-duration syntax
+      
       const dashMatch = pure.match(/^transition-(.+)-(\d+)ms$/);
       if (dashMatch) {
         const [, property, duration] = dashMatch;
@@ -1052,7 +1052,7 @@ const Twigwind = (() => {
     }
   };
 
-  // Initialize rules array after all utility functions are defined
+  
   rules = [
       { test: (p) => p.startsWith("bg-") || p.startsWith("color-"), run: twColor },
       { test: (p) => /^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/.test(p), run: twSpacing },
@@ -1137,7 +1137,7 @@ const Twigwind = (() => {
     const isDOM = typeof HTMLElement !== 'undefined';
 
     if (isDOM && !(el instanceof HTMLElement)) {
-      // Not a DOM element and not an iterable — warn
+      
       if (!el || typeof el.forEach !== 'function') {
         raise(`twApply: expected an HTMLElement or iterable of class names, got ${typeof el}.`);
         return;
