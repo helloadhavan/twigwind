@@ -1,7 +1,7 @@
 const Twigwind = (() => {
   const css = {}; // stores generated CSS rules
   const used = new Set();       // tracks generated CSS
-  const processedElements = new WeakSet(); 
+  const processedElements = new WeakSet();
   const twigom = new Object();
   const util = {};
   // Initialize configuration variables
@@ -17,8 +17,20 @@ const Twigwind = (() => {
 
   let rules = [];
 
-  const raise = (error) => {
+  /**
+   * Log an error and optionally return a fallback value.
+   * When used inline (e.g. as a default in `||`), pass a fallback so the
+   * expression evaluates to something safe instead of `undefined`.
+   * @param {string} error  - human-readable error message
+   * @param {*} [fallback]  - value to return (defaults to `undefined`)
+   * @returns {*} the fallback value
+   */
+  const raise = (error, fallback) => {
     errors.push(error);
+    if (typeof console !== 'undefined' && console.warn) {
+      console.warn(`[Twigwind] ${error}`);
+    }
+    return fallback;
   };
   
   // Load configuration based on environment
@@ -71,17 +83,56 @@ const Twigwind = (() => {
   } else if (typeof module !== 'undefined' && module.exports) {
       try {
         const path = require('path');
-        const js = require(path.join(__dirname, '../twigwind.config.js'));
-        colors = js.colors || {};
-        space = js.space || {};
-        sizes = js.sizes || {};
-        breakpoints = js.breakpoints || {};
-        components = js.components || {};
-        variables = js.variables || {};
+        const configPath = path.join(__dirname, '../twigwind.config.js');
+        const js = require(configPath);
+        if (!js || typeof js !== 'object') {
+          raise(`twigwind.config.js does not export a valid configuration object (got ${typeof js}).`);
+        } else {
+          colors = js.colors || {};
+          space = js.space || {};
+          sizes = js.sizes || {};
+          breakpoints = js.breakpoints || {};
+          components = js.components || {};
+          variables = js.variables || {};
+        }
       } catch (error) {
-        raise(`Could not load twigwind.config.js, check twigwind.config.js path.`);
-        process.exit(1);}
+        raise(`Could not load twigwind.config.js: ${error.message || error}. Falling back to empty configuration.`);
+        // Graceful fallback — continue with empty defaults instead of crashing
       }
+    }
+  
+  const htmlColors = [
+    "AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", 
+    "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", 
+    "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", 
+    "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", 
+    "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", 
+    "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", 
+    "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", 
+    "DarkSlateGray", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", 
+    "DimGray", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", 
+    "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", 
+    "Gray", "Green", "GreenYellow", "HoneyDew", "HotPink", 
+    "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", 
+    "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", 
+    "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGreen", "LightPink", 
+    "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSteelBlue", 
+    "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", 
+    "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", 
+    "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", 
+    "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", 
+    "Navy", "OldLace", "Olive", "OliveDrab", "Orange", 
+    "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", 
+    "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", 
+    "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", 
+    "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", 
+    "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", 
+    "SlateBlue", "SlateGray", "Snow", "SpringGreen", "SteelBlue", 
+    "Tan", "Teal", "Thistle", "Tomato", "Turquoise", 
+    "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen",
+    "black", "white", "silver", "gray", "maroon", "red", "purple", "fuchsia",
+];
+
     
   const escapeClass = (cls) =>
     cls.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1");
@@ -91,7 +142,16 @@ const Twigwind = (() => {
    * @param {string} cls 
    * @returns {object} { hover, dark, media, focus, pure }
    */
+  /**
+   * @param {string} cls
+   * @returns {object} { hover, dark, media, focus, pure }
+   */
   const parsePrefix = (cls) => {
+    if (typeof cls !== 'string' || cls.length === 0) {
+      raise(`parsePrefix received invalid class: "${cls}"`);
+      return { hover: false, dark: false, media: "", focus: false, pure: "" };
+    }
+
     let hover = false;
     let dark = false;
     let media = "";
@@ -112,8 +172,22 @@ const Twigwind = (() => {
         pure = parts.slice(1).join(":");
       }
     }
-    let vars = pure.match(/@([a-zA-Z0-9 _-]+)/g);
-    if (vars) {for (const v of vars) { pure = pure.replace(new RegExp(v, 'g'), variables[v.replace('@', '')] || raise(`Variable not found: ${v}`)); }} 
+
+    // Resolve @variable references
+    const vars = pure.match(/@([a-zA-Z0-9 _-]+)/g);
+    if (vars) {
+      for (const v of vars) {
+        const varName = v.replace('@', '');
+        const resolved = variables[varName];
+        if (resolved === undefined || resolved === null) {
+          raise(`Variable not found: "${v}" in class "${cls}". The variable will be removed.`);
+          pure = pure.replace(new RegExp(v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
+        } else {
+          pure = pure.replace(new RegExp(v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), String(resolved));
+        }
+      }
+    }
+
     return { hover, dark, media, focus, pure };
   };
 
@@ -141,14 +215,35 @@ const Twigwind = (() => {
    * @returns {string} CSS color value
    */
     const formatColor = (color) => {
+      if (color === undefined || color === null) {
+        raise(`formatColor received null/undefined color value.`);
+        return 'inherit';
+      }
+
       // RGB array
-      if (Array.isArray(color) && color.length >= 3) {
+      if (Array.isArray(color)) {
+        if (color.length < 3) {
+          raise(`formatColor received an RGB array with fewer than 3 values: [${color.join(', ')}].`);
+          return 'inherit';
+        }
+        for (let i = 0; i < 3; i++) {
+          if (typeof color[i] !== 'number' || color[i] < 0 || color[i] > 255) {
+            raise(`formatColor RGB value out of range at index ${i}: ${color[i]} (expected 0-255).`);
+          }
+        }
         return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
       }
 
-      if (typeof color !== 'string') return color;
+      if (typeof color !== 'string') {
+        raise(`formatColor received unsupported type: ${typeof color}. Returning 'inherit'.`);
+        return 'inherit';
+      }
 
       const value = color.trim();
+      if (value.length === 0) {
+        raise(`formatColor received an empty string.`);
+        return 'inherit';
+      }
 
       // rgb / rgba with dash-separated values
       const match = value.match(/^(rgb|rgba)\(([^)]+)\)$/i);
@@ -159,6 +254,9 @@ const Twigwind = (() => {
       }
 
       // hex (already valid) → leave it alone
+      if (value.startsWith('#')) return value;
+
+      // HTML named color or other string — return as-is
       return value;
     };
 
@@ -179,7 +277,15 @@ const Twigwind = (() => {
     } else if (pure.startsWith("color-")) {
       prop = "color";
       name = pure.slice(6);
-    } else return;
+    } else {
+      raise(`Invalid color class: "${cls}" — expected "bg-*" or "color-*" prefix.`);
+      return;
+    }
+
+    if (!name || name.length === 0) {
+      raise(`Empty color name in class "${cls}".`);
+      return;
+    }
     
     // Check for numbered color variants (e.g., "cyan-5", "red-3")
     const colorMatch = name.match(/^([a-zA-Z][a-zA-Z_]*)-?(\d+)?$/);
@@ -194,7 +300,7 @@ const Twigwind = (() => {
           if (index >= 0 && index < colorArray.length) {
             colorValue = formatColor(colorArray[index]);
           } else {
-            // Fallback to middle value if index out of range
+            raise(`Color index ${index} out of range for "${colorName}" (0-${colorArray.length - 1}). Falling back to middle value.`);
             const midIndex = Math.floor(colorArray.length / 2);
             colorValue = formatColor(colorArray[midIndex]);
           }
@@ -519,12 +625,15 @@ const Twigwind = (() => {
     pushCSS(cls, `font-${prop}: ${val};`, hover, media, dark, focus, cname);
   };
 
-  const twImage = (cls) => {
+  const twImage = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
     const { hover, media, focus, pure } = parsePrefix(cls);
     const match = pure.match(/^image-url-(.+)$/);
-    if (!match) return;
+    if (!match) {
+      raise(`Invalid image class: "${cls}" — expected "image-url-*" format.`);
+      return;
+    }
     
     // Handle URL properly - replace underscores with spaces and decode if needed
     let url = match[1];
@@ -539,7 +648,7 @@ const Twigwind = (() => {
       background-repeat: no-repeat;
     `;
     
-    pushCSS(cls, rules, hover, media, false, focus);
+    pushCSS(cls, rules, hover, media, false, focus, cname);
   };
 
   const twFilter = (cls, cname) => {
@@ -750,37 +859,84 @@ const Twigwind = (() => {
   ];
 
   const addfunction = (test, run) => {
-    rules.test = test
-    rules.run = run
-  }
+    if (typeof test !== 'function') {
+      raise(`addfunction: "test" must be a function, got ${typeof test}.`);
+      return;
+    }
+    if (typeof run !== 'function') {
+      raise(`addfunction: "run" must be a function, got ${typeof run}.`);
+      return;
+    }
+    rules.push({ test, run });
+  };
 
   function applyUtilityClass(cls, cname, element_name = "unknown") {
-    const { pure } = parsePrefix(cls)
-
-    for (const rule of rules) {
-      if (rule.test(pure)) {
-        rule.run(cls, cname)
-        return
-      }
+    if (typeof cls !== 'string' || cls.trim().length === 0) {
+      raise(`applyUtilityClass: received invalid class value (${typeof cls}).`);
+      return;
     }
-    if (!util[cls]) {
-      const errorMsg = `Twigwind: Error compiling "${cls}" in element "${element_name}" - utility not recognized.`
-      raise(errorMsg)
+
+    try {
+      const { pure } = parsePrefix(cls);
+
+      if (!pure || pure.trim().length === 0) {
+        raise(`Twigwind: class "${cls}" resolved to an empty utility after prefix parsing.`);
+        return;
+      }
+
+      for (const rule of rules) {
+        if (rule.test(pure)) {
+          rule.run(cls, cname);
+          return;
+        }
+      }
+
+      if (!util[cls]) {
+        raise(`Twigwind: Error compiling "${cls}" in element <${element_name}> — utility not recognized. Check spelling or register a custom rule with addfunction().`);
+      }
+    } catch (err) {
+      raise(`Twigwind: Unexpected error processing class "${cls}" in element <${element_name}>: ${err.message || err}`);
     }
   }
 
   const twApply = (el) => {
+    if (!el) {
+      raise(`twApply: received null/undefined element.`);
+      return;
+    }
+
     const isDOM = typeof HTMLElement !== 'undefined';
+
+    if (isDOM && !(el instanceof HTMLElement)) {
+      // Not a DOM element and not an iterable — warn
+      if (!el || typeof el.forEach !== 'function') {
+        raise(`twApply: expected an HTMLElement or iterable of class names, got ${typeof el}.`);
+        return;
+      }
+    }
 
     if (isDOM && processedElements.has(el)) return;
 
     const classes = isDOM ? el.classList : el;
 
+    if (!classes || typeof classes.forEach !== 'function') {
+      raise(`twApply: could not iterate classes on the provided element.`);
+      return;
+    }
+
     classes.forEach(cls => {
-      if (components && components[cls]) {
-        components[cls].forEach(c => applyUtilityClass(c, cls, el?.tagName));
-      } else {
-        applyUtilityClass(cls, null, el?.tagName);
+      try {
+        if (components && components[cls]) {
+          if (!Array.isArray(components[cls])) {
+            raise(`twApply: component "${cls}" is not an array. Skipping.`);
+            return;
+          }
+          components[cls].forEach(c => applyUtilityClass(c, cls, el?.tagName));
+        } else {
+          applyUtilityClass(cls, null, el?.tagName);
+        }
+      } catch (err) {
+        raise(`twApply: error processing class "${cls}": ${err.message || err}`);
       }
     });
 
@@ -788,29 +944,64 @@ const Twigwind = (() => {
   };
 
   const twInject = () => {
-    let final = "";
-
-    for (const [selector, rules] of Object.entries(css)) {
-      for (const rule of rules) {
-        if (rule.trim().startsWith("@media")) {
-          final += rule + "\n";
-        } else {
-          final += `${selector} {\n${rule}\n}\n`;
-        }
-      }
+    if (typeof document === 'undefined' || !document.head) {
+      raise(`twInject: no document/head available — cannot inject styles. Are you running in a non-browser environment?`);
+      return;
     }
 
-    const style = document.createElement("style");
-    style.textContent = final;
-    document.head.appendChild(style);
+    try {
+      let final = "";
+
+      for (const [selector, rules] of Object.entries(css)) {
+        if (!Array.isArray(rules)) {
+          raise(`twInject: rules for selector "${selector}" is not an array. Skipping.`);
+          continue;
+        }
+        for (const rule of rules) {
+          if (typeof rule !== 'string') {
+            raise(`twInject: non-string rule encountered for selector "${selector}". Skipping.`);
+            continue;
+          }
+          if (rule.trim().startsWith("@media")) {
+            final += rule + "\n";
+          } else {
+            final += `${selector} {\n${rule}\n}\n`;
+          }
+        }
+      }
+
+      const style = document.createElement("style");
+      style.setAttribute("data-twigwind", "true");
+      style.textContent = final;
+      document.head.appendChild(style);
+    } catch (err) {
+      raise(`twInject: failed to inject styles: ${err.message || err}`);
+    }
   };
 
   return {
     twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius,
     twTransform, twLinearGradient, twshadow, twPosition, twText, twTypography, twLayout,
     twTransition, twOpacity, twFilter, twApply, twInject, applyUtilityClass, twDisplay,
-    getCSS: () => {let out = ""; for (const [selector, rules] of Object.entries(css)) {out += `${selector} {\n${rules.join("\n")}\n}\n`;}return out;},
-    reset: () => {for (const key in css) delete css[key]; used.clear();}, Object_Model: () => twigom, raise, getErrors: () => errors, addfunction
+    getCSS: () => {
+      try {
+        let out = "";
+        for (const [selector, rules] of Object.entries(css)) {
+          if (!Array.isArray(rules)) continue;
+          out += `${selector} {\n${rules.join("\n")}\n}\n`;
+        }
+        return out;
+      } catch (err) {
+        raise(`getCSS: failed to generate CSS output: ${err.message || err}`);
+        return "";
+      }
+    },
+    reset: () => { for (const key in css) delete css[key]; used.clear(); errors.length = 0; },
+    Object_Model: () => twigom,
+    raise,
+    getErrors: () => [...errors],
+    hasErrors: () => errors.length > 0,
+    addfunction
   }});
 
 if (typeof window !== 'undefined') window.Twigwind = Twigwind;
