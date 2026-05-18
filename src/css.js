@@ -133,6 +133,8 @@ const Twigwind = (() => {
     "black", "white", "silver", "gray", "maroon", "red", "purple", "fuchsia",
 ];
 
+  const overflows =  ["visible", "hidden", "scroll", "auto"];
+
     
   const escapeClass = (cls) => {
     if (typeof cls !== 'string') {
@@ -1036,6 +1038,27 @@ const Twigwind = (() => {
     }
   };
 
+  const twOverflow = (cls, cname) => {
+    if (used.has(cls)) return;
+    used.add(cls);
+    try {
+      const { hover, dark, media, focus, pure } = parsePrefix(cls);
+      const match = pure.match(/^overflow(?:-(x|y))?-(visible|hidden|scroll|auto)$/);
+      if (match) {
+        const axis = match[1];
+        const value = match[2];
+        if (axis) {
+          return pushCSS(cls, `overflow-${axis}: ${value};`, hover, media, dark, focus, cname);
+        }
+        return pushCSS(cls, `overflow: ${value};`, hover, media, dark, focus, cname);
+      }
+
+      raise(`twOverflow: "${cls}" does not match overflow pattern. Valid: overflow-auto, overflow-hidden, overflow-visible, overflow-scroll, overflow-x-*, overflow-y-*.`);
+    } catch (err) {
+      raise(`twOverflow: unexpected error processing "${cls}": ${err.message || err}`);
+    }
+  };
+
   const twDisplay = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
@@ -1084,6 +1107,8 @@ const Twigwind = (() => {
       { test: (p) => p.startsWith("opacity-"), run: twOpacity },
       { test: (p) => p.startsWith("image-url-"), run: twImage },
       { test: (p) => p.startsWith("filter") || p.startsWith("bg-filter") || p.startsWith("backdrop-filter"), run: twFilter },
+      { test: (p) => p.startsWith("text-decoration-"), run: twTextDecoration },
+      { test: (p) => p.startsWith("overflow"), run: twOverflow },
       { test: (p) => display[p], run: twDisplay }
   ];
 
