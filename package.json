@@ -1,6 +1,6 @@
 {
   "name": "twigwind",
-  "version": "4.3.6",
+  "version": "4.3.7",
   "description": "A utility-first CSS framework that's tiny, JS-powered, and designed for rapid prototyping",
   "main": "src/css.js",
   "bin": {
@@ -34,7 +34,7 @@
     "jit",
     "prototyping",
     "parser",
-    "complier"
+    "compiler"
   ],
   "author": "Adhavan Yuvaraj",
   "license": "ISC",
