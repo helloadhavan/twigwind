@@ -1145,7 +1145,7 @@ const Twigwind = (() => {
   rules = [
       { test: (p) => p.startsWith("bg-") || p.startsWith("color-"), run: twColor },
       { test: (p) => /^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/.test(p), run: twSpacing },
-      { test: (p) => /^(max|min)?-?(w|h)-(\d+%|\d+(?:px|rem|em|%)?)$/ || p.startsWith("size-"), run: twSize },
+      { test: (p) => /^(max|min)?-?(w|h)-(\d+%|\d+(?:px|rem|em|%)?)$/.test(p) || p.startsWith("size-"), run: twSize },
       { test: (p) => p.startsWith("flex"), run: twflex },
       { test: (p) => p.startsWith("grid:"), run: twGrid },
       { test: (p) => p.startsWith("border-radius"), run: twBorderRadius },
