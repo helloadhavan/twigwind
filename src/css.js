@@ -14,7 +14,7 @@ const Twigwind = (() => {
   let display = {};
   let font_sizes = {};
   let variables = {};
-
+  let animations = {};
   let rules = [];
 
   /**
