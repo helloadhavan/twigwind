@@ -40,9 +40,56 @@ const display = {
 const sizes = { sm: "40px", md: "80px", lg: "160px", xl: "320px", xxl: "640px"};
 const breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
 const font_sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" }; 
-const variables = { "black": "#000000", "white": "#ffffff", "transparent": "transparent" }; // Add more variables as needed
+const variables = { "black": "#000000", "white": "#ffffff"}; // Add more variables as needed
 const components = {};
-const animations = {};
+
+const animations = {
+  "fade-in": {
+    "0%":   { opacity: "0" },
+    "100%": { opacity: "1" }
+  },
+  "fade-out": {
+    "0%":   { opacity: "1" },
+    "100%": { opacity: "0" }
+  },
+  "slide-up": {
+    "from": { transform: "translateY(100%)", opacity: "0" },
+    "to":   { transform: "translateY(0)", opacity: "1" }
+  },
+  "slide-down": {
+    "from": { transform: "translateY(-100%)", opacity: "0" },
+    "to":   { transform: "translateY(0)", opacity: "1" }
+  },
+  "slide-left": {
+    "from": { transform: "translateX(100%)", opacity: "0" },
+    "to":   { transform: "translateX(0)", opacity: "1" }
+  },
+  "slide-right": {
+    "from": { transform: "translateX(-100%)", opacity: "0" },
+    "to":   { transform: "translateX(0)", opacity: "1" }
+  },
+  "bounce": {
+    "0%, 100%": { transform: "translateY(0)" },
+    "50%":      { transform: "translateY(-25%)" }
+  },
+  "spin": {
+    "from": { transform: "rotate(0deg)" },
+    "to":   { transform: "rotate(360deg)" }
+  },
+  "pulse": {
+    "0%, 100%": { opacity: "1" },
+    "50%":      { opacity: "0.5" }
+  },
+  "scale-in": {
+    "from": { transform: "scale(0)", opacity: "0" },
+    "to":   { transform: "scale(1)", opacity: "1" }
+  },
+  "shake": {
+    "0%, 100%": { transform: "translateX(0)" },
+    "25%":      { transform: "translateX(-5px)" },
+    "75%":      { transform: "translateX(5px)" }
+  }
+};
 
 
 module.exports = {
@@ -54,4 +101,5 @@ module.exports = {
     components: components,
     display: display,
     variables: variables,
+    animations: animations,
 };
