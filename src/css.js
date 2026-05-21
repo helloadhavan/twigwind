@@ -1079,7 +1079,7 @@ const Twigwind = (() => {
   rules = [
       { test: (p) => p.startsWith("bg-") || p.startsWith("color-"), run: twColor },
       { test: (p) => /^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/.test(p), run: twSpacing },
-      { test: (p) => /^(w|h)-/.test(p) || p.startsWith("size-"), run: twSize },
+      { test: (p) => /^(max|min)?-?(w|h)-(\d+%|\d+(?:px|rem|em|%)?)$/ || p.startsWith("size-"), run: twSize },
       { test: (p) => p.startsWith("flex"), run: twflex },
       { test: (p) => p.startsWith("grid:"), run: twGrid },
       { test: (p) => p.startsWith("border-radius"), run: twBorderRadius },
@@ -1097,7 +1097,6 @@ const Twigwind = (() => {
       { test: (p) => p.startsWith("font-") || /^font-(size|weight|family|style|variant):/.test(p), run: twTypography },
       { test: (p) => p.startsWith("animate-"), run: twAnimation },
       { test: (p) =>
-          p.startsWith("max-w-") ||
           p === "mx-auto" ||
           p === "my-auto" ||
           /^gap-/.test(p),
