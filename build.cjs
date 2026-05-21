@@ -196,6 +196,13 @@ function build() {
     return;
   }
 
+  // Compile @keyframes from config animations before processing any HTML
+  try {
+    tw.compileAnimations();
+  } catch (err) {
+    log.warn(`Could not compile animations: ${err.message || err}`);
+  }
+
   for (const file of htmlFiles) {
     try {
       let html;

@@ -14,7 +14,8 @@ const Twigwind = (() => {
   let display = {};
   let font_sizes = {};
   let variables = {};
-
+  let animations = {};
+  let animationCSS = "";
   let rules = [];
 
   /**
@@ -79,7 +80,9 @@ const Twigwind = (() => {
 
     font_sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
     components = {};
+    animations = {};
     variables = {};
+    animations = {};
   } else if (typeof module !== 'undefined' && module.exports) {
       try {
         const path = require('path');
@@ -94,6 +97,9 @@ const Twigwind = (() => {
           breakpoints = js.breakpoints || {};
           components = js.components || {};
           variables = js.variables || {};
+          display = js.display || {};
+          font_sizes = js.font_sizes || {};
+          animations = js.animations || {};
         }
       } catch (error) {
         raise(`Could not load twigwind.config.js: ${error.message || error}. Falling back to empty configuration.`);
@@ -1021,6 +1027,66 @@ const Twigwind = (() => {
     }
   };
 
+  /**
+   * Compile all animations from the `animations` config into @keyframes CSS.
+   *
+   * Expected config format:
+   *   animations: {
+   *     "fade-in": {
+   *       "0%":   { opacity: "0" },
+   *       "100%": { opacity: "1" }
+   *     },
+   *     "slide-up": {
+   *       "from": { transform: "translateY(100%)", opacity: "0" },
+   *       "to":   { transform: "translateY(0)", opacity: "1" }
+   *     }
+   *   }
+   *
+   * Produces:
+   *   @keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+   *   @keyframes slide-up { from { transform: translateY(100%); opacity: 0; } to { ... } }
+   */
+  const compileAnimations = () => {
+    animationCSS = "";
+
+    if (!animations || typeof animations !== 'object') {
+      return animationCSS;
+    }
+
+    const names = Object.keys(animations);
+    if (names.length === 0) return animationCSS;
+
+    for (const name of names) {
+      const keyframes = animations[name];
+      if (!keyframes || typeof keyframes !== 'object') {
+        raise(`compileAnimations: animation "${name}" is not a valid keyframes object. Skipping.`);
+        continue;
+      }
+
+      let rule = `@keyframes ${name} {\n`;
+
+      for (const [stop, props] of Object.entries(keyframes)) {
+        if (!props || typeof props !== 'object') {
+          raise(`compileAnimations: keyframe stop "${stop}" in animation "${name}" is not an object. Skipping.`);
+          continue;
+        }
+
+        rule += `  ${stop} {\n`;
+        for (const [prop, val] of Object.entries(props)) {
+          // Convert camelCase to kebab-case (e.g. backgroundColor -> background-color)
+          const cssProp = prop.replace(/([A-Z])/g, '-$1').toLowerCase();
+          rule += `    ${cssProp}: ${val};\n`;
+        }
+        rule += `  }\n`;
+      }
+
+      rule += `}\n`;
+      animationCSS += rule;
+    }
+
+    return animationCSS;
+  };
+
   const twTextDecoration = (cls, cname) => {
     if (used.has(cls)) return;
     used.add(cls);
@@ -1079,7 +1145,7 @@ const Twigwind = (() => {
   rules = [
       { test: (p) => p.startsWith("bg-") || p.startsWith("color-"), run: twColor },
       { test: (p) => /^([pm][lrtb]?)-(\d+)(px|rem|em|%)?$/.test(p), run: twSpacing },
-      { test: (p) => /^(w|h)-/.test(p) || p.startsWith("size-"), run: twSize },
+      { test: (p) => /^(max|min)?-?(w|h)-(\d+%|\d+(?:px|rem|em|%)?)$/.test(p) || p.startsWith("size-"), run: twSize },
       { test: (p) => p.startsWith("flex"), run: twflex },
       { test: (p) => p.startsWith("grid:"), run: twGrid },
       { test: (p) => p.startsWith("border-radius"), run: twBorderRadius },
@@ -1097,7 +1163,6 @@ const Twigwind = (() => {
       { test: (p) => p.startsWith("font-") || /^font-(size|weight|family|style|variant):/.test(p), run: twTypography },
       { test: (p) => p.startsWith("animate-"), run: twAnimation },
       { test: (p) =>
-          p.startsWith("max-w-") ||
           p === "mx-auto" ||
           p === "my-auto" ||
           /^gap-/.test(p),
@@ -1206,6 +1271,11 @@ const Twigwind = (() => {
     try {
       let final = "";
 
+      // Prepend compiled @keyframes animations
+      if (animationCSS) {
+        final += animationCSS + "\n";
+      }
+
       for (const [selector, rules] of Object.entries(css)) {
         if (!Array.isArray(rules)) {
           raise(`twInject: rules for selector "${selector}" is not an array. Skipping.`);
@@ -1237,9 +1307,16 @@ const Twigwind = (() => {
     twColor, twSpacing, twSize, twflex, twGrid, twBorder, twBorderRadius,
     twTransform, twLinearGradient, twshadow, twPosition, twText, twTypography, twLayout,
     twTransition, twOpacity, twFilter, twApply, twInject, applyUtilityClass, twDisplay,
+    compileAnimations,
     getCSS: () => {
       try {
         let out = "";
+
+        // Prepend compiled @keyframes animations
+        if (animationCSS) {
+          out += animationCSS + "\n";
+        }
+
         for (const [selector, rules] of Object.entries(css)) {
           if (!Array.isArray(rules)) continue;
           out += `${selector} {\n${rules.join("\n")}\n}\n`;
@@ -1250,7 +1327,7 @@ const Twigwind = (() => {
         return "";
       }
     },
-    reset: () => { for (const key in css) delete css[key]; used.clear(); errors.length = 0; },
+    reset: () => { for (const key in css) delete css[key]; used.clear(); errors.length = 0; animationCSS = ""; },
     Object_Model: () => twigom,
     raise,
     getErrors: () => [...errors],
