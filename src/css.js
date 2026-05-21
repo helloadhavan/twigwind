@@ -79,7 +79,9 @@ const Twigwind = (() => {
 
     font_sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" };
     components = {};
+    animations = {};
     variables = {};
+    animations = {};
   } else if (typeof module !== 'undefined' && module.exports) {
       try {
         const path = require('path');
@@ -94,6 +96,9 @@ const Twigwind = (() => {
           breakpoints = js.breakpoints || {};
           components = js.components || {};
           variables = js.variables || {};
+          display = js.display || {};
+          font_sizes = js.font_sizes || {};
+          animations = js.animations || {};
         }
       } catch (error) {
         raise(`Could not load twigwind.config.js: ${error.message || error}. Falling back to empty configuration.`);
