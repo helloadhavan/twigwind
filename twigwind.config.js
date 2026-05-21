@@ -42,6 +42,7 @@ const breakpoints = { sm: 640, md: 768, lg: 1024, xl: 1280, "2xl": 1536 };
 const font_sizes = { sm: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", xxl: "1.5rem" }; 
 const variables = { "black": "#000000", "white": "#ffffff", "transparent": "transparent" }; // Add more variables as needed
 const components = {};
+const animations = {};
 
 
 module.exports = {
